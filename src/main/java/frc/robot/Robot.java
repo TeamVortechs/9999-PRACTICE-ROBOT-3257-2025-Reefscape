@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.drive.Drive;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -36,6 +37,8 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
+  private Drive drivetrain;
+  private Vision vision;
 
   public Robot() {
     // Record metadata
@@ -117,6 +120,19 @@ public class Robot extends LoggedRobot {
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
+
+    // Correct pose estimate with vision measurements
+    var visionEst = vision.getEstimatedGlobalPose();
+    visionEst.ifPresent(
+        est -> {
+          // Change our trust in the measurement based on the tags we can see
+          var estStdDevs = vision.getEstimationStdDevs();
+
+          drivetrain.addVisionMeasurement(
+              est.estimatedPose.toPose2d(),
+              est.timestampSeconds,
+              estStdDevs); // !!! note: the standard deviation in the constants has to be tweaked
+        });
   }
 
   /** This function is called once when the robot is disabled. */
