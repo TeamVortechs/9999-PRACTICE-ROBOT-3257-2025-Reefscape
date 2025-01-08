@@ -1,3 +1,26 @@
+package frc.robot.subsystems.AlgaeCollector;
+
+import org.littletonrobotics.junction.AutoLog;
+
+public class AlgaeCollectorIO {
+    @AutoLog
+    public static class AlgaeCollectorIOInputs {
+        double wristSpeedRad = 0.0;
+        double wristPosRad = 0.0;
+
+        double wristCurrentAmps = 0.0;
+        double wristAppliedVolts = 0.0;
+
+        double intakeSpeedRad = 0.0;
+        double intakeAppliedVolts;
+    }
+
+    //not gonna do the methods here just yet
+}
+
+
+
+/*
 package frc.robot.subsystems.elevator;
 
 import org.littletonrobotics.junction.AutoLog;
@@ -7,7 +30,6 @@ public interface ElevatorModuleIO {
   @AutoLog
   public static class ElevatorModuleIOInputs {
     double elevatorCurrentHeightMeter = 0.0;
-    double elevatorCurrentSpeedMeter = 0.0;
 
     double elevatorCurrentAmps = 0.0;
     double elevatorAppliedVolts = 0.0;
@@ -27,3 +49,5 @@ public interface ElevatorModuleIO {
 
   // reminder for myself to use the given PID stuff
 }
+
+ */
