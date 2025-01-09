@@ -4,6 +4,8 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.KDoublePreferences;
+import frc.robot.KDoublePreferences.PElevator;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -20,12 +22,14 @@ public class Elevator extends SubsystemBase {
 
   @AutoLogOutput private boolean isOnTarget = false;
 
-  private ElevatorModuleIO[] elevatorModulesIO;
+  private ElevatorModuleIO elevatorModuleIO;
 
   private ElevatorModuleIOInputsAutoLogged inputs = new ElevatorModuleIOInputsAutoLogged();
 
-  public Elevator(ElevatorModuleIO[] elevatorModuleIO) {
-    this.elevatorModulesIO = elevatorModuleIO;
+  private ProfiledPIDController PID = new ProfiledPIDController(PElevator.proportional.getValue(), PElevator.integral.getValue(), PElevator.derivative.getValue(), new TrapezoidProfile.Constraints(targetHeight, currentHeight));
+
+  public Elevator(ElevatorModuleIO elevatorModuleIO) {
+    this.elevatorModuleIO = elevatorModuleIO;
   }
 
   // PID controller so we don't need to do the logic ourselves. It just gets all of it's values from
@@ -45,33 +49,34 @@ public class Elevator extends SubsystemBase {
     // skeleton for later:
 
     // logging
-    for(int i = 0; i < elevatorModulesIO.length; i++) {
-        elevatorModulesIO[i].updateInputs(inputs);
-        Logger.processInputs("Elevator", inputs);
-    }
+    elevatorModuleIO.updateInputs(inputs);
+    Logger.processInputs("Elevator", inputs);
 
     // calculate the needed position of each elevator
+    
+    double diffHeight = targetHeight - currentHeight;
+
+    if(diffHeight < 0.1) return;
+    
+    double elevatorSpeed =  PID.calculate(diffHeight);
 
     // individually move each elevator to that position
 
+    elevatorModuleIO.setSpeed(elevatorSpeed);
     // finish
   }
 
   // HELPER
   // gets the total height of all the added modules
-  public double getHeight() {
-
-    double height = 0.0;
-
-    for(int i = 0; i < elevatorModulesIO.length; i++) {
-        height += elevatorModulesIO[i].getHeightMeters();
-    }
-    return d;
+  public double getHeight() { 
+    return elevatorModuleIO.getHeightMeters();
   }
 
   // GETTER/SETTER(simple)
   // sets the heihgt of the elevator using the pid system
-  public void setTargetHeight(double height) {}
+  public void setTargetHeight(double height) {
+    this.targetHeight = height;
+  }
 
   // sets the height of the elevator but uses an enum to make it more expandable
   public void setTargetHeight(ElevatorLevel level) {
@@ -80,7 +85,7 @@ public class Elevator extends SubsystemBase {
 
   // gets the height that the pid loop is going to
   public double getTargetHeight() {
-    return 0;
+    return targetHeight;
   }
 
   // returns wether or not the elevator is currently on it's target or still trying to path to it
