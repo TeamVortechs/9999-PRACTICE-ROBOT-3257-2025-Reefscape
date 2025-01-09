@@ -3,22 +3,20 @@ package frc.robot.subsystems.AlgaeCollector;
 import org.littletonrobotics.junction.AutoLog;
 
 public class AlgaeCollectorIO {
-    @AutoLog
-    public static class AlgaeCollectorIOInputs {
-        double wristSpeedRad = 0.0;
-        double wristPosRad = 0.0;
+  @AutoLog
+  public static class AlgaeCollectorIOInputs {
+    double wristSpeedRad = 0.0;
+    double wristPosRad = 0.0;
 
-        double wristCurrentAmps = 0.0;
-        double wristAppliedVolts = 0.0;
+    double wristCurrentAmps = 0.0;
+    double wristAppliedVolts = 0.0;
 
-        double intakeSpeedRad = 0.0;
-        double intakeAppliedVolts;
-    }
+    double intakeSpeedRad = 0.0;
+    double intakeAppliedVolts;
+  }
 
-    //not gonna do the methods here just yet
+  // not gonna do the methods here just yet
 }
-
-
 
 /*
 package frc.robot.subsystems.elevator;

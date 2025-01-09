@@ -1,5 +1,3 @@
 package frc.robot.subsystems.AlgaeCollector;
 
-public class AlgaeCollector {
-    
-}
+public class AlgaeCollector {}

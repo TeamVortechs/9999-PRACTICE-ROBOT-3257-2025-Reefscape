@@ -16,10 +16,9 @@ public class SetElevatorCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
+  private double wantedHeight;
 
-   private double wantedHeight;
-   private Elevator elevator;
-
+  private Elevator elevator;
 
   public SetElevatorCommand(double wantedHeight, Elevator elevator) {
     this.wantedHeight = wantedHeight;
@@ -39,29 +38,25 @@ public class SetElevatorCommand extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
-  //finish either if the elevator has reached it's height or if the target height changed
+  // finish either if the elevator has reached it's height or if the target height changed
   @Override
   public boolean isFinished() {
 
-    //just a way to ask if the doubles are not equal which works for innacuracies
-    if(Math.abs(wantedHeight - elevator.getTargetHeight()) > 0.0001) {
-        return true;
+    // just a way to ask if the doubles are not equal which works for innacuracies
+    if (Math.abs(wantedHeight - elevator.getTargetHeight()) > 0.0001) {
+      return true;
     }
 
-    //returns true if the heihgt of the elevator is really close to the wanted height
-    if(Math.abs(wantedHeight - elevator.getHeight()) > 0.1) {
-        return true;
+    // returns true if the heihgt of the elevator is really close to the wanted height
+    if (Math.abs(wantedHeight - elevator.getHeight()) > 0.1) {
+      return true;
     }
 
     return false;

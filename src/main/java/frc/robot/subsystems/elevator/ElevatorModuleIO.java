@@ -13,17 +13,21 @@ public interface ElevatorModuleIO {
     double elevatorAppliedVolts = 0.0;
   }
 
-  //updates the given inputs with new values(advantage kit stuff)
+  // updates the given inputs with new values(advantage kit stuff)
   public default void updateInputs(ElevatorModuleIOInputs inputs) {}
 
   // sets the elevator height to the given number
   public default void setSpeed(double height) {}
 
-  //gets the highest possible height of the elevator in radians
-  public default double getMaxHeight() {return 0.0;}
+  // gets the highest possible height of the elevator in radians
+  public default double getMaxHeight() {
+    return 0.0;
+  }
 
-  //gets the height of the elevator in meters
-  public default double getHeightMeters() {return 0.0;}
+  // gets the height of the elevator in meters
+  public default double getHeightMeters() {
+    return 0.0;
+  }
 
   // reminder for myself to use the given PID stuff
 }
