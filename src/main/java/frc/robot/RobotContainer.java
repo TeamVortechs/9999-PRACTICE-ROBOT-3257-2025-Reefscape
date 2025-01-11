@@ -16,8 +16,11 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -41,6 +44,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final Vision vision;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -84,6 +88,9 @@ public class RobotContainer {
                 new ModuleIO() {});
         break;
     }
+
+    // instantiate vision
+    vision = new Vision();
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -146,7 +153,16 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-  }
+
+    // add a free disturbance when pressing the y button to test vision
+    var disturbance =
+        new Transform2d(new Translation2d(1.0, 1.0), new Rotation2d(0.17 * 2 * Math.PI));
+    controller
+        .y()
+        .onTrue(
+            Commands.runOnce(() -> drive.setPose(drive.getPose().plus(disturbance)))
+                .ignoringDisable(true));
+  } // end configure bindings
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -155,5 +171,28 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void sendVisionMeasurement() {
+    // Correct pose estimate with vision measurements
+    var visionEst = vision.getEstimatedGlobalPose();
+    visionEst.ifPresent(
+        est -> {
+          // Change our trust in the measurement based on the tags we can see
+          var estStdDevs = vision.getEstimationStdDevs();
+
+          drive.addVisionMeasurement(
+              est.estimatedPose.toPose2d(),
+              est.timestampSeconds,
+              estStdDevs); // !!! note: the standard deviation in the constants has to be tweaked
+        });
+  }
+
+  // intended for testing usage only
+  // puts sendables on shuffleboard
+  public void putPositionData() {
+    SmartDashboard.putNumber("x position:", drive.getPose().getX());
+    SmartDashboard.putNumber("y position:", drive.getPose().getY());
+    SmartDashboard.putNumber("current rotation:", drive.getPose().getRotation().getDegrees());
   }
 }
