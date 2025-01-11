@@ -5,7 +5,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.KDoublePreferences;
 import frc.robot.KDoublePreferences.PElevator;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -26,7 +25,12 @@ public class Elevator extends SubsystemBase {
 
   private ElevatorModuleIOInputsAutoLogged inputs = new ElevatorModuleIOInputsAutoLogged();
 
-  private ProfiledPIDController PID = new ProfiledPIDController(PElevator.proportional.getValue(), PElevator.integral.getValue(), PElevator.derivative.getValue(), new TrapezoidProfile.Constraints(targetHeight, currentHeight));
+  private ProfiledPIDController PID =
+      new ProfiledPIDController(
+          PElevator.proportional.getValue(),
+          PElevator.integral.getValue(),
+          PElevator.derivative.getValue(),
+          new TrapezoidProfile.Constraints(targetHeight, currentHeight));
 
   public Elevator(ElevatorModuleIO elevatorModuleIO) {
     this.elevatorModuleIO = elevatorModuleIO;
@@ -53,12 +57,12 @@ public class Elevator extends SubsystemBase {
     Logger.processInputs("Elevator", inputs);
 
     // calculate the needed position of each elevator
-    
+
     double diffHeight = targetHeight - currentHeight;
 
-    if(diffHeight < 0.1) return;
-    
-    double elevatorSpeed =  PID.calculate(diffHeight);
+    if (diffHeight < 0.1) return;
+
+    double elevatorSpeed = PID.calculate(diffHeight);
 
     // individually move each elevator to that position
 
@@ -68,7 +72,7 @@ public class Elevator extends SubsystemBase {
 
   // HELPER
   // gets the total height of all the added modules
-  public double getHeight() { 
+  public double getHeight() {
     return elevatorModuleIO.getHeightMeters();
   }
 
