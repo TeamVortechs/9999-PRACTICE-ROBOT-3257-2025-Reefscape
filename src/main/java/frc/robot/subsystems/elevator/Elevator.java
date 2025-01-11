@@ -70,6 +70,7 @@ public class Elevator extends SubsystemBase {
 
   // HELPER
   // gets the total height of all the added modules
+  @AutoLogOutput
   public double getHeight() {
     return elevatorModuleIO.getHeightMeters();
   }
