@@ -14,8 +14,6 @@ public class Elevator extends SubsystemBase {
   // VARIABLES
 
   // Variables the encompass the elevator as a whole. The annotation means it is automatically
-  // logged in advantage kti
-  @AutoLogOutput private double currentHeight = 0;
 
   @AutoLogOutput private double targetHeight = 0;
 
@@ -30,7 +28,7 @@ public class Elevator extends SubsystemBase {
           PElevator.proportional.getValue(),
           PElevator.integral.getValue(),
           PElevator.derivative.getValue(),
-          new TrapezoidProfile.Constraints(targetHeight, currentHeight));
+          new TrapezoidProfile.Constraints(targetHeight, getHeight()));
 
   public Elevator(ElevatorModuleIO elevatorModuleIO) {
     this.elevatorModuleIO = elevatorModuleIO;
@@ -58,7 +56,7 @@ public class Elevator extends SubsystemBase {
 
     // calculate the needed position of each elevator
 
-    double diffHeight = targetHeight - currentHeight;
+    double diffHeight = targetHeight - getHeight();
 
     if (diffHeight < 0.1) return;
 
@@ -95,7 +93,7 @@ public class Elevator extends SubsystemBase {
   // returns wether or not the elevator is currently on it's target or still trying to path to it
   public boolean isOnTarget() {
     // just checks to see if the difference is low enough
-    return Math.abs(currentHeight - targetHeight) < 0.04;
+    return Math.abs(getHeight() - targetHeight) < 0.04;
   }
 
   // enum for each level that the elevator could be
