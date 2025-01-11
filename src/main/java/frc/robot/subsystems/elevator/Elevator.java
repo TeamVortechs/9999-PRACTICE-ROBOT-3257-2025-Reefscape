@@ -66,7 +66,7 @@ public class Elevator extends SubsystemBase {
     for(int i = 0; i < elevatorModulesIO.length; i++) {
         height += elevatorModulesIO[i].getHeightMeters();
     }
-    return d;
+    return height;
   }
 
   // GETTER/SETTER(simple)
