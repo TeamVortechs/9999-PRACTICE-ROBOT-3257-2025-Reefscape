@@ -19,6 +19,8 @@ public class Elevator extends SubsystemBase {
 
   @AutoLogOutput private boolean isOnTarget = false;
 
+  @AutoLogOutput private double height = 0;
+
   private ElevatorModuleIO elevatorModuleIO;
 
   private ElevatorModuleIOInputsAutoLogged inputs = new ElevatorModuleIOInputsAutoLogged();
@@ -50,6 +52,8 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     // skeleton for later:
 
+    height = elevatorModuleIO.getHeightMeters();
+
     // logging
     elevatorModuleIO.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
@@ -70,9 +74,8 @@ public class Elevator extends SubsystemBase {
 
   // HELPER
   // gets the total height of all the added modules
-  @AutoLogOutput
   public double getHeight() {
-    return elevatorModuleIO.getHeightMeters();
+    return height;
   }
 
   // GETTER/SETTER(simple)
