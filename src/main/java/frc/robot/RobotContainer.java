@@ -33,6 +33,11 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -64,6 +69,13 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(
+                    VisionConstants.camera0Name, VisionConstants.robotToCamera0)
+                // new VisionIOPhotonVision(camera1Name, robotToCamera1)
+                );
         break;
 
       case SIM:
@@ -75,6 +87,13 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose)
+                // new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose)
+                );
         break;
 
       default:
@@ -86,11 +105,13 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+        vision =
+            new Vision(
+                drive::addVisionMeasurement, new VisionIO() {}
+                // new VisionIO() {}
+                );
         break;
     }
-
-    // instantiate vision
-    vision = new Vision();
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -173,20 +194,21 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
-  public void sendVisionMeasurement() {
-    // Correct pose estimate with vision measurements
-    var visionEst = vision.getEstimatedGlobalPose();
-    visionEst.ifPresent(
-        est -> {
-          // Change our trust in the measurement based on the tags we can see
-          var estStdDevs = vision.getEstimationStdDevs();
+  //   public void sendVisionMeasurement() {
+  //     // Correct pose estimate with vision measurements
+  //     var visionEst = vision.getEstimatedGlobalPose();
+  //     visionEst.ifPresent(
+  //         est -> {
+  //           // Change our trust in the measurement based on the tags we can see
+  //           var estStdDevs = vision.getEstimationStdDevs();
 
-          drive.addVisionMeasurement(
-              est.estimatedPose.toPose2d(),
-              est.timestampSeconds,
-              estStdDevs); // !!! note: the standard deviation in the constants has to be tweaked
-        });
-  }
+  //           drive.addVisionMeasurement(
+  //               est.estimatedPose.toPose2d(),
+  //               est.timestampSeconds,
+  //               estStdDevs); // !!! note: the standard deviation in the constants has to be
+  // tweaked
+  //         });
+  //   }
 
   // intended for testing usage only
   // puts sendables on shuffleboard

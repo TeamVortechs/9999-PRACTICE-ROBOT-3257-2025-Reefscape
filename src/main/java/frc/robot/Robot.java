@@ -119,7 +119,7 @@ public class Robot extends LoggedRobot {
     Threads.setCurrentThreadPriority(false, 10);
 
     // tell robotcontainer to send a vision measurement to the drivetrain
-    robotContainer.sendVisionMeasurement();
+    // robotContainer.sendVisionMeasurement();
     robotContainer.putPositionData();
   }
 

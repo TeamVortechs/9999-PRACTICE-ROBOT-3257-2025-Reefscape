@@ -44,7 +44,7 @@ import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-public class Vision {
+public class OldVision {
   private final PhotonCamera camera;
   private final PhotonPoseEstimator photonEstimator;
   private Matrix<N3, N1> curStdDevs;
@@ -53,7 +53,7 @@ public class Vision {
   private PhotonCameraSim cameraSim;
   private VisionSystemSim visionSim;
 
-  public Vision() {
+  public OldVision() {
     camera = new PhotonCamera(kCameraName);
 
     photonEstimator =
