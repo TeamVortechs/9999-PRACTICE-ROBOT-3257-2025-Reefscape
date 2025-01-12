@@ -71,6 +71,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight));
         vision =
             new Vision(
+                drive,
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
                     VisionConstants.camera0Name, VisionConstants.robotToCamera0)
@@ -89,11 +90,10 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight));
         vision =
             new Vision(
+                drive,
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(
-                    VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose)
-                // new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose)
-                );
+                    VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose));
         break;
 
       default:
@@ -107,7 +107,7 @@ public class RobotContainer {
                 new ModuleIO() {});
         vision =
             new Vision(
-                drive::addVisionMeasurement, new VisionIO() {}
+                drive, drive::addVisionMeasurement, new VisionIO() {}
                 // new VisionIO() {}
                 );
         break;
