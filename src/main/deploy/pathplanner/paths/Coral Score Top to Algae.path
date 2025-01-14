@@ -1,0 +1,99 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.302773178807946,
+        "y": 5.36158940397351
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.503725165562914,
+        "y": 6.516576986754966
+      },
+      "isLocked": false,
+      "linkedName": "CoralScoreTopLeft"
+    },
+    {
+      "anchor": {
+        "x": 1.8813948675496688,
+        "y": 5.811961920529801
+      },
+      "prevControl": {
+        "x": 2.6691958840684373,
+        "y": 4.901915918689156
+      },
+      "nextControl": {
+        "x": 1.4600786423841061,
+        "y": 6.298654801324502
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.1477235099337748,
+        "y": 6.560161423841059
+      },
+      "prevControl": {
+        "x": 1.2071772719617138,
+        "y": 7.063536609010943
+      },
+      "nextControl": {
+        "x": 1.0387624172185432,
+        "y": 5.637624172185429
+      },
+      "isLocked": false,
+      "linkedName": "TopAlgaeScoreView"
+    },
+    {
+      "anchor": {
+        "x": 2.113845198675497,
+        "y": 6.966949503311258
+      },
+      "prevControl": {
+        "x": 1.380173841059603,
+        "y": 6.632802152317882
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.9796484736355269,
+      "rotationDegrees": 180.0
+    },
+    {
+      "waypointRelativePos": 1.085106382978686,
+      "rotationDegrees": 180.0
+    },
+    {
+      "waypointRelativePos": 1.964847363552299,
+      "rotationDegrees": -90.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -136.57655005518376
+  },
+  "reversed": false,
+  "folder": "Complicated Paths Top Start",
+  "idealStartingState": {
+    "velocity": 0.0,
+    "rotation": -122.15229514128232
+  },
+  "useDefaultConstraints": true
+}
