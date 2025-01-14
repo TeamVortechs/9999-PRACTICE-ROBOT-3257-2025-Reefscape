@@ -45,9 +45,9 @@ public class Elevator extends SubsystemBase {
     // skeleton for later:
 
     // logging
-    for(int i = 0; i < elevatorModulesIO.length; i++) {
-        elevatorModulesIO[i].updateInputs(inputs);
-        Logger.processInputs("Elevator", inputs);
+    for (int i = 0; i < elevatorModulesIO.length; i++) {
+      elevatorModulesIO[i].updateInputs(inputs);
+      Logger.processInputs("Elevator", inputs);
     }
 
     // calculate the needed position of each elevator
@@ -63,10 +63,10 @@ public class Elevator extends SubsystemBase {
 
     double height = 0.0;
 
-    for(int i = 0; i < elevatorModulesIO.length; i++) {
-        height += elevatorModulesIO[i].getHeightMeters();
+    for (int i = 0; i < elevatorModulesIO.length; i++) {
+      height += elevatorModulesIO[i].getHeightMeters();
     }
-    return d;
+    return height;
   }
 
   // GETTER/SETTER(simple)
