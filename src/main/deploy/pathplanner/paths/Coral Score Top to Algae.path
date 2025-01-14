@@ -44,20 +44,20 @@
         "y": 5.637624172185429
       },
       "isLocked": false,
-      "linkedName": "TopAlgaeScoreView"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.113845198675497,
-        "y": 6.966949503311258
+        "x": 2.183778409090909,
+        "y": 6.851946022727272
       },
       "prevControl": {
-        "x": 1.380173841059603,
-        "y": 6.632802152317882
+        "x": 1.450107051475015,
+        "y": 6.517798671733896
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "TopAlgaeScoreView"
     }
   ],
   "rotationTargets": [
@@ -87,7 +87,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -136.57655005518376
+    "rotation": -149.48976259388445
   },
   "reversed": false,
   "folder": "Complicated Paths Top Start",
