@@ -1,0 +1,150 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 6.986111111111111,
+        "y": 1.7380681818181813
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.986111111111111,
+        "y": 1.7380681818181813
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.030681818181819,
+        "y": 3.781060606060606
+      },
+      "prevControl": {
+        "x": 6.056102443329071,
+        "y": 2.1160096589155737
+      },
+      "nextControl": {
+        "x": 6.010353535353536,
+        "y": 5.112563131313131
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.339520202020202,
+        "y": 5.224368686868687
+      },
+      "prevControl": {
+        "x": 5.76052371734094,
+        "y": 4.978783302931591
+      },
+      "nextControl": {
+        "x": 4.485732323232323,
+        "y": 5.722411616161615
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.7234217171717177,
+        "y": 5.224368686868687
+      },
+      "prevControl": {
+        "x": 4.394255050505051,
+        "y": 5.813888888888888
+      },
+      "nextControl": {
+        "x": 3.010845701222695,
+        "y": 4.598165521337729
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.0627525252525247,
+        "y": 4.014835858585858
+      },
+      "prevControl": {
+        "x": 3.0627525252525247,
+        "y": 4.447874151479061
+      },
+      "nextControl": {
+        "x": 3.0627525252525247,
+        "y": 3.6387626262626265
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.7234217171717177,
+        "y": 2.7646464646464644
+      },
+      "prevControl": {
+        "x": 2.839141414141414,
+        "y": 3.333838383838384
+      },
+      "nextControl": {
+        "x": 4.492223101677039,
+        "y": 2.2697858033556826
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.17689393939394,
+        "y": 2.7646464646464644
+      },
+      "prevControl": {
+        "x": 4.82114898989899,
+        "y": 2.4902146464646453
+      },
+      "nextControl": {
+        "x": 5.631584182762137,
+        "y": 3.1154075095305025
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.986111111111111,
+        "y": 0.7114898989898983
+      },
+      "prevControl": {
+        "x": 5.986111111111111,
+        "y": 0.7114898989898983
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": "Algae focus",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}
