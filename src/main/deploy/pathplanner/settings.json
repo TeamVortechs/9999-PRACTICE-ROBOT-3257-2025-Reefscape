@@ -3,7 +3,11 @@
   "robotLength": 0.826,
   "holonomicMode": true,
   "pathFolders": [
+<<<<<<< HEAD
     "Algae focus"
+=======
+    "Simple paths"
+>>>>>>> 4403403bd39d15ba23dabc79144f3c2ab91e601c
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,
@@ -31,4 +35,8 @@
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.0,
   "robotFeatures": []
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 4403403bd39d15ba23dabc79144f3c2ab91e601c
