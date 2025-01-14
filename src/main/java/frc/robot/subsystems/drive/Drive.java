@@ -87,6 +87,11 @@ public class Drive extends SubsystemBase {
               1),
           getModuleTranslations());
 
+  private static int offsetBuffer = 3;
+  private int offsetBufferCounter = 0;
+  private ChassisSpeeds offsetDriveSpeeds;
+  private double offsetProportions = 0;
+
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
@@ -218,6 +223,40 @@ public class Drive extends SubsystemBase {
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
   }
 
+  /*
+  sets the offsets and velocity proportions of the drivetrain. These offsets will become zero after 3 ticks to avoid bugs
+   */
+  public void setOffsets(ChassisSpeeds offsets, double velocityProportions) {
+    //sets the offsets
+    this.offsetDriveSpeeds = offsets;
+
+    //resets the buffer between deleting the offsets
+    offsetBufferCounter = 0;
+
+    this.offsetProportions = velocityProportions;
+  }
+
+  /*
+   * gets the offsets currently in place
+   */
+  public ChassisSpeeds getOffsetDriveSpeeds() {
+    
+    //if the offset buffer ran out of time then we just return nothing
+    if(this.offsetBufferCounter > offsetBuffer) {
+      return new ChassisSpeeds();
+    }
+
+    return offsetDriveSpeeds;
+  }
+
+  public double getVelocityProportions() {
+    if(this.offsetBufferCounter > offsetBuffer) {
+      return 1;
+    }
+
+    return offsetProportions;
+  }
+
   /**
    * Runs the drive at the desired velocity.
    *
@@ -225,6 +264,11 @@ public class Drive extends SubsystemBase {
    */
   public void runVelocity(ChassisSpeeds speeds) {
     // Calculate module setpoints
+
+    //adds the offsets to the speeds and multiplies them by the proportions
+    speeds.times(getVelocityProportions());
+    speeds.plus(getOffsetDriveSpeeds());
+
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, TunerConstants.kSpeedAt12Volts);
