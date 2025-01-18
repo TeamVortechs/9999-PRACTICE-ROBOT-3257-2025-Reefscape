@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.PathfindingCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -65,9 +66,6 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-
-  private final PathConstraints pathConstraints =
-      new PathConstraints(0.75, 0.5, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -154,13 +152,6 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-
-    List<Waypoint> waypoints =
-        PathPlannerPath.waypointsFromPoses(
-            new Pose2d(1, 0, Rotation2d.fromDegrees(0)),
-            new Pose2d(0, 1, Rotation2d.fromDegrees(1)));
-
-    PathPlannerPath path = null;
     // new PathPlannerPath(
     //     waypoints,
     //     pathConstraints,
@@ -168,16 +159,7 @@ public class RobotContainer {
     //     new GoalEndState(0.0, Rotation2d.fromDegrees(0)),
     //     false);
 
-    try {
-      path = PathPlannerPath.fromPathFile("CoralFeed");
-    } catch (IOException e) {
-      System.out.println("IO exception");
-    } catch (ParseException e) {
-      System.out.println("parse exception ");
-    }
-
-    controller.rightTrigger().whileTrue(AutoBuilder.pathfindThenFollowPath(path, pathConstraints));
-    controller.leftTrigger().whileTrue(AutoBuilder.pathfindToPose(new Pose2d(), pathConstraints));
+    controller.rightTrigger().whileTrue(PathfindingCommands.pathfindToDepotCommand(0));
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
