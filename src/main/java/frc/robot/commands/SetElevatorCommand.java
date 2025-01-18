@@ -23,11 +23,15 @@ public class SetElevatorCommand extends Command {
   public SetElevatorCommand(double wantedHeight, Elevator elevator) {
     this.wantedHeight = wantedHeight;
     this.elevator = elevator;
+
+    addRequirements(elevator);
   }
 
   public SetElevatorCommand(ElevatorLevel elevatorLevel, Elevator elevator) {
     this.wantedHeight = elevatorLevel.getHeight();
     this.elevator = elevator;
+
+    addRequirements(elevator);
   }
 
   // Called when the command is initially scheduled.
