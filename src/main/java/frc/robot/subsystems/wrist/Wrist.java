@@ -1,11 +1,10 @@
 package frc.robot.subsystems.wrist;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 // again I'm not adding stuff to this class while we don't whats gonna go here
-public class Wrist extends SubsystemBase{
+public class Wrist extends SubsystemBase {
 
   private WristIO wristIO;
   private WristIOInputsAutoLogged inputsAutoLogged;
@@ -16,7 +15,7 @@ public class Wrist extends SubsystemBase{
 
   @Override
   public void periodic() {
-    //advantageKit inputs updating
+    // advantageKit inputs updating
     wristIO.updateInputs(inputsAutoLogged);
     Logger.processInputs("Wrist", inputsAutoLogged);
   }

@@ -11,14 +11,18 @@ public class WristIOTalonFX implements WristIO {
   }
 
   @Override
-  public updateInputs(WristIOInputsAutoLogged inputs) {
-    
+  public void updateInputs(WristIOInputsAutoLogged inputs) {
+    inputs.wristAppliedVoltage = arm.getMotorVoltage().getValueAsDouble();
+    inputs.wristCurrentAmps = arm.getStatorCurrent().getValueAsDouble();
+    inputs.wristSpeedRad = arm.get();
+    inputs.wristLocationRad = 0;
   }
-  /*
-   *     double wristLocationRad = 0.0;
-    double wristSpeedRad = 0.0;
 
-    double wristCurrentAmps = 0.0;
-    double wristAppliedVoltage = 0.0;
-   */
+  /*
+  *     double wristLocationRad = 0.0;
+   double wristSpeedRad = 0.0;
+
+   double wristCurrentAmps = 0.0;
+   double wristAppliedVoltage = 0.0;
+  */
 }

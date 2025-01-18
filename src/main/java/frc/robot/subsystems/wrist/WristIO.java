@@ -13,7 +13,7 @@ public interface WristIO {
   }
 
   // updates the given inputs with new values(advantage kit stuff)
-  public default void updateInputs(WristIOInputs inputs) {}
+  public default void updateInputs(WristIOInputsAutoLogged inputs) {}
 
   // sets the speed of the wrist to the amount
   public default void setSpeed(double speed) {}
