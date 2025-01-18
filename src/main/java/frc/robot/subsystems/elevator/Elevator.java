@@ -4,9 +4,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.KDoublePreferences;
-
 import frc.robot.KDoublePreferences.PElevator;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -22,7 +20,6 @@ public class Elevator extends SubsystemBase {
   @AutoLogOutput private double targetHeight = 0;
 
   @AutoLogOutput private boolean isOnTarget = false;
-
 
   private ElevatorModuleIO elevatorModuleIO;
 
