@@ -182,7 +182,7 @@ public class RobotContainer {
       System.out.println("parse exception ");
     }
 
-    controller.start().whileTrue(new WristSpeedCommand(wrist, 0.1));
+    controller.start().whileTrue(new WristSpeedCommand(wrist, 0.5));
 
     controller.rightTrigger().whileTrue(AutoBuilder.pathfindThenFollowPath(path, pathConstraints));
     controller.leftTrigger().whileTrue(AutoBuilder.pathfindToPose(new Pose2d(), pathConstraints));
