@@ -14,10 +14,13 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -33,11 +36,11 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -58,6 +61,9 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  private final PathConstraints pathConstraints =
+      new PathConstraints(0.75, 0.5, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -144,6 +150,31 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
+
+    List<Waypoint> waypoints =
+        PathPlannerPath.waypointsFromPoses(
+            new Pose2d(1, 0, Rotation2d.fromDegrees(0)),
+            new Pose2d(0, 1, Rotation2d.fromDegrees(1)));
+
+    PathPlannerPath path = null;
+        // new PathPlannerPath(
+        //     waypoints,
+        //     pathConstraints,
+        //     null,
+        //     new GoalEndState(0.0, Rotation2d.fromDegrees(0)),
+        //     false);
+
+    try {
+      path = PathPlannerPath.fromPathFile("CoralFeed");
+    } catch (IOException e) {
+      System.out.println("IO exception");
+    } catch (ParseException e) {
+      System.out.println("parse exception ");
+    }
+
+    controller.rightTrigger().whileTrue(AutoBuilder.pathfindThenFollowPath(path, pathConstraints));
+    controller.leftTrigger().whileTrue(AutoBuilder.pathfindToPose(new Pose2d(), pathConstraints));
+
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
