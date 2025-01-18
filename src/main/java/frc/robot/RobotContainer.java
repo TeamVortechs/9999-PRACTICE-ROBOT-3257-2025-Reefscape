@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.WristSpeedCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -42,6 +43,8 @@ import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristIOTalonFX;
 import java.io.IOException;
 import java.util.List;
 import org.json.simple.parser.ParseException;
@@ -59,6 +62,9 @@ public class RobotContainer {
 
   @SuppressWarnings("unused")
   private final Vision vision;
+
+  // physical subsystems
+  private final Wrist wrist = new Wrist(new WristIOTalonFX());
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -175,6 +181,8 @@ public class RobotContainer {
     } catch (ParseException e) {
       System.out.println("parse exception ");
     }
+
+    controller.start().whileTrue(new WristSpeedCommand(wrist, 0.1));
 
     controller.rightTrigger().whileTrue(AutoBuilder.pathfindThenFollowPath(path, pathConstraints));
     controller.leftTrigger().whileTrue(AutoBuilder.pathfindToPose(new Pose2d(), pathConstraints));

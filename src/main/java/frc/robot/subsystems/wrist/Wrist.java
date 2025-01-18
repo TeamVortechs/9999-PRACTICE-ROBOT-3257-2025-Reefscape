@@ -20,4 +20,8 @@ public class Wrist {
   public double targetAngle() {
     return 0;
   }
+
+  public void setSpeed(double speed) {
+    wristIO.setSpeed(speed);
+  }
 }
