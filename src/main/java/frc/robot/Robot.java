@@ -117,6 +117,10 @@ public class Robot extends LoggedRobot {
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
+
+    // tell robotcontainer to send a vision measurement to the drivetrain
+    // robotContainer.sendVisionMeasurement();
+    robotContainer.putPositionData();
   }
 
   /** This function is called once when the robot is disabled. */

@@ -4,7 +4,9 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.KDoublePreferences;
+
 import frc.robot.KDoublePreferences.PElevator;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -20,6 +22,7 @@ public class Elevator extends SubsystemBase {
   @AutoLogOutput private double targetHeight = 0;
 
   @AutoLogOutput private boolean isOnTarget = false;
+
 
   private ElevatorModuleIO elevatorModuleIO;
 
@@ -53,6 +56,7 @@ public class Elevator extends SubsystemBase {
     // skeleton for later:
 
     // logging
+
     elevatorModuleIO.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
 
@@ -67,6 +71,7 @@ public class Elevator extends SubsystemBase {
     // individually move each elevator to that position
 
     elevatorModuleIO.setSpeed(elevatorSpeed);
+
     // finish
   }
 
@@ -78,6 +83,7 @@ public class Elevator extends SubsystemBase {
 
   // GETTER/SETTER(simple)
   // sets the heihgt of the elevator using the pid system
+
   public void setTargetHeight(double height) {
     this.targetHeight = height;
   }
