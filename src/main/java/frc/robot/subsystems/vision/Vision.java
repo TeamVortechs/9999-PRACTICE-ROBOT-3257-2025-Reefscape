@@ -108,19 +108,20 @@ public class Vision extends SubsystemBase {
                     && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
                 || Math.abs(observation.pose().getZ())
                     > maxZError // Must have realistic Z coordinate
-                || Math.abs(observation.pose().getY())
-                    > Math.abs(drive.getPose().getY())
-                        + maxDistance // horizontally cannot exceed max distance
-                || Math.abs(observation.pose().getX())
-                    > Math.abs(drive.getPose().getX())
-                        + maxDistance // same here but in the other horizontal
-                || Math.abs(observation.pose().getY())
-                    < Math.abs(drive.getPose().getY())
-                        - maxDistance // horizontally cannot exceed max distance (in other
+                // || Math.abs(observation.pose().getY())
+                //     > Math.abs(drive.getPose().getY())
+                //         + maxDistance // horizontally cannot exceed max distance
+                // || Math.abs(observation.pose().getX())
+                //     > Math.abs(drive.getPose().getX())
+                //         + maxDistance // same here but in the other horizontal
+                // || Math.abs(observation.pose().getY())
+                //     < Math.abs(drive.getPose().getY())
+                //         - maxDistance // horizontally cannot exceed max distance (in other
+                // // direction)
+                // || Math.abs(observation.pose().getX())
+                //     < Math.abs(drive.getPose().getX())
+                //         - maxDistance // same here but in the other horizontal (in other
                 // direction)
-                || Math.abs(observation.pose().getX())
-                    < Math.abs(drive.getPose().getX())
-                        - maxDistance // same here but in the other horizontal (in other direction)
 
                 // Must be within the field boundaries
                 || observation.pose().getX() < 0.0
