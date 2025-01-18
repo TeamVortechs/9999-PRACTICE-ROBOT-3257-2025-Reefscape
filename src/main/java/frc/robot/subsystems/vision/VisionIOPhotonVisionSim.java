@@ -15,12 +15,9 @@ package frc.robot.subsystems.vision;
 
 import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import frc.robot.Robot;
 import java.util.function.Supplier;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
@@ -53,27 +50,16 @@ public class VisionIOPhotonVisionSim extends VisionIOPhotonVision {
     // Add sim camera
     var cameraProp = new SimCameraProperties();
     cameraSim = new PhotonCameraSim(camera, cameraProp);
+
+    // Create simulated camera properties. These can be set to mimic your actual camera.
+    cameraProp.setCalibration(640, 480, Rotation2d.fromDegrees(70));
+    cameraProp.setCalibError(0.35, 0.10);
+    cameraProp.setFPS(30);
+    cameraProp.setAvgLatencyMs(10);
+    cameraProp.setLatencyStdDevMs(3);
+
+    // Add the simulated camera to view the targets on this simulated field.
     visionSim.addCamera(cameraSim, robotToCamera);
-
-    // ----- Simulation
-    if (Robot.isSimulation()) {
-      // Create the vision system simulation which handles cameras and targets on the field.
-      visionSim = new VisionSystemSim("main");
-      // Add all the AprilTags inside the tag layout as visible targets to this simulated field.
-      visionSim.addAprilTags(AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField));
-
-      // Create simulated camera properties. These can be set to mimic your actual camera.
-      cameraProp.setCalibration(640, 480, Rotation2d.fromDegrees(70));
-      cameraProp.setCalibError(0.35, 0.10);
-      cameraProp.setFPS(50);
-      cameraProp.setAvgLatencyMs(10);
-      cameraProp.setLatencyStdDevMs(3);
-
-      // Add the simulated camera to view the targets on this simulated field.
-      visionSim.addCamera(cameraSim, robotToCamera);
-
-      cameraSim.enableDrawWireframe(true);
-    }
   }
 
   @Override
