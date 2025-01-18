@@ -9,4 +9,16 @@ public class WristIOTalonFX implements WristIO {
   public void setSpeed(double speed) {
     arm.set(speed);
   }
+
+  @Override
+  public updateInputs(WristIOInputsAutoLogged inputs) {
+    
+  }
+  /*
+   *     double wristLocationRad = 0.0;
+    double wristSpeedRad = 0.0;
+
+    double wristCurrentAmps = 0.0;
+    double wristAppliedVoltage = 0.0;
+   */
 }

@@ -1,12 +1,24 @@
 package frc.robot.subsystems.wrist;
 
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 // again I'm not adding stuff to this class while we don't whats gonna go here
-public class Wrist {
+public class Wrist extends SubsystemBase{
 
   private WristIO wristIO;
+  private WristIOInputsAutoLogged inputsAutoLogged;
 
   public Wrist(WristIO wristIO) {
     this.wristIO = wristIO;
+  }
+
+  @Override
+  public void periodic() {
+    //advantageKit inputs updating
+    wristIO.updateInputs(inputsAutoLogged);
+    Logger.processInputs("Wrist", inputsAutoLogged);
   }
 
   public double getAngle() {
