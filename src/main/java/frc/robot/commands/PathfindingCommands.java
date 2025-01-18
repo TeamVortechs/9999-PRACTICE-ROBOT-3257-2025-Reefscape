@@ -38,6 +38,7 @@ public class PathfindingCommands {
     }
 
     public static Command pathfindToDepotCommand(int depotID) {
+        init();
         return AutoBuilder.pathfindThenFollowPath(coralPaths[depotID], pathConstraints);
     } 
 }
