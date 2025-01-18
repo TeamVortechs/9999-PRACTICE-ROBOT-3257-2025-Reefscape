@@ -25,7 +25,6 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,15 +32,13 @@ import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
   private final VisionConsumer consumer;
-  private final Drive drive;
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
 
-  public Vision(Drive drive, VisionConsumer consumer, VisionIO... io) {
+  public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
-    this.drive = drive;
 
     // Initialize inputs
     this.inputs = new VisionIOInputsAutoLogged[io.length];
@@ -108,20 +105,6 @@ public class Vision extends SubsystemBase {
                     && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
                 || Math.abs(observation.pose().getZ())
                     > maxZError // Must have realistic Z coordinate
-                // || Math.abs(observation.pose().getY())
-                //     > Math.abs(drive.getPose().getY())
-                //         + maxDistance // horizontally cannot exceed max distance
-                // || Math.abs(observation.pose().getX())
-                //     > Math.abs(drive.getPose().getX())
-                //         + maxDistance // same here but in the other horizontal
-                // || Math.abs(observation.pose().getY())
-                //     < Math.abs(drive.getPose().getY())
-                //         - maxDistance // horizontally cannot exceed max distance (in other
-                // // direction)
-                // || Math.abs(observation.pose().getX())
-                //     < Math.abs(drive.getPose().getX())
-                //         - maxDistance // same here but in the other horizontal (in other
-                // direction)
 
                 // Must be within the field boundaries
                 || observation.pose().getX() < 0.0

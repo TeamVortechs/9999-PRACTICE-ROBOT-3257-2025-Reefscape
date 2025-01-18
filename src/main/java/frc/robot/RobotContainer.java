@@ -49,6 +49,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+
+  @SuppressWarnings("unused")
   private final Vision vision;
 
   // Controller
@@ -71,7 +73,6 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight));
         vision =
             new Vision(
-                drive,
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
                     VisionConstants.camera0Name, VisionConstants.robotToCamera0)
@@ -90,7 +91,6 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight));
         vision =
             new Vision(
-                drive,
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(
                     VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose));
@@ -107,7 +107,7 @@ public class RobotContainer {
                 new ModuleIO() {});
         vision =
             new Vision(
-                drive, drive::addVisionMeasurement, new VisionIO() {}
+                drive::addVisionMeasurement, new VisionIO() {}
                 // new VisionIO() {}
                 );
         break;
