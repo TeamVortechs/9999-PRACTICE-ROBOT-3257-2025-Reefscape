@@ -124,4 +124,20 @@ public class Arm extends SubsystemBase {
             new TrapezoidProfile.Constraints(
                 PArm.speedLimit.getValue(), PArm.accelerationLimit.getValue()));
   }
+
+  public enum ArmLevel {
+    FIRST_LEVEL(1.0),
+    SECOND_LEVEL(1.0),
+    THIRD_LEVEL(1.0);
+
+    private double angleRad;
+
+    private ArmLevel(double angleRad) {
+      this.angleRad = angleRad;
+    }
+
+    public double getAngleRad() {
+      return angleRad;
+    }
+  }
 }

@@ -15,9 +15,9 @@ public class SetArmAngleCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
+  private Arm arm;
 
-   private Arm arm;
-   private double angle;
+  private double angle;
 
   public SetArmAngleCommand(Arm arm, double angle) {
     addRequirements(arm);
@@ -42,9 +42,9 @@ public class SetArmAngleCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //if the target angle changed the command is finished(fnacy statement bc it's a double)
-    if(Math.abs(angle - arm.getTargetAngleRad()) > 0.01 ) {
-        return true;
+    // if the target angle changed the command is finished(fnacy statement bc it's a double)
+    if (Math.abs(angle - arm.getTargetAngleRad()) > 0.01) {
+      return true;
     }
 
     return false;
