@@ -3,6 +3,8 @@ package frc.robot.commands;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import java.io.IOException;
@@ -14,6 +16,7 @@ public class PathfindingCommands {
   private static final PathConstraints pathConstraints =
       new PathConstraints(0.75, 0.5, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
+  //creates the array of paths from hardcode path files
   private static void init() {
     // if it is not initailized initialize it
     if (coralPaths.length != 1) return;
@@ -34,8 +37,28 @@ public class PathfindingCommands {
     }
   }
 
+  //returns the command that pathfinds the robot to the specific depot id
   public static Command pathfindToDepotCommand(int depotID) {
     init();
     return AutoBuilder.pathfindThenFollowPath(coralPaths[depotID], pathConstraints);
+  }
+
+  //finds the closest path that goes to the depot
+  public static int getClosestDepotPath(Pose2d curLocation) {
+
+    double lowestDist = Double.MAX_VALUE;
+    int lowestDistID = 0;
+
+    for(int i = 0; i < coralPaths.length; i++) {
+      Pose2d testPose = coralPaths[i].getStartingDifferentialPose();
+
+      double dist = curLocation.getTranslation().getDistance(testPose.getTranslation());
+
+      if(dist < lowestDist) {
+        lowestDistID = i;
+      }
+    }
+
+    return lowestDistID;
   }
 }
