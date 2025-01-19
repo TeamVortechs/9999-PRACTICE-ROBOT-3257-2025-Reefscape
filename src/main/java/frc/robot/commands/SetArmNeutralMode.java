@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.wrist.Arm;
+import frc.robot.subsystems.arm.Arm;
 
 /*
 Names
@@ -16,9 +16,9 @@ public class SetArmNeutralMode extends Command {
    * @param subsystem The subsystem used by this command.
    */
   private boolean mode;
-
   private Arm wrist;
 
+  //sets the idle mode of the motor
   public SetArmNeutralMode(boolean mode, Arm wrist) {
     this.mode = mode;
     this.wrist = wrist;

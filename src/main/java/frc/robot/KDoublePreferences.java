@@ -39,15 +39,15 @@ public class KDoublePreferences {
     // locked in, change to 0
   }
 
-  public static class PWrist {
+  public static class PArm {
     // should switch this all to a set value when we finish tuning
 
-    public static KDoublePref proportional = new KDoublePref("wrist proportional", 1.6);
-    public static KDoublePref integral = new KDoublePref("wrist integral", 0.0002);
+    public static KDoublePref proportional = new KDoublePref("arm proportional", 1.6);
+    public static KDoublePref integral = new KDoublePref("arm integral", 0.0002);
     public static KDoublePref derivative =
-        new KDoublePref("wrist derivative", 0.0); // should be tweaked
+        new KDoublePref("arm derivative", 0.0); // should be tweaked
 
-    public static KDoublePref speedLimit = new KDoublePref("wrist speed limit", 0.01);
-    public static KDoublePref accelerationLimit = new KDoublePref("wrist acceleration limit", 0.01);
+    public static KDoublePref speedLimit = new KDoublePref("arm speed limit", 0.01);
+    public static KDoublePref accelerationLimit = new KDoublePref("arm acceleration limit", 0.01);
   }
 }

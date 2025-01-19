@@ -1,4 +1,4 @@
-package frc.robot.subsystems.wrist;
+package frc.robot.subsystems.arm;
 
 import org.littletonrobotics.junction.AutoLog;
 
@@ -23,6 +23,7 @@ public interface ArmIO {
     return 0.0;
   }
 
+  //set sthe idle mode of the motor, if true the motor's idle mode will be braked
   public default void setBraked(boolean braked) {}
 
   // gets the lowest possible angle of the wrist in radians

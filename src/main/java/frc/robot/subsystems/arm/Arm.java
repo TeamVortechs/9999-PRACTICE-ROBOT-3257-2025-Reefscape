@@ -1,0 +1,83 @@
+package frc.robot.subsystems.arm;
+
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.KDoublePreferences.PArm;
+
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+
+// again I'm not adding stuff to this class while we don't whats gonna go here
+public class Arm extends SubsystemBase {
+
+  //think of this like the direct hardware interface, it's just like a talon interface that we code ourselves
+  private ArmIO armIO;
+
+  //all of the logged inputs from the armIO
+  private ArmIOInputsAutoLogged inputsAutoLogged = new ArmIOInputsAutoLogged();
+
+  // classes for PID control
+  //this goes to -10 when we don't want the arm to move anywhere
+  @AutoLogOutput private double targetAngleRad = -10;
+  
+  //this is just outside of the method so AK can log it
+  @AutoLogOutput private double wantedSpeed;
+
+  //this is just a helper class that calculates the PID speed
+  private ProfiledPIDController PID;
+      
+  public Arm(ArmIO armIO) {
+    //the hardware interface that the arm uses to the specific one given by the creator of this class(in other words allows switching between motors and advantage kit compabipility)
+    this.armIO = armIO;
+
+    //builds the PID tuner for the first time
+    rebuildPIDtuner();
+  }
+
+  @Override
+  public void periodic() {
+    // advantageKit inputs updating
+    armIO.updateInputs(inputsAutoLogged);
+    Logger.processInputs("Wrist", inputsAutoLogged);
+
+    //calculates the wanted rotation from the PID and sets the motor to that position
+    double curAngle = getAngle();
+    double angleDiff = targetAngleRad - curAngle;
+    wantedSpeed = PID.calculate(angleDiff);
+    
+    //this is commented out while we don't have an encoder
+    //armIO.setSpeed(wantedSpeed);
+  }
+
+  //sets the wether or not the arm has "brakes" on it. If this is true the motor idle mode will be set to stop. I reccomend keeping this off true for now bc it doesn't work and idk if it breaks the motor
+  public void setBraked(boolean braked) {
+    armIO.setBraked(braked);
+  }
+
+  //gets the angle in radians of the motor
+  public double getAngle() {
+    return armIO.getAngleRad();
+  }
+
+  //sets the angle that the PID loop attempts to go to
+  public double gettargetAngle() {
+    return targetAngleRad;
+  }
+
+  //sets the speed of the motor, this will most likely be deprecated
+  public void setSpeed(double speed) {
+    armIO.setSpeed(speed);
+  }
+
+  //rebuilds the pid tuner, this is only good while we test PID constants so we cna quickly switch with preferences without having to redeploy
+  public void rebuildPIDtuner() {
+    //builds the PID tuner. It seems complicated but really it's just building a new one with all the values form preferences
+    PID = new ProfiledPIDController(PArm.proportional.getValue(),
+    PArm.integral.getValue(),
+    PArm.derivative.getValue(),
+    new TrapezoidProfile.Constraints(
+      PArm.speedLimit.getValue(), 
+      PArm.accelerationLimit.getValue()));
+  }
+}
