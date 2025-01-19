@@ -22,6 +22,7 @@ public class PathfindingCommands {
     if (coralPaths.length != 1) return;
     coralPaths = new PathPlannerPath[6];
 
+    //loads all the different paths from their file names
     try {
       coralPaths[0] = PathPlannerPath.fromPathFile("CoralFeed1");
       coralPaths[1] = PathPlannerPath.fromPathFile("CoralFeed2");
@@ -30,6 +31,7 @@ public class PathfindingCommands {
       coralPaths[4] = PathPlannerPath.fromPathFile("CoralFeed5");
       coralPaths[5] = PathPlannerPath.fromPathFile("CoralFeed6");
 
+    //avoids exceptions
     } catch (IOException e) {
       System.out.println("Could not load the pathplanner coral paths from the file, IO exception");
     } catch (ParseException e) {
@@ -44,11 +46,14 @@ public class PathfindingCommands {
     return AutoBuilder.pathfindThenFollowPath(coralPaths[depotID], pathConstraints);
   }
 
-  //does the same thing as before but with a little bit more functionality. Command before runs while the robot is getting in position and command in between runs while the robot is doing the path. command after runs after everything has been finished
-  public static Command pathfindToDepotCommand(Command commandBefore, Command commandInBetween, Command commandLast, int depotID) {
-    init();
+  //does the same thing as pathfind with commands in between except it does a depot spot
+  public static Command pathfindToDepotCommand(int depotID, Command commandBefore, Command commandInBetween, Command commandLast) {
+    return pathfindWithCommandsInBetween(commandBefore, commandInBetween, commandLast, coralPaths[depotID]);
+  }
 
-    PathPlannerPath path = coralPaths[depotID];
+  //Command before runs while the robot is getting in position and command in between runs while the robot is doing the path. command after runs after everything has been finished
+  public static Command pathfindWithCommandsInBetween(Command commandBefore, Command commandInBetween, Command commandLast, PathPlannerPath path) {
+    init();
 
     //gets the two needed commands: pathfinding to pose and path from pose
     Command pathfindCommand = AutoBuilder.pathfindToPose(path.getStartingDifferentialPose(), pathConstraints);
