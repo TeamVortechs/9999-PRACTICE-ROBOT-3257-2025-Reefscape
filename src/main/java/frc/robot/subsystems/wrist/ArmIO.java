@@ -2,25 +2,21 @@ package frc.robot.subsystems.wrist;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface WristIO {
+public interface ArmIO {
   @AutoLog
-  public static class WristIOInputs {
-    double wristLocationRad = 0.0;
-    double wristSpeedRad = 0.0;
+  public static class ArmIOInputs {
+    double armLocationRad = 0.0;
+    double armSpeedRad = 0.0;
 
-    double wristCurrentAmps = 0.0;
-    double wristAppliedVoltage = 0.0;
+    double armCurrentAmps = 0.0;
+    double armAppliedVoltage = 0.0;
   }
 
   // updates the given inputs with new values(advantage kit stuff)
-  public default void updateInputs(WristIOInputsAutoLogged inputs) {}
+  public default void updateInputs(ArmIOInputsAutoLogged inputs) {}
 
   // sets the speed of the wrist to the amount
   public default void setSpeed(double speed) {}
-  ;
-
-  // stops the wrist at the given angle, locks it
-  public default void stopWrist() {}
 
   // gets the current of the wrist in radians
   public default double getAngleRad() {

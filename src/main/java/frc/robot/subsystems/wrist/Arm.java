@@ -4,24 +4,24 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
 // again I'm not adding stuff to this class while we don't whats gonna go here
-public class Wrist extends SubsystemBase {
+public class Arm extends SubsystemBase {
 
-  private WristIO wristIO;
-  private WristIOInputsAutoLogged inputsAutoLogged = new WristIOInputsAutoLogged();
+  private ArmIO armIO;
+  private ArmIOInputsAutoLogged inputsAutoLogged = new ArmIOInputsAutoLogged();
 
-  public Wrist(WristIO wristIO) {
-    this.wristIO = wristIO;
+  public Arm(ArmIO armIO) {
+    this.armIO = armIO;
   }
 
   @Override
   public void periodic() {
     // advantageKit inputs updating
-    wristIO.updateInputs(inputsAutoLogged);
+    armIO.updateInputs(inputsAutoLogged);
     Logger.processInputs("Wrist", inputsAutoLogged);
   }
 
   public void setBraked(boolean braked) {
-    wristIO.setBraked(braked);
+    armIO.setBraked(braked);
   }
 
   public double getAngle() {
@@ -37,6 +37,6 @@ public class Wrist extends SubsystemBase {
   }
 
   public void setSpeed(double speed) {
-    wristIO.setSpeed(speed);
+    armIO.setSpeed(speed);
   }
 }

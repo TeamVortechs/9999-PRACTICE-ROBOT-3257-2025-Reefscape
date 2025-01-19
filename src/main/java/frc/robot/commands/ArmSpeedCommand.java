@@ -1,15 +1,15 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.Arm;
 
 /*
 Names
 brief description
  */
-public class WristSpeedCommand extends Command {
+public class ArmSpeedCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Wrist wrist;
+  private final Arm wrist;
 
   private double speed;
 
@@ -18,7 +18,7 @@ public class WristSpeedCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public WristSpeedCommand(Wrist wrist, double speed) {
+  public ArmSpeedCommand(Arm wrist, double speed) {
     // addRequirements(null);
     this.wrist = wrist;
     this.speed = speed;

@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.Arm;
 
 /*
 Names
@@ -17,9 +17,9 @@ public class SetArmNeutralMode extends Command {
    */
   private boolean mode;
 
-  private Wrist wrist;
+  private Arm wrist;
 
-  public SetArmNeutralMode(boolean mode, Wrist wrist) {
+  public SetArmNeutralMode(boolean mode, Arm wrist) {
     this.mode = mode;
     this.wrist = wrist;
   }
