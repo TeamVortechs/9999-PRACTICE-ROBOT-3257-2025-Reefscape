@@ -11,6 +11,8 @@ public class Wrist extends SubsystemBase {
 
   public Wrist(WristIO wristIO) {
     this.wristIO = wristIO;
+
+    wristIO.setBraked(true);
   }
 
   @Override
