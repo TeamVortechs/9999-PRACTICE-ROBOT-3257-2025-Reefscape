@@ -31,16 +31,31 @@ public class PathfindingCommands {
       coralPaths[5] = PathPlannerPath.fromPathFile("CoralFeed6");
 
     } catch (IOException e) {
-      System.out.println("Could not load the pathplanner coral paths from the file");
+      System.out.println("Could not load the pathplanner coral paths from the file, IO exception");
     } catch (ParseException e) {
-      System.out.println("");
+      System.out.println("Could not load the pathplanner coral paths from the file, Parse exception");
     }
   }
 
   //returns the command that pathfinds the robot to the specific depot id
   public static Command pathfindToDepotCommand(int depotID) {
+    //initializes the REPO if it isn't already
     init();
     return AutoBuilder.pathfindThenFollowPath(coralPaths[depotID], pathConstraints);
+  }
+
+  //does the same thing as before but with a little bit more functionality. Command before runs while the robot is getting in position and command in between runs while the robot is doing the path. command after runs after everything has been finished
+  public static Command pathfindToDepotCommand(Command commandBefore, Command commandInBetween, Command commandLast, int depotID) {
+    init();
+
+    PathPlannerPath path = coralPaths[depotID];
+
+    //gets the two needed commands: pathfinding to pose and path from pose
+    Command pathfindCommand = AutoBuilder.pathfindToPose(path.getStartingDifferentialPose(), pathConstraints);
+    Command pathCommand = AutoBuilder.followPath(path);
+
+    //a bunch of command composition to due what the function says it does(ik know it's confusing)
+    return commandBefore.alongWith(pathfindCommand).andThen(commandInBetween.alongWith(pathCommand)).andThen(commandLast);
   }
 
   //finds the closest path that goes to the depot
