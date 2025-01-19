@@ -21,7 +21,7 @@ public class WristIOTalonFX implements WristIO {
 
   @Override
   public void setBraked(boolean braked) {
-    if(braked) {
+    if (braked) {
       arm.setNeutralMode(NeutralModeValue.Brake);
     } else {
       arm.setNeutralMode(NeutralModeValue.Coast);

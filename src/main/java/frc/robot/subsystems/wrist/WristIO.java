@@ -27,9 +27,7 @@ public interface WristIO {
     return 0.0;
   }
 
-  public default void setBraked(boolean braked) {
-    
-  }
+  public default void setBraked(boolean braked) {}
 
   // gets the lowest possible angle of the wrist in radians
   public default double getLowestAngleRad() {
