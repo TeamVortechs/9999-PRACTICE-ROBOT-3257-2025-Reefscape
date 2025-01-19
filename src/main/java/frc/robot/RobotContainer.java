@@ -100,8 +100,7 @@ public class RobotContainer {
         // Sim robot, instantiate physics sim IO implementations
         drive =
             new Drive(
-                
-            new GyroIO() {},
+                new GyroIO() {},
                 new ModuleIOSim(TunerConstants.FrontLeft),
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
@@ -183,7 +182,8 @@ public class RobotContainer {
       System.out.println("parse exception ");
     }
 
-    controller.start().whileTrue(new WristSpeedCommand(wrist, 0.1));
+    controller.start().whileTrue(new WristSpeedCommand(wrist, 0.25));
+    controller.back().whileTrue(new WristSpeedCommand(wrist, -0.25));
 
     controller.rightTrigger().whileTrue(AutoBuilder.pathfindThenFollowPath(path, pathConstraints));
     controller.leftTrigger().whileTrue(AutoBuilder.pathfindToPose(new Pose2d(), pathConstraints));

@@ -7,7 +7,7 @@ import org.littletonrobotics.junction.Logger;
 public class Wrist extends SubsystemBase {
 
   private WristIO wristIO;
-  private WristIOInputsAutoLogged inputsAutoLogged;
+  private WristIOInputsAutoLogged inputsAutoLogged = new WristIOInputsAutoLogged();
 
   public Wrist(WristIO wristIO) {
     this.wristIO = wristIO;
