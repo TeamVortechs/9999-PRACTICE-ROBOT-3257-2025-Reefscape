@@ -1,6 +1,7 @@
 package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.KDoublePreferences.PArm;
@@ -24,6 +25,9 @@ public class Arm extends SubsystemBase {
   //this is just outside of the method so AK can log it
   @AutoLogOutput private double wantedSpeed;
 
+  //this is how we find the downward force on the motor at an specific point of the arm(not used rn bc we don't have the air pistons and don't even know if we need it)
+  private InterpolatingDoubleTreeMap weightMap = new InterpolatingDoubleTreeMap();
+
   //this is just a helper class that calculates the PID speed
   private ProfiledPIDController PID;
       
@@ -33,18 +37,32 @@ public class Arm extends SubsystemBase {
 
     //builds the PID tuner for the first time
     rebuildPIDtuner();
+
+    //builds the weight map here with given values (is commented out so it doesn't do anything)
+    //weightMap.put(0d, 0d);
   }
 
+  //logs Advantage kit and does PDI logic
   @Override
   public void periodic() {
     // advantageKit inputs updating
     armIO.updateInputs(inputsAutoLogged);
     Logger.processInputs("Wrist", inputsAutoLogged);
 
+    //this means we don't want to set the arm angle bc it hasn't been set for the first time yet
+    if(targetAngleRad == -10) {
+      return;
+    } 
+
     //calculates the wanted rotation from the PID and sets the motor to that position
     double curAngle = getAngle();
     double angleDiff = targetAngleRad - curAngle;
     wantedSpeed = PID.calculate(angleDiff);
+
+    //finds the downward force from the arm weight and add that
+    //this is commented out bc we don't have the weight map and don't know if we need this
+    // double weightOffset = weightMap.get(curAngle);
+    // wantedSpeed += weightOffset;
     
     //this is commented out while we don't have an encoder
     //armIO.setSpeed(wantedSpeed);
@@ -61,7 +79,7 @@ public class Arm extends SubsystemBase {
   }
 
   //sets the angle that the PID loop attempts to go to
-  public double gettargetAngle() {
+  public double getTargetAngle() {
     return targetAngleRad;
   }
 
