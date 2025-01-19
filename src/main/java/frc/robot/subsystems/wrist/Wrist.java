@@ -22,6 +22,10 @@ public class Wrist extends SubsystemBase {
     Logger.processInputs("Wrist", inputsAutoLogged);
   }
 
+  public void setBraked(boolean braked) {
+    wristIO.setBraked(braked);
+  }
+
   public double getAngle() {
     return 0;
   }

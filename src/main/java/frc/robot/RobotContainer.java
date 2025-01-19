@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.SetArmNeutralMode;
 import frc.robot.commands.WristSpeedCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -184,6 +185,8 @@ public class RobotContainer {
 
     controller.start().whileTrue(new WristSpeedCommand(wrist, 0.25));
     controller.back().whileTrue(new WristSpeedCommand(wrist, -0.25));
+
+    controller.leftBumper().onTrue(new SetArmNeutralMode(true, wrist));
 
     controller.rightTrigger().whileTrue(AutoBuilder.pathfindThenFollowPath(path, pathConstraints));
     controller.leftTrigger().whileTrue(AutoBuilder.pathfindToPose(new Pose2d(), pathConstraints));
