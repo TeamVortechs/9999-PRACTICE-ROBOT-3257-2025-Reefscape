@@ -185,10 +185,6 @@ public class RobotContainer {
 
     controller.start().whileTrue(new WristSpeedCommand(wrist, 0.25));
     controller.back().whileTrue(new WristSpeedCommand(wrist, -0.25));
-
-    controller.rightTrigger().whileTrue(AutoBuilder.pathfindThenFollowPath(path, pathConstraints));
-    controller.leftTrigger().whileTrue(AutoBuilder.pathfindToPose(new Pose2d(), pathConstraints));
-
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
