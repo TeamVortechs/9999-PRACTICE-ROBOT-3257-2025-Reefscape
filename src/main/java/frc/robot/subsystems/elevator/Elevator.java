@@ -30,7 +30,8 @@ public class Elevator extends SubsystemBase {
           PElevator.proportional.getValue(),
           PElevator.integral.getValue(),
           PElevator.derivative.getValue(),
-          new TrapezoidProfile.Constraints(PElevator.speedlimit.getValue(), PElevator.accelerationLimit.getValue()));
+          new TrapezoidProfile.Constraints(
+              PElevator.speedlimit.getValue(), PElevator.accelerationLimit.getValue()));
 
   public Elevator(ElevatorModuleIO elevatorModuleIO) {
     this.elevatorModuleIO = elevatorModuleIO;

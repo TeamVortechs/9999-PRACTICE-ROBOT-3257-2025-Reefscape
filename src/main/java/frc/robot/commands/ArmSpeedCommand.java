@@ -18,7 +18,7 @@ public class ArmSpeedCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  //sets the speed of arm, will msot likely be deprecated when we move into a pid system
+  // sets the speed of arm, will msot likely be deprecated when we move into a pid system
   public ArmSpeedCommand(Arm wrist, double speed) {
     // addRequirements(null);
     this.wrist = wrist;

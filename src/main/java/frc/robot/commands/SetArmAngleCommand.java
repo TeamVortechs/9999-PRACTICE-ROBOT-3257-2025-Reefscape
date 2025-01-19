@@ -7,7 +7,7 @@ import frc.robot.subsystems.arm.Arm;
 Names
 brief description
  */
-public class SetArmNeutralMode extends Command {
+public class SetArmAngleCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 
   /**
@@ -15,20 +15,20 @@ public class SetArmNeutralMode extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  private boolean mode;
 
-  private Arm arm;
+   private Arm arm;
+   private double angle;
 
-  // sets the idle mode of the motor
-  public SetArmNeutralMode(boolean mode, Arm wrist) {
-    this.mode = mode;
-    this.arm = wrist;
+  public SetArmAngleCommand(Arm arm, double angle) {
+    addRequirements(arm);
+    this.arm = arm;
+    this.angle = angle;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    arm.setBraked(mode);
+    arm.setTargetAngleRad(angle);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -42,6 +42,11 @@ public class SetArmNeutralMode extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    //if the target angle changed the command is finished(fnacy statement bc it's a double)
+    if(Math.abs(angle - arm.getTargetAngleRad()) > 0.01 ) {
+        return true;
+    }
+
+    return false;
   }
 }

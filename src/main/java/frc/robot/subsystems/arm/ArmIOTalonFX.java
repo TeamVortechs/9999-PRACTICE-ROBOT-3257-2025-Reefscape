@@ -3,7 +3,6 @@ package frc.robot.subsystems.arm;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-
 public class ArmIOTalonFX implements ArmIO {
   private TalonFX armMotor = new TalonFX(14);
 
@@ -11,8 +10,8 @@ public class ArmIOTalonFX implements ArmIO {
   public void setSpeed(double speed) {
     armMotor.set(speed);
 
-    //uncommenting when we add PID loop code
-    //speedCheck();
+    // uncommenting when we add PID loop code
+    // speedCheck();
   }
 
   @Override
@@ -32,22 +31,22 @@ public class ArmIOTalonFX implements ArmIO {
     }
   }
 
-  //if the arm is out of bounds makes sure it doens't move further then return true
+  // if the arm is out of bounds makes sure it doens't move further then return true
   @Override
   public boolean speedCheck() {
     double angle = getAngleRad();
     double speed = armMotor.get();
 
-    if(angle > getHighestAngleRad()) {
-      if(speed > 0) {
+    if (angle > getHighestAngleRad()) {
+      if (speed > 0) {
         setSpeed(0);
       }
 
       return true;
     }
 
-    if(angle < getLowestAngleRad()) {
-      if(speed < 0) {
+    if (angle < getLowestAngleRad()) {
+      if (speed < 0) {
         setSpeed(0);
       }
 
@@ -73,7 +72,7 @@ public class ArmIOTalonFX implements ArmIO {
   // gets the highest possible value of the wrist angle in radians
   @Override
   public double getHighestAngleRad() {
-    //90 deg
-    return Math.PI/2;
+    // 90 deg
+    return Math.PI / 2;
   }
 }
