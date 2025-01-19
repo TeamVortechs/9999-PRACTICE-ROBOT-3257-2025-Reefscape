@@ -15,9 +15,9 @@ public class SetArmNeutralMode extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
+  private boolean mode;
 
-   private boolean mode;
-   private Wrist wrist;
+  private Wrist wrist;
 
   public SetArmNeutralMode(boolean mode, Wrist wrist) {
     this.mode = mode;
@@ -36,8 +36,7 @@ public class SetArmNeutralMode extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
