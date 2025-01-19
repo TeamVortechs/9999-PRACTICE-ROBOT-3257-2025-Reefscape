@@ -23,6 +23,11 @@ public interface ArmIO {
     return 0.0;
   }
 
+  //if the arm is outside the target stop the arm. returns true if it was out of bounds
+  public default boolean speedCheck() {
+    return false;
+  }
+
   //set sthe idle mode of the motor, if true the motor's idle mode will be braked
   public default void setBraked(boolean braked) {}
 

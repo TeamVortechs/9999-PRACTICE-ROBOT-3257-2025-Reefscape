@@ -55,7 +55,7 @@ public class Arm extends SubsystemBase {
     } 
 
     //calculates the wanted rotation from the PID and sets the motor to that position
-    double curAngle = getAngle();
+    double curAngle = getAngleRad();
     double angleDiff = targetAngleRad - curAngle;
     wantedSpeed = PID.calculate(angleDiff);
 
@@ -66,6 +66,9 @@ public class Arm extends SubsystemBase {
     
     //this is commented out while we don't have an encoder
     //armIO.setSpeed(wantedSpeed);
+
+    //stops the arm if it outside of the target bounds
+    //armIO.speedCheck();
   }
 
   //sets the wether or not the arm has "brakes" on it. If this is true the motor idle mode will be set to stop. I reccomend keeping this off true for now bc it doesn't work and idk if it breaks the motor
@@ -74,16 +77,31 @@ public class Arm extends SubsystemBase {
   }
 
   //gets the angle in radians of the motor
-  public double getAngle() {
+  public double getAngleRad() {
     return armIO.getAngleRad();
   }
 
   //sets the angle that the PID loop attempts to go to
-  public double getTargetAngle() {
+  public double getTargetAngleRad() {
     return targetAngleRad;
   }
 
-  //sets the speed of the motor, this will most likely be deprecated
+  //sets the target angle, or the angle that the PID loop will try to path to
+  public void setTargetAngleRad(double targetAngle) {
+
+    //stops the target angle from going above the appropriate value
+    if(targetAngle < armIO.getLowestAngleRad()) {
+      targetAngle = armIO.getLowestAngleRad();
+    }
+
+    if(targetAngle > armIO.getHighestAngleRad()) {
+      targetAngle = armIO.getHighestAngleRad();
+    }
+
+    this.targetAngleRad = targetAngle;
+  }
+
+  //sets the speed of the motor, this will most likely be deprecated when we get the encoder and can do set point
   public void setSpeed(double speed) {
     armIO.setSpeed(speed);
   }
