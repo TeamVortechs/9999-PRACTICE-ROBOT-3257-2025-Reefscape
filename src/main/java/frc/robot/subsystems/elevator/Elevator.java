@@ -53,6 +53,7 @@ public class Elevator extends SubsystemBase {
     // skeleton for later:
 
     // logging
+
     elevatorModuleIO.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
 
@@ -67,6 +68,7 @@ public class Elevator extends SubsystemBase {
     // individually move each elevator to that position
 
     elevatorModuleIO.setSpeed(elevatorSpeed);
+
     // finish
   }
 
@@ -78,6 +80,7 @@ public class Elevator extends SubsystemBase {
 
   // GETTER/SETTER(simple)
   // sets the heihgt of the elevator using the pid system
+
   public void setTargetHeight(double height) {
     this.targetHeight = height;
   }

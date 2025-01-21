@@ -19,15 +19,19 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.PathfindingCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -35,6 +39,11 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 
 import java.io.IOException;
 
@@ -50,6 +59,9 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+
+  @SuppressWarnings("unused")
+  private final Vision vision;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -72,6 +84,13 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(
+                    VisionConstants.camera0Name, VisionConstants.robotToCamera0)
+                // new VisionIOPhotonVision(camera1Name, robotToCamera1)
+                );
         break;
 
       case SIM:
@@ -83,6 +102,11 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose));
         break;
 
       default:
@@ -94,6 +118,11 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+        vision =
+            new Vision(
+                drive::addVisionMeasurement, new VisionIO() {}
+                // new VisionIO() {}
+                );
         break;
     }
 
@@ -139,6 +168,16 @@ public class RobotContainer {
     }
 
     // Default command, normal field-relative drive
+    // new PathPlannerPath(
+    //     waypoints,
+    //     pathConstraints,
+    //     null,
+    //     new GoalEndState(0.0, Rotation2d.fromDegrees(0)),
+    //     false);
+
+    //makes a path from the robot to the closest path and runs it
+    controller.rightTrigger().whileTrue(PathfindingCommands.pathfindToDepotCommand(PathfindingCommands.getClosestDepotPath(drive.getPose())));
+
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
@@ -159,6 +198,7 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
+    controller.leftTrigger().whileTrue(PathfindingCommands.pathfindToDepotCommand(0));
     // Reset gyro to 0° when B button is pressed
     controller
         .b()
@@ -169,9 +209,16 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-  }
 
-  
+    // add a free disturbance when pressing the y button to test vision
+    var disturbance =
+        new Transform2d(new Translation2d(1.0, 1.0), new Rotation2d(0.17 * 2 * Math.PI));
+    controller
+        .y()
+        .onTrue(
+            Commands.runOnce(() -> drive.setPose(drive.getPose().plus(disturbance)))
+                .ignoringDisable(true));
+  } // end configure bindings
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -180,5 +227,29 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  //   public void sendVisionMeasurement() {
+  //     // Correct pose estimate with vision measurements
+  //     var visionEst = vision.getEstimatedGlobalPose();
+  //     visionEst.ifPresent(
+  //         est -> {
+  //           // Change our trust in the measurement based on the tags we can see
+  //           var estStdDevs = vision.getEstimationStdDevs();
+
+  //           drive.addVisionMeasurement(
+  //               est.estimatedPose.toPose2d(),
+  //               est.timestampSeconds,
+  //               estStdDevs); // !!! note: the standard deviation in the constants has to be
+  // tweaked
+  //         });
+  //   }
+
+  // intended for testing usage only
+  // puts sendables on shuffleboard
+  public void putPositionData() {
+    SmartDashboard.putNumber("x position:", drive.getPose().getX());
+    SmartDashboard.putNumber("y position:", drive.getPose().getY());
+    SmartDashboard.putNumber("current rotation:", drive.getPose().getRotation().getDegrees());
   }
 }

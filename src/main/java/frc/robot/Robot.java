@@ -16,6 +16,8 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
+import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.pathfinding.Pathfinder;
@@ -25,6 +27,7 @@ import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.TunerConstants;
+import frc.robot.util.LocalADStarAK;
 import frc.robot.util.FieldMovement.LocalADStarAK;
 
 import org.littletonrobotics.junction.LogFileUtil;
@@ -111,12 +114,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotInit() {
-    //initializes pathfinding
-    //sets the pathfinder to something loggable by advantage kit
     Pathfinding.setPathfinder(new LocalADStarAK());
-
-    //warms up the library by running a firt pathfinding command, running the first one will make the rest faster.
-    PathfindingCommand.warmupCommand().schedule();
+    PathfindingCommand.warmupCommand();
   }
 
   /** This function is called periodically during all modes. */
@@ -134,6 +133,10 @@ public class Robot extends LoggedRobot {
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
+
+    // tell robotcontainer to send a vision measurement to the drivetrain
+    // robotContainer.sendVisionMeasurement();
+    robotContainer.putPositionData();
   }
 
   /** This function is called once when the robot is disabled. */
