@@ -152,7 +152,8 @@ public class RobotContainer {
     //     new GoalEndState(0.0, Rotation2d.fromDegrees(0)),
     //     false);
 
-    controller.rightTrigger().whileTrue(PathfindingCommands.pathfindToDepotCommand(0));
+    //makes a path from the robot to the closest path and runs it
+    controller.rightTrigger().whileTrue(PathfindingCommands.pathfindToDepotCommand(PathfindingCommands.getClosestDepotPath(drive.getPose())));
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
