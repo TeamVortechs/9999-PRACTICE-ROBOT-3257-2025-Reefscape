@@ -2,6 +2,8 @@ package frc.robot.subsystems.elevator;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import com.ctre.phoenix6.hardware.CANrange;
+
 // this is just a prototype, will be more fleshed out later.
 public interface ElevatorModuleIO {
   @AutoLog
@@ -26,7 +28,9 @@ public interface ElevatorModuleIO {
 
   // gets the height of the elevator in meters
   public default double getHeightMeters() {
-    return 0.0;
+    CANrange distance = new CANrange(0);
+    double CurrentHeight = distance.getDistance().getValueAsDouble();
+    return CurrentHeight;
   }
 
   // reminder for myself to use the given PID stuff
