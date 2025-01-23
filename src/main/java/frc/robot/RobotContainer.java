@@ -15,13 +15,10 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -31,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.PathfindToClosestDepotCommand;
 import frc.robot.commands.PathfindingCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -44,10 +42,6 @@ import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-
-import java.io.IOException;
-
-import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -69,8 +63,9 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
-  //pathconstraints for pathplanner paths
-  private final PathConstraints pathConstraints = new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+  // pathconstraints for pathplanner paths
+  private final PathConstraints pathConstraints =
+      new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -157,16 +152,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    controller.x().whileTrue(AutoBuilder.pathfindToPose(new Pose2d(0, 0, Rotation2d.fromDegrees(180)), pathConstraints));
-
-    try {
-        controller.leftTrigger().whileTrue(AutoBuilder.pathfindThenFollowPath(PathPlannerPath.fromPathFile("Clear"), pathConstraints));
-    } catch(IOException exception) {
-        System.out.println("could not dechipher");
-    } catch(ParseException exception) {
-        System.out.println("could not dechipher");
-    }
-
+    controller.leftTrigger().whileTrue(new PathfindToClosestDepotCommand(drive));
     // Default command, normal field-relative drive
     // new PathPlannerPath(
     //     waypoints,
@@ -175,8 +161,7 @@ public class RobotContainer {
     //     new GoalEndState(0.0, Rotation2d.fromDegrees(0)),
     //     false);
 
-    //makes a path from the robot to the closest path and runs it
-    controller.rightTrigger().whileTrue(PathfindingCommands.pathfindToDepotCommand(PathfindingCommands.getClosestDepotPath(drive.getPose())));
+    // makes a path from the robot to the closest path and runs it
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -198,7 +183,11 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    controller.leftTrigger().whileTrue(PathfindingCommands.pathfindToDepotCommand(0));
+    controller
+        .leftTrigger()
+        .whileTrue(
+            PathfindingCommands.pathfindToDepotCommand(
+                PathfindingCommands.getClosestDepotPath(drive.getPose())));
     // Reset gyro to 0° when B button is pressed
     controller
         .b()
