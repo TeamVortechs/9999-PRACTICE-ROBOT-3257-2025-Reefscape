@@ -7,6 +7,7 @@ import frc.robot.subsystems.drive.Drive;
 Names
 brief description
  */
+// THIS CLASS WILL BREAK THE ROBOT
 public class PathfindToClosestDepotCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 
@@ -55,7 +56,9 @@ public class PathfindToClosestDepotCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    depotPathCommands[targetPoseID].end(interrupted);
+    if(targetPoseID > -1) {
+      depotPathCommands[targetPoseID].end(interrupted);
+    }
   }
 
   // Returns true when the command should end.

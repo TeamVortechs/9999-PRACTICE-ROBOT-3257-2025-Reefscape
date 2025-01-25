@@ -119,6 +119,7 @@ public class PathfindingCommands {
     return lowestDistID;
   }
 
+  // gets a list of every command to pathfind to a given path
   public static Command[] getPathfindingCommands() {
     Command[] commands = new Command[coralPaths.length];
 
