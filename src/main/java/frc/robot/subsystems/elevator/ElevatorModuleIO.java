@@ -1,8 +1,7 @@
 package frc.robot.subsystems.elevator;
 
-import org.littletonrobotics.junction.AutoLog;
-
 import com.ctre.phoenix6.hardware.CANrange;
+import org.littletonrobotics.junction.AutoLog;
 
 // this is just a prototype, will be more fleshed out later.
 public interface ElevatorModuleIO {
