@@ -20,6 +20,8 @@ public class PathfindToClosestDepotCommand extends Command {
 
   private int targetPoseID = 0;
 
+  private boolean lockedIn = false;
+
   private Command[] depotPathCommands;
 
   public PathfindToClosestDepotCommand(Drive drive) {
@@ -30,8 +32,6 @@ public class PathfindToClosestDepotCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    targetPoseID = -1;
-
     depotPathCommands = PathfindingCommands.getPathfindingCommands();
   }
 
@@ -41,12 +41,14 @@ public class PathfindToClosestDepotCommand extends Command {
     int testPoseID = PathfindingCommands.getClosestDepotPath(drive.getPose());
     System.out.println("testposeID: " + testPoseID);
 
+    if (!lockedIn) {
+      depotPathCommands[targetPoseID].schedule();
+      lockedIn = true;
+    }
+
     if (testPoseID != targetPoseID) {
 
-      if (targetPoseID > -1) {
-        depotPathCommands[targetPoseID].cancel();
-        ;
-      }
+      depotPathCommands[targetPoseID].cancel();
 
       targetPoseID = testPoseID;
       depotPathCommands[targetPoseID].schedule();
@@ -56,7 +58,7 @@ public class PathfindToClosestDepotCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if(targetPoseID > -1) {
+    if (lockedIn) {
       depotPathCommands[targetPoseID].end(interrupted);
     }
   }

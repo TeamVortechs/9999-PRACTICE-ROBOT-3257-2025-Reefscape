@@ -121,7 +121,7 @@ public class PathfindingCommands {
 
   // gets a list of every command to pathfind to a given path
   public static Command[] getPathfindingCommands() {
-    Command[] commands = new Command[coralPaths.length];
+    Command[] commands = new Command[6];
 
     for (int i = 0; i < coralPaths.length; i++) {
       commands[i] = pathfindToDepotCommand(i);
