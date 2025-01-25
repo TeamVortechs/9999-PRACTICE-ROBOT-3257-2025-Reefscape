@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 
@@ -18,9 +17,9 @@ public class PathfindToClosestDepotCommand extends Command {
    */
   private Drive drive;
 
-  private Command command = null;
+  private int targetPoseID = 0;
 
-  private Pose2d targetPose2d = null;
+  private Command[] depotPathCommands;
 
   public PathfindToClosestDepotCommand(Drive drive) {
     // addRequirements(null);
@@ -30,45 +29,38 @@ public class PathfindToClosestDepotCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("pose: " + drive.getPose().toString());
-    targetPose2d =
-        PathfindingCommands.getDepotPose(PathfindingCommands.getClosestDepotPath(drive.getPose()));
-    command =
-        PathfindingCommands.pathfindToDepotCommand(
-            PathfindingCommands.getClosestDepotPath(drive.getPose()));
-    command.schedule();
+    targetPoseID = -1;
+
+    depotPathCommands = PathfindingCommands.getPathfindingCommands();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Pose2d testPose =
-        PathfindingCommands.getDepotPose(PathfindingCommands.getClosestDepotPath(drive.getPose()));
-    System.out.println(testPose.toString());
-    System.out.println("target: " + targetPose2d.toString());
-    if (!testPose.equals(targetPose2d)) {
+    int testPoseID = PathfindingCommands.getClosestDepotPath(drive.getPose());
+    System.out.println("testposeID: " + testPoseID);
 
-      System.out.println("redid command");
+    if (testPoseID != targetPoseID) {
 
-      command =
-          PathfindingCommands.pathfindToDepotCommand(
-              PathfindingCommands.getClosestDepotPath(drive.getPose()));
+      if (targetPoseID > -1) {
+        depotPathCommands[targetPoseID].cancel();
+        ;
+      }
 
-      targetPose2d =
-          PathfindingCommands.getDepotPose(
-              PathfindingCommands.getClosestDepotPath(drive.getPose()));
+      targetPoseID = testPoseID;
+      depotPathCommands[targetPoseID].schedule();
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    command.end(interrupted);
+    depotPathCommands[targetPoseID].end(interrupted);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return command.isFinished();
+    return false;
   }
 }

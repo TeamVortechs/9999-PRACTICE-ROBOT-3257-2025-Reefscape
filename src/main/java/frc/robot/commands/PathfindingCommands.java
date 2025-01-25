@@ -118,4 +118,14 @@ public class PathfindingCommands {
 
     return lowestDistID;
   }
+
+  public static Command[] getPathfindingCommands() {
+    Command[] commands = new Command[coralPaths.length];
+
+    for (int i = 0; i < coralPaths.length; i++) {
+      commands[i] = pathfindToDepotCommand(i);
+    }
+
+    return commands;
+  }
 }
