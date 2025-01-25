@@ -31,9 +31,7 @@ public class PathfindToClosestDepotCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    depotPathCommands = PathfindingCommands.getPathfindingCommands();
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -42,6 +40,7 @@ public class PathfindToClosestDepotCommand extends Command {
     System.out.println("testposeID: " + testPoseID);
 
     if (!lockedIn) {
+      depotPathCommands = PathfindingCommands.getPathfindingCommands();
       depotPathCommands[targetPoseID].schedule();
       lockedIn = true;
     }
