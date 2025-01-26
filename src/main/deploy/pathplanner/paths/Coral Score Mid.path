@@ -8,27 +8,80 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.319170273443835,
-        "y": 4.00178410734145
+        "x": 6.843801207966791,
+        "y": 3.912098462105152
       },
       "isLocked": false,
       "linkedName": "MidStartingSpot"
     },
     {
       "anchor": {
-        "x": 5.934747516556291,
+        "x": 5.89875,
         "y": 4.0
       },
       "prevControl": {
-        "x": 6.184746579975713,
-        "y": 3.9993156832519103
+        "x": 5.839843817961006,
+        "y": 4.242961029215777
+      },
+      "nextControl": {
+        "x": 5.957656182038994,
+        "y": 3.7570389707842247
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.113250000000001,
+        "y": 3.2303749999999996
+      },
+      "prevControl": {
+        "x": 6.31190253908507,
+        "y": 3.382155001037867
+      },
+      "nextControl": {
+        "x": 5.914597460914932,
+        "y": 3.078594998962132
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.12425,
+        "y": 2.245625
+      },
+      "prevControl": {
+        "x": 4.383564402127678,
+        "y": 2.4193923828690624
+      },
+      "nextControl": {
+        "x": 3.6513750000000003,
+        "y": 1.92875
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.0517499999999997,
+        "y": 3.9564453124999988
+      },
+      "prevControl": {
+        "x": 2.7104999999999997,
+        "y": 3.6593749999999994
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CoralScoreMid"
+      "linkedName": "midintake starting"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.9839370078740083,
+      "rotationDegrees": 91.33645939912677
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -42,7 +95,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 179.44501550487283
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": null,

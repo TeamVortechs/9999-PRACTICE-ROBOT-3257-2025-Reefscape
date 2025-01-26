@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.201205842391305,
+        "x": 3.0517499999999997,
         "y": 3.9564453124999988
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.951205842391305,
+        "x": 2.8017499999999997,
         "y": 3.9564453124999988
       },
       "isLocked": false,
-      "linkedName": "TopStartingSpot"
+      "linkedName": "midintake starting"
     },
     {
       "anchor": {
@@ -57,7 +57,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "bottomMidScoring"
     }
   ],
   "rotationTargets": [],
