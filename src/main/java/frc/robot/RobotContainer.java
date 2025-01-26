@@ -19,8 +19,6 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -60,7 +58,6 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
 
-  @SuppressWarnings("unused")
   private final Vision vision;
 
   // physical subsystems
@@ -218,14 +215,40 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // add a free disturbance when pressing the y button to test vision
-    var disturbance =
-        new Transform2d(new Translation2d(1.0, 1.0), new Rotation2d(0.17 * 2 * Math.PI));
+    // // add a free disturbance when pressing the y button to test vision
+    // var disturbance =
+    //     new Transform2d(new Translation2d(1.0, 1.0), new Rotation2d(0.17 * 2 * Math.PI));
+    // controller
+    //     .y()
+    //     .onTrue(
+    //         Commands.runOnce(() -> drive.setPose(drive.getPose().plus(disturbance)))
+    //             .ignoringDisable(true));
+
+    // tells robot to drive in robot-centric mode and to lock onto the current limelight target
+    // if tx = 0, then no rotation is made
     controller
         .y()
-        .onTrue(
-            Commands.runOnce(() -> drive.setPose(drive.getPose().plus(disturbance)))
-                .ignoringDisable(true));
+        .whileTrue( // this'll probably be fine.
+            DriveCommands.RobotCentricDriveWhileTurningToAngle(
+                drive,
+                () -> -controller.getLeftY(),
+                () ->
+                    -controller
+                        .getLeftX(), // limelight outputs in degrees, so using radians is a much
+                // safer choice
+                () ->
+                    new Rotation2d(
+                        Units.degreesToRadians(
+                            LimelightHelpers.getTX("")
+                                * -1.25)))); // multiplied by arbitrary negative constant to make
+    // turning stronger without touching other drive PID
+    // constants and because rotation is CCW positive on
+    // the robot but is not as such on limelight
+    // Commands.run(
+    //     () ->
+    //         SmartDashboard.putNumber(
+    //             "Trying to turn:", Units.degreesToRadians(LimelightHelpers.getTX(""))),
+    //     vision));
   } // end configure bindings
 
   /**

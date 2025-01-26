@@ -37,7 +37,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 public class DriveCommands {
-  private static final double DEADBAND = 0.1;
+  private static final double DEADBAND = 0.2;
   private static final double ANGLE_KP = 5.0;
   private static final double ANGLE_KD = 0.4;
   private static final double ANGLE_MAX_VELOCITY = 8.0;
@@ -149,6 +149,108 @@ public class DriveCommands {
                       isFlipped
                           ? drive.getRotation().plus(new Rotation2d(Math.PI))
                           : drive.getRotation()));
+            },
+            drive)
+
+        // Reset PID controller when command starts
+        .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+  }
+
+  /**
+   * Robot-Centric drive command using two joysticks (controlling linear and angular velocities).
+   */
+  public static Command RobotCentricDrive(
+      Drive drive,
+      DoubleSupplier xSupplier,
+      DoubleSupplier ySupplier,
+      DoubleSupplier omegaSupplier) {
+    return Commands.run(
+        () -> {
+          // Get linear velocity
+          Translation2d linearVelocity =
+              getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+
+          // Apply rotation deadband
+          double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
+
+          // Square rotation value for more precise control
+          omega = Math.copySign(omega * omega, omega);
+
+          // Do not convert to field relative speeds & send command
+          ChassisSpeeds speeds =
+              new ChassisSpeeds(
+                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+                  omega * drive.getMaxAngularSpeedRadPerSec());
+          // boolean isFlipped =
+          //     DriverStation.getAlliance().isPresent()
+          //         && DriverStation.getAlliance().get() == Alliance.Red;
+          // drive.runVelocity(
+          //     ChassisSpeeds.fromFieldRelativeSpeeds(
+          //         speeds,
+          //         isFlipped
+          //             ? drive.getRotation().plus(new Rotation2d(Math.PI))
+          //             : drive.getRotation()));
+          drive.runVelocity(speeds);
+        },
+        drive);
+  }
+
+  /**
+   * robot-relative drive command that takes in a parameter of how many radians it should be turning
+   * intended for usage with limelight's tx variable to feed into the rotation parameter for object
+   * detection i'm aware that this is a VERY verbose name stems from joystickDriveAtAngle
+   */
+  public static Command RobotCentricDriveWhileTurningToAngle(
+      Drive drive,
+      DoubleSupplier xSupplier,
+      DoubleSupplier ySupplier,
+      Supplier<Rotation2d> rotationSupplier) {
+
+    // Create PID controller
+    ProfiledPIDController angleController =
+        new ProfiledPIDController(
+            ANGLE_KP,
+            0.0,
+            ANGLE_KD,
+            new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
+    angleController.enableContinuousInput(-Math.PI, Math.PI);
+
+    // Construct command
+    return Commands.run(
+            () -> {
+              // Get linear velocity
+              Translation2d linearVelocity =
+                  getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+
+              // Calculate angular speed
+              // since this is robot centric, the target should be radians deviating from the
+              // current position
+              // if rotation supplier is greater than ACCEPTABLE_DEVIATION, use PID; else, use zero
+              double ACCEPTABLE_DEVIATION = 0.05; // this is in radians
+              double omega =
+                  (Math.abs(rotationSupplier.get().getRadians()) > ACCEPTABLE_DEVIATION)
+                      ? angleController.calculate(
+                          drive.getRotation().getRadians(),
+                          drive.getRotation().getRadians() + rotationSupplier.get().getRadians())
+                      : 0;
+
+              // Do not convert to field relative speeds & send command
+              ChassisSpeeds speeds =
+                  new ChassisSpeeds(
+                      linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+                      linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+                      omega);
+              // boolean isFlipped =
+              //     DriverStation.getAlliance().isPresent()
+              //         && DriverStation.getAlliance().get() == Alliance.Red;
+              // drive.runVelocity(
+              //     ChassisSpeeds.fromFieldRelativeSpeeds(
+              //         speeds,
+              //         isFlipped
+              //             ? drive.getRotation().plus(new Rotation2d(Math.PI))
+              //             : drive.getRotation()));
+              drive.runVelocity(speeds);
             },
             drive)
 
