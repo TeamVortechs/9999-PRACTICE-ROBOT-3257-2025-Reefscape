@@ -8,11 +8,11 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.420875,
+        "x": 3.4208749999999997,
         "y": 2.0
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "leftcoralpickupstart"
     },
     {
       "anchor": {

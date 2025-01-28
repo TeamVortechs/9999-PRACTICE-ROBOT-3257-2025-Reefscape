@@ -3,25 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.0517499999999997,
-        "y": 3.9564453124999988
+        "x": 1.586,
+        "y": 3.837
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8017499999999997,
-        "y": 3.9564453124999988
+        "x": 1.336,
+        "y": 3.837
       },
       "isLocked": false,
-      "linkedName": "midintake starting"
+      "linkedName": "midintakes"
     },
     {
       "anchor": {
-        "x": 2.27124660326087,
-        "y": 3.9564453124999988
+        "x": 1.5856997282608696,
+        "y": 3.4351249999999998
       },
       "prevControl": {
-        "x": 2.5842136548913044,
-        "y": 3.93856148097826
+        "x": 1.4988711393049705,
+        "y": 3.6695621901809257
+      },
+      "nextControl": {
+        "x": 1.6725283172167684,
+        "y": 3.200687809819074
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.9120754076086958,
+        "y": 3.837219769021738
+      },
+      "prevControl": {
+        "x": 1.2250424592391305,
+        "y": 3.819335937499999
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +58,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -179.45948981286935
+    "rotation": 103.52316065041597
   },
   "reversed": false,
   "folder": null,
