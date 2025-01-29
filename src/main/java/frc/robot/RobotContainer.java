@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -30,14 +31,22 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.IntakeSpeedCommand;
+import frc.robot.commands.SetElevatorCommand;
 import frc.robot.commands.WristSpeedCommand;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Intake.IntakeIO;
+import frc.robot.subsystems.Intake.IntakeIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorModuleIO;
+import frc.robot.subsystems.elevator.ElevatorModuleSparkMaxIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -65,9 +74,18 @@ public class RobotContainer {
 
   // physical subsystems
   private final Wrist wrist = new Wrist(new WristIOTalonFX());
+  DigitalInput limitSwitch = new DigitalInput(0);
+  private final Intake intake = new Intake(new IntakeIOTalonFX(), limitSwitch);
+  private final ElevatorModuleIO eModuleIO = new ElevatorModuleIO() {
+    
+  };
+  private final Elevator elevator = new Elevator(eModuleIO);
+  
+  
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController controller2 = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -184,6 +202,9 @@ public class RobotContainer {
 
     controller.start().whileTrue(new WristSpeedCommand(wrist, 0.25));
     controller.back().whileTrue(new WristSpeedCommand(wrist, -0.25));
+    controller2.leftBumper().whileTrue(new IntakeSpeedCommand(intake, 0.75,limitSwitch));
+    controller2.rightBumper().whileTrue(elevator1.ElevatorMethodCommand());
+    
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
