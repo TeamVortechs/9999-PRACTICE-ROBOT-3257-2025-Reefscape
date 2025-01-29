@@ -23,6 +23,12 @@ public class Elevator extends SubsystemBase {
 
   private ElevatorModuleIO elevatorModuleIO;
 
+  private static double Stage2 = 20.4999634796;
+  
+  private static double Stage3 = 33.2499634796;
+
+  private static double Stage4 = 72;
+
   private ElevatorModuleIOInputsAutoLogged inputs = new ElevatorModuleIOInputsAutoLogged();
 
   private ProfiledPIDController PID =
@@ -58,7 +64,7 @@ public class Elevator extends SubsystemBase {
     Logger.processInputs("Elevator", inputs);
 
     // calculate the needed position of each elevator
-
+    currentHeight = elevatorModuleIO.getHeightMeters();
     double diffHeight = targetHeight - currentHeight;
 
     if (diffHeight < 0.1) return;
@@ -74,9 +80,9 @@ public class Elevator extends SubsystemBase {
 
   // HELPER
   // gets the total height of all the added modules
-  public double getHeight() {
-    return elevatorModuleIO.getHeightMeters();
-  }
+  //public double getHeight() {
+   // return elevatorModuleIO.getHeightMeters();
+ // }
 
   // GETTER/SETTER(simple)
   // sets the heihgt of the elevator using the pid system
@@ -103,9 +109,9 @@ public class Elevator extends SubsystemBase {
 
   // enum for each level that the elevator could be
   public enum ElevatorLevel {
-    FIRST_LEVEL(1.0),
-    SECOND_LEVEL(2.0),
-    THIRD_LEVEL(3.0);
+    FIRST_LEVEL(Stage2),
+    SECOND_LEVEL(Stage3),
+    THIRD_LEVEL(Stage4);
 
     private double height;
 
