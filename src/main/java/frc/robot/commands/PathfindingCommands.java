@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import java.io.IOException;
+import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
 
 public class PathfindingCommands {
@@ -58,6 +59,12 @@ public class PathfindingCommands {
     }
 
     return AutoBuilder.pathfindThenFollowPath(coralPaths[depotID], pathConstraints);
+  }
+
+  public static Command pathfindToDepotCommand(Supplier<Integer> depotID) {
+    init();
+
+    return AutoBuilder.pathfindThenFollowPath(coralPaths[depotID.get()], pathConstraints);
   }
 
   public static Pose2d getDepotPose(int depotID) {
@@ -117,5 +124,35 @@ public class PathfindingCommands {
     // System.out.println("lowest dist ID: " + lowestDistID);
 
     return lowestDistID;
+  }
+
+  public static Supplier<Integer> getClosestDepotPathSupplier(Supplier<Pose2d> curLocation) {
+
+    init();
+
+    double lowestDist = Double.MAX_VALUE;
+    Integer lowestDistID = 0;
+
+    // System.out.println("pose " + curLocation);
+
+    for (int i = 0; i < coralPaths.length; i++) {
+      Pose2d testPose = coralPaths[i].getPathPoses().get(0);
+
+      double dist = testPose.getTranslation().getDistance(curLocation.get().getTranslation());
+
+      if (dist < lowestDist) {
+        lowestDistID = i;
+        lowestDist = dist;
+      }
+
+      // System.out.println("pose: " + testPose.toString() + " dist " + dist + " id: " +
+      // lowestDistID);
+    }
+
+    // System.out.println("lowest dist ID: " + lowestDistID);
+
+    final Integer finalAns = lowestDistID;
+
+    return () -> finalAns;
   }
 }

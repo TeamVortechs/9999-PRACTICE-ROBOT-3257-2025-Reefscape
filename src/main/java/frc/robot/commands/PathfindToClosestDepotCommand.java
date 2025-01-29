@@ -47,6 +47,11 @@ public class PathfindToClosestDepotCommand extends Command {
     System.out.println(testPose.toString());
     System.out.println("target: " + targetPose2d.toString());
     if (!testPose.equals(targetPose2d)) {
+      if (PathfindingCommands.getClosestDepotPath(testPose) < 0
+          || PathfindingCommands.getClosestDepotPath(testPose) > 5) {
+        System.out.println(
+            "ERROR: index out of bounds (Pathfiding to closest depot depot command, execute function)");
+      }
 
       System.out.println("redid command");
 
