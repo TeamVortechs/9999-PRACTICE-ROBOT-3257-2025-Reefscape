@@ -219,15 +219,30 @@ public class DriveCommands {
     // Construct command
     return Commands.run(
             () -> {
+
+              // variables to ensure that the PID behaves itself and doesn't try
+              // to switch the wheels back and forth rapidly at low speed input
+              double ACCEPTABLE_DEVIATION = 0.05; // acceptable angle deviation in radians
+              double MINIMUM_LINEAR_VELOCITY =
+                  0.1; // minimum magnitude of velocity to exceed (the name's a bit inaccurate)
               // Get linear velocity
+              // if not greater than MINIMUM_LINEAR_VELOCITY then create a new translation2d
+              // (effectively zeroes it out)
+              // get linear magnitude and square it to mimic getLinearVelocityFromJoysticks
+              double linearMagnitude =
+                  MathUtil.applyDeadband(
+                      Math.hypot(xSupplier.getAsDouble(), ySupplier.getAsDouble()), DEADBAND);
+              linearMagnitude = linearMagnitude * linearMagnitude;
               Translation2d linearVelocity =
-                  getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+                  linearMagnitude > MINIMUM_LINEAR_VELOCITY
+                      ? getLinearVelocityFromJoysticks(
+                          xSupplier.getAsDouble(), ySupplier.getAsDouble())
+                      : new Translation2d();
 
               // Calculate angular speed
               // since this is robot centric, the target should be radians deviating from the
               // current position
               // if rotation supplier is greater than ACCEPTABLE_DEVIATION, use PID; else, use zero
-              double ACCEPTABLE_DEVIATION = 0.05; // this is in radians
               double omega =
                   (Math.abs(rotationSupplier.get().getRadians()) > ACCEPTABLE_DEVIATION)
                       ? angleController.calculate(

@@ -240,7 +240,7 @@ public class RobotContainer {
                     new Rotation2d(
                         Units.degreesToRadians(
                             LimelightHelpers.getTX("")
-                                * -1.25)))); // multiplied by arbitrary negative constant to make
+                                * -1.4)))); // multiplied by arbitrary negative constant to make
     // turning stronger without touching other drive PID
     // constants and because rotation is CCW positive on
     // the robot but is not as such on limelight
