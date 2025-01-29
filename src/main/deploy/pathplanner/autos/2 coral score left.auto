@@ -13,12 +13,6 @@
         {
           "type": "path",
           "data": {
-            "pathName": "left coral scoretointake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
             "pathName": "left coral pickup"
           }
         },

@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.8977904040404039,
-        "y": 3.837219769021738
+        "x": 7.402840909090909,
+        "y": 5.691919191919192
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8977904040404034,
-        "y": 3.837219769021738
+        "x": 8.40284090909092,
+        "y": 5.691919191919192
       },
       "isLocked": false,
-      "linkedName": "bottomMidScoring"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.1053750000000004,
-        "y": 4.000624999999999
+        "x": 7.738257575757576,
+        "y": 5.691919191919192
       },
       "prevControl": {
-        "x": 2.1053750000000004,
-        "y": 4.000624999999999
+        "x": 6.738257575757576,
+        "y": 5.691919191919192
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 88.65211271980142
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "algae paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 103.52316065041597
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

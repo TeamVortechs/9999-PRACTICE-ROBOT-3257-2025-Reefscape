@@ -13,12 +13,6 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Mid intaketoscore"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
             "pathName": "mid coral pickup"
           }
         },

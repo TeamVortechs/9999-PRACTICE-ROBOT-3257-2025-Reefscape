@@ -13,12 +13,6 @@
         {
           "type": "path",
           "data": {
-            "pathName": "rightscoretointake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
             "pathName": "right coral pickup"
           }
         },
