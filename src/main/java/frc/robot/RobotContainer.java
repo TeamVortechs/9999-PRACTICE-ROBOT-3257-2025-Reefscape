@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.PathfindingCommands;
+import frc.robot.commands.PathfindToClosestDepotCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -190,12 +191,13 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    controller
-        .leftTrigger()
-        .whileTrue(
-            PathfindingCommands.pathfindToDepotCommand(
-                PathfindingCommands.getClosestDepotPath(drive.getPose())));
-    // Reset gyro to 0° when B button is pressed
+    // controller
+    //     .leftTrigger()
+    //     .whileTrue(
+    //         PathfindingCommands.pathfindToDepotCommand(
+    //             PathfindingCommands.getClosestDepotPath(drive.getPose())));
+
+    // // Reset gyro to 0° when B button is pressed
     controller
         .b()
         .onTrue(

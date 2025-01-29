@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 
@@ -8,6 +7,7 @@ import frc.robot.subsystems.drive.Drive;
 Names
 brief description
  */
+// THIS CLASS WILL BREAK THE ROBOT
 public class PathfindToClosestDepotCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 
@@ -18,9 +18,11 @@ public class PathfindToClosestDepotCommand extends Command {
    */
   private Drive drive;
 
-  private Command command = null;
+  private int targetPoseID = 0;
 
-  private Pose2d targetPose2d = null;
+  private boolean lockedIn = false;
+
+  private Command[] depotPathCommands;
 
   public PathfindToClosestDepotCommand(Drive drive) {
     // addRequirements(null);
@@ -29,15 +31,7 @@ public class PathfindToClosestDepotCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    System.out.println("pose: " + drive.getPose().toString());
-    targetPose2d =
-        PathfindingCommands.getDepotPose(PathfindingCommands.getClosestDepotPath(drive.getPose()));
-    command =
-        PathfindingCommands.pathfindToDepotCommand(
-            PathfindingCommands.getClosestDepotPath(drive.getPose()));
-    command.schedule();
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -68,12 +62,14 @@ public class PathfindToClosestDepotCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    command.end(interrupted);
+    if (lockedIn) {
+      depotPathCommands[targetPoseID].end(interrupted);
+    }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return command.isFinished();
+    return false;
   }
 }
