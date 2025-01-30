@@ -27,49 +27,50 @@ public class PathfindToClosestDepotCommand extends Command {
   public PathfindToClosestDepotCommand(Drive drive) {
     // addRequirements(null);
     this.drive = drive;
+    depotPathCommands = new Command[6];
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    for (int i = 0; i < depotPathCommands.length; i++) {
+      depotPathCommands[i] = PathfindingCommands.pathfindToDepotCommand(i);
+    }
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Pose2d testPose =
-        PathfindingCommands.getDepotPose(PathfindingCommands.getClosestDepotPath(drive.getPose()));
-    System.out.println(testPose.toString());
-    System.out.println("target: " + targetPose2d.toString());
-    if (!testPose.equals(targetPose2d)) {
-      if (PathfindingCommands.getClosestDepotPath(testPose) < 0
-          || PathfindingCommands.getClosestDepotPath(testPose) > 5) {
-        System.out.println(
-            "ERROR: index out of bounds (Pathfiding to closest depot depot command, execute function)");
-      }
+    int curPoseID = PathfindingCommands.getClosestDepotPath(drive.getPose());
 
-      System.out.println("redid command");
+    if (!lockedIn) {
+      targetPoseID = curPoseID;
+      depotPathCommands[targetPoseID].schedule();
+    }
 
-      command =
-          PathfindingCommands.pathfindToDepotCommand(
-              PathfindingCommands.getClosestDepotPath(drive.getPose()));
-
-      targetPose2d =
-          PathfindingCommands.getDepotPose(
-              PathfindingCommands.getClosestDepotPath(drive.getPose()));
+    if (targetPoseID != curPoseID) {
+      // depotPathCommands[targetPoseID].cancel();
+      targetPoseID = curPoseID;
+      depotPathCommands[targetPoseID].schedule();
+      ;
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (lockedIn) {
-      depotPathCommands[targetPoseID].end(interrupted);
-    }
+    depotPathCommands[targetPoseID].cancel();
+
+    // for(int i = 0; i < depotPathCommands.length; i++) {
+    //   depotPathCommands[i].cancel();
+    // }
+
+    lockedIn = false;
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return depotPathCommands[targetPoseID].isFinished();
   }
 }

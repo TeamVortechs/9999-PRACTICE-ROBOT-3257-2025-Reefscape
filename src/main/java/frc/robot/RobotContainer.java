@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.PathfindingCommands;
 import frc.robot.commands.PathfindToClosestDepotCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -42,7 +41,6 @@ import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -153,14 +151,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    controller
-        .leftTrigger()
-        .whileTrue(
-            PathfindingCommands.pathfindToDepotCommand(
-                PathfindingCommands.getClosestDepotPath(drive.getPose())));
-    Supplier<Integer> posInteger =
-        PathfindingCommands.getClosestDepotPathSupplier(() -> drive.getPose());
-    controller.rightTrigger().whileTrue(PathfindingCommands.pathfindToDepotCommand(posInteger));
+    controller.leftTrigger().whileTrue(new PathfindToClosestDepotCommand(drive));
     // Default command, normal field-relative drive
     // new PathPlannerPath(
     //     waypoints,
