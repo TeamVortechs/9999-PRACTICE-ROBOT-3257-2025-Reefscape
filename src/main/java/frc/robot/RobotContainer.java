@@ -47,6 +47,7 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorModuleIO;
 import frc.robot.subsystems.elevator.ElevatorModuleSparkMaxIO;
+import frc.robot.subsystems.elevator.Elevator.ElevatorLevel;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -203,7 +204,9 @@ public class RobotContainer {
     controller.start().whileTrue(new WristSpeedCommand(wrist, 0.25));
     controller.back().whileTrue(new WristSpeedCommand(wrist, -0.25));
     controller2.leftBumper().whileTrue(new IntakeSpeedCommand(intake, 0.75,limitSwitch));
-    controller2.rightBumper().whileTrue(elevator1.ElevatorMethodCommand());
+    controller2.rightBumper().whileTrue(new SetElevatorCommand(ElevatorLevel.FIRST_LEVEL,elevator));
+    controller2.rightTrigger().whileTrue(new SetElevatorCommand(ElevatorLevel.SECOND_LEVEL,elevator));
+    controller2.leftTrigger().whileTrue(new SetElevatorCommand(ElevatorLevel.THIRD_LEVEL,elevator));
     
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(

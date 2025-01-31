@@ -7,7 +7,7 @@ import frc.robot.util.KDoublePref;
 public class KDoublePreferences {
   public static class PElevator {
     // should switch this all to a set value when we finish tuning
-    public static KDoublePref proportional = new KDoublePref("elevator proportional", 1.6);
+    public static KDoublePref proportional = new KDoublePref("elevator proportional", 1);
     public static KDoublePref integral = new KDoublePref("elevator integral", 0.0002);
     public static KDoublePref derivative =
         new KDoublePref("elevator derivative", 0.0); // should be tweaked

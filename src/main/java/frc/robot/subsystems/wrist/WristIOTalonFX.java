@@ -5,10 +5,14 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class WristIOTalonFX implements WristIO {
   private TalonFX arm = new TalonFX(14);
+  private TalonFX rollers = new TalonFX(5);
 
   @Override
-  public void setSpeed(double speed) {
+  public void setArmSpeed(double speed) {
     arm.set(speed);
+  }
+  public void setRollerSpeed(double speed){
+    rollers.set(speed);
   }
 
   @Override

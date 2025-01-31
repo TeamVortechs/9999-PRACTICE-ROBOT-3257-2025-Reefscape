@@ -18,7 +18,7 @@ public interface ElevatorModuleIO {
   public default void updateInputs(ElevatorModuleIOInputs inputs) {}
 
   // sets the elevator height to the given number
-  public default void setSpeed(double height) {}
+  public default void setSpeed(double Speed) {}
 
   // gets the highest possible height of the elevator in radians
   public default double getMaxHeight() {
@@ -27,9 +27,9 @@ public interface ElevatorModuleIO {
 
   // gets the height of the elevator in meters
   public default double getHeightMeters() {
-    CANrange distance = new CANrange(0);
-    double CurrentHeight = distance.getDistance().getValueAsDouble();
-    return CurrentHeight;
+    //CANrange distance = new CANrange(0);
+   // double CurrentHeight = distance.getDistance().getValueAsDouble();
+    return 0;
   }
 
   // reminder for myself to use the given PID stuff

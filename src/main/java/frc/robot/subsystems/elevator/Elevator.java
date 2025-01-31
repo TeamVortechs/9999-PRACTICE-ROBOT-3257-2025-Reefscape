@@ -36,7 +36,7 @@ public class Elevator extends SubsystemBase {
           PElevator.proportional.getValue(),
           PElevator.integral.getValue(),
           PElevator.derivative.getValue(),
-          new TrapezoidProfile.Constraints(targetHeight, currentHeight));
+          new TrapezoidProfile.Constraints(PElevator.speedlimit.getValue(), PElevator.accelerationLimit.getValue()));
 
   public Elevator(ElevatorModuleIO elevatorModuleIO) {
     this.elevatorModuleIO = elevatorModuleIO;
@@ -44,14 +44,7 @@ public class Elevator extends SubsystemBase {
 
   // PID controller so we don't need to do the logic ourselves. It just gets all of it's values from
   // preferences
-  ProfiledPIDController elevatorPID =
-      new ProfiledPIDController(
-          KDoublePreferences.PElevator.proportional.getValue(),
-          KDoublePreferences.PElevator.integral.getValue(),
-          KDoublePreferences.PElevator.derivative.getValue(),
-          new TrapezoidProfile.Constraints(
-              KDoublePreferences.PElevator.speedlimit.getValue(),
-              KDoublePreferences.PElevator.accelerationLimit.getValue()));
+  
 
   // LOGIC
   @Override
@@ -80,9 +73,9 @@ public class Elevator extends SubsystemBase {
 
   // HELPER
   // gets the total height of all the added modules
-  //public double getHeight() {
-   // return elevatorModuleIO.getHeightMeters();
- // }
+  public double getHeight() {
+    return elevatorModuleIO.getHeightMeters();
+ }
 
   // GETTER/SETTER(simple)
   // sets the heihgt of the elevator using the pid system
@@ -104,7 +97,7 @@ public class Elevator extends SubsystemBase {
   // returns wether or not the elevator is currently on it's target or still trying to path to it
   public boolean isOnTarget() {
     // just checks to see if the difference is low enough
-    return Math.abs(currentHeight - targetHeight) < 0.04;
+    return Math.abs(currentHeight - targetHeight) < 0.04 || Math.abs(currentHeight - targetHeight) > 0.04;
   }
 
   // enum for each level that the elevator could be
