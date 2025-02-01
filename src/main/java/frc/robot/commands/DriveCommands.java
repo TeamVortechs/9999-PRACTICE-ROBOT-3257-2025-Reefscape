@@ -26,8 +26,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -271,6 +273,120 @@ public class DriveCommands {
 
         // Reset PID controller when command starts
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+  }
+
+  // fully automatic drive system to center self with target piece and drive into it
+  public static Command LimelightDrive(
+      Drive drive,
+      DoubleSupplier xSupplier,
+      DoubleSupplier ySupplier,
+      Supplier<Rotation2d> rotationSupplier) {
+
+    // Create PID controller
+    ProfiledPIDController angleController =
+        new ProfiledPIDController(
+            ANGLE_KP,
+            0.0,
+            ANGLE_KD,
+            new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
+    angleController.enableContinuousInput(-Math.PI, Math.PI);
+
+    // Construct command
+    return Commands.run(
+            () -> {
+
+              // variables to ensure that the PID behaves itself and doesn't try
+              // to switch the wheels back and forth rapidly at low speed input
+              double ACCEPTABLE_DEVIATION = 0.08; // acceptable angle deviation in radians
+              double MINIMUM_Y_VELOCITY = 0.1; // minimum *magnitude* of velocity
+              double ACTIVATION_ANGLE =
+                  ACCEPTABLE_DEVIATION * 4; // angle in rads when to start going forwards
+              // Get linear velocity
+              // if not greater than MINIMUM_LINEAR_VELOCITY then create a new translation2d
+              // get linear magnitude and square it to mimic getLinearVelocityFromJoysticks
+              //   double linearMagnitude =
+              //       MathUtil.applyDeadband(
+              //           Math.hypot(xSupplier.getAsDouble(), ySupplier.getAsDouble()), DEADBAND);
+              //   linearMagnitude = linearMagnitude * linearMagnitude;
+              //   Translation2d linearVelocity =
+              //       linearMagnitude > MINIMUM_LINEAR_VELOCITY
+              //           ? getLinearVelocityFromJoysticks(
+              //               xSupplier.getAsDouble(), ySupplier.getAsDouble())
+              //           : new Translation2d();
+              // linear velocity to use when ready to activate forward motion
+              // if y supplier is below minimum, then use 0 instead
+              Translation2d preparedLinVel =
+                  ySupplier.getAsDouble() > MINIMUM_Y_VELOCITY
+                      ? getLinearVelocityFromJoysticks(
+                          xSupplier.getAsDouble(), ySupplier.getAsDouble())
+                      : getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), 0);
+
+              // Calculate angular speed
+              // if rotation supplier is greater than ACCEPTABLE_DEVIATION, use PID; else, use zero
+              double omega =
+                  (Math.abs(rotationSupplier.get().getRadians()) > ACCEPTABLE_DEVIATION)
+                      ? angleController.calculate(
+                          drive.getRotation().getRadians(),
+                          drive.getRotation().getRadians() + rotationSupplier.get().getRadians())
+                      : 0;
+
+              // set chassis speeds and run them
+              // if within acceptable turn and lateral movement, use preparedlinvel (forward
+              // movement)
+              // else, use only y component and set x (forward) to 0
+              ChassisSpeeds speeds;
+              if (Math.abs(omega) < ACTIVATION_ANGLE) {
+                speeds =
+                    new ChassisSpeeds(
+                        preparedLinVel.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+                        preparedLinVel.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+                        omega);
+              } else {
+                speeds =
+                    new ChassisSpeeds(
+                        0, preparedLinVel.getY() * drive.getMaxLinearSpeedMetersPerSec(), omega);
+              }
+              // debug putters
+              SmartDashboard.putNumber("prepped x: ", preparedLinVel.getX());
+              SmartDashboard.putNumber("chosen y: ", preparedLinVel.getY());
+              SmartDashboard.putNumber("chosen omega: ", omega);
+              System.out.println(
+                  "speed variables: "
+                      + preparedLinVel.getX()
+                      + " "
+                      + preparedLinVel.getY()
+                      + " "
+                      + omega);
+              System.out.println(
+                  "input variables: " + xSupplier.getAsDouble() + " " + ySupplier.getAsDouble());
+              drive.runVelocity(speeds);
+            },
+            drive)
+
+        // Reset PID controller when command starts
+        .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+  }
+
+  /*
+   * command that chooses whether or not to use limelight drive
+   * if limelight TA is greater than 0 (meaning a target is there) then use limelight drive
+   * otherwise, return the normal joystick drive command
+   */
+  public static Command ChooseIfLimelightDrive(
+      Drive drive,
+      DoubleSupplier xSupplier,
+      DoubleSupplier ySupplier,
+      DoubleSupplier omegaSupplier,
+      DoubleSupplier limelightXSupplier,
+      DoubleSupplier limelightYSupplier,
+      Supplier<Rotation2d> limelightRotationSupplier) {
+
+    if (LimelightHelpers.getTA("") > 0) {
+      return LimelightDrive(
+          drive, limelightXSupplier, limelightYSupplier, limelightRotationSupplier);
+    } else {
+      return joystickDrive(drive, xSupplier, ySupplier, omegaSupplier);
+    }
   }
 
   /**

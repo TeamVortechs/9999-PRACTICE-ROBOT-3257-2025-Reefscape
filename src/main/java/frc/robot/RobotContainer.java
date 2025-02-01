@@ -88,8 +88,8 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    VisionConstants.camera0Name, VisionConstants.robotToCamera0)
-                // new VisionIOPhotonVision(camera1Name, robotToCamera1)
+                    VisionConstants.arducam0Name, VisionConstants.robotToArducam0)
+                // , new VisionIOPhotonVision(arducam1Name, robotToArducam1)
                 );
         break;
 
@@ -106,7 +106,9 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(
-                    VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose));
+                    VisionConstants.arducam0Name, VisionConstants.robotToArducam0, drive::getPose),
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.arducam1Name, VisionConstants.robotToArducam1, drive::getPose));
         break;
 
       default:
@@ -118,11 +120,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        vision =
-            new Vision(
-                drive::addVisionMeasurement, new VisionIO() {}
-                // new VisionIO() {}
-                );
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
 
@@ -215,41 +213,61 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // // add a free disturbance when pressing the y button to test vision
-    // var disturbance =
-    //     new Transform2d(new Translation2d(1.0, 1.0), new Rotation2d(0.17 * 2 * Math.PI));
+    // tells robot to drive in robot-centric mode and to lock onto the current limelight target
+    // if tx == 0, then no rotation is made
     // controller
     //     .y()
-    //     .onTrue(
-    //         Commands.runOnce(() -> drive.setPose(drive.getPose().plus(disturbance)))
-    //             .ignoringDisable(true));
+    //     .whileTrue( // this'll probably be fine.
+    //         DriveCommands.RobotCentricDriveWhileTurningToAngle(
+    //             drive,
+    //             () -> -controller.getLeftY(),
+    //             () ->
+    //                 -controller
+    //                     .getLeftX(), // limelight outputs in degrees, so using radians is a much
+    //             // safer choice
+    //             () ->
+    //                 new Rotation2d(
+    //                     Units.degreesToRadians(
+    //                         LimelightHelpers.getTX("")
+    //                             * -1.4)))); // multiplied by arbitrary negative constant to make
+    // // turning stronger without touching other drive PID
+    // // constants and because rotation is CCW positive on
+    // // the robot but is not as such on limelight
 
-    // tells robot to drive in robot-centric mode and to lock onto the current limelight target
-    // if tx = 0, then no rotation is made
+    // full limelight robot-centric movement to lock onto current target
+    // !! broken !! does not  use limelightdrive to laterally drive robot
     controller
         .y()
-        .whileTrue( // this'll probably be fine.
-            DriveCommands.RobotCentricDriveWhileTurningToAngle(
+        .whileTrue(
+            DriveCommands.ChooseIfLimelightDrive(
                 drive,
                 () -> -controller.getLeftY(),
-                () ->
-                    -controller
-                        .getLeftX(), // limelight outputs in degrees, so using radians is a much
-                // safer choice
-                () ->
-                    new Rotation2d(
-                        Units.degreesToRadians(
-                            LimelightHelpers.getTX("")
-                                * -1.4)))); // multiplied by arbitrary negative constant to make
-    // turning stronger without touching other drive PID
-    // constants and because rotation is CCW positive on
-    // the robot but is not as such on limelight
-    // Commands.run(
-    //     () ->
-    //         SmartDashboard.putNumber(
-    //             "Trying to turn:", Units.degreesToRadians(LimelightHelpers.getTX(""))),
-    //     vision));
+                () -> -controller.getLeftX(),
+                () -> -controller.getRightX(), // end regular drive input
+                () -> getLLDTranslationX(),
+                () -> getLLDTranslationY(),
+                () -> getLLDOmega()) // end limelight inputs
+            );
   } // end configure bindings
+
+  // helper functions for limelight drive
+  // this is really dumb but i don't know how else to do this
+  // 0-1? double scaled like a joystick to feed into the limelight drive
+  private double getLLDTranslationX() {
+    return 0.8;
+  }
+  // scaled arbitrary measure to laterally move the robot
+  private double getLLDTranslationY() {
+    double scaleFactor = 1.4; // arbitrary constant to make movement stronger
+    return Units.degreesToRadians(LimelightHelpers.getTX("") * -1) * scaleFactor;
+  }
+  // scaled arbitrary measure to turn the robot towards the target
+  private Rotation2d getLLDOmega() {
+    double scaleFactor = 1.6; // arbitrary constant to make turning stronger
+    return new Rotation2d(
+        Units.degreesToRadians( // *-1 because robot is CCW+ while limelight is CW+
+            LimelightHelpers.getTX("") * -1 * scaleFactor));
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
