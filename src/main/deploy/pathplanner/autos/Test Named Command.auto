@@ -7,19 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Coral Score Mid"
+            "pathName": "TestNamedCommand"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "test"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "2nd waypoint test"
           }
         }
       ]

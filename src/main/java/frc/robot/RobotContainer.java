@@ -14,9 +14,8 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -27,6 +26,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
@@ -45,9 +45,6 @@ import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristIOTalonFX;
-import java.io.IOException;
-import java.util.List;
-import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -94,6 +91,8 @@ public class RobotContainer {
                     VisionConstants.camera0Name, VisionConstants.robotToCamera0)
                 // new VisionIOPhotonVision(camera1Name, robotToCamera1)
                 );
+        registerNamedCommands();
+
         break;
 
       case SIM:
@@ -110,6 +109,8 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(
                     VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose));
+
+        registerNamedCommands();
         break;
 
       default:
@@ -126,6 +127,8 @@ public class RobotContainer {
                 drive::addVisionMeasurement, new VisionIO() {}
                 // new VisionIO() {}
                 );
+
+        registerNamedCommands();
         break;
     }
 
@@ -161,31 +164,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
 
-    List<Waypoint> waypoints =
-        PathPlannerPath.waypointsFromPoses(
-            new Pose2d(1, 0, Rotation2d.fromDegrees(0)),
-            new Pose2d(0, 1, Rotation2d.fromDegrees(1)));
-
-    PathPlannerPath path = null;
-    // new PathPlannerPath(
-    //     waypoints,
-    //     pathConstraints,
-    //     null,
-    //     new GoalEndState(0.0, Rotation2d.fromDegrees(0)),
-    //     false);
-
-    try {
-      path = PathPlannerPath.fromPathFile("CoralFeed");
-    } catch (IOException e) {
-      System.out.println("IO exception");
-    } catch (ParseException e) {
-      System.out.println("parse exception ");
-    }
-
     controller.start().whileTrue(new WristSpeedCommand(wrist, 0.5));
-
-    controller.rightTrigger().whileTrue(AutoBuilder.pathfindThenFollowPath(path, pathConstraints));
-    controller.leftTrigger().whileTrue(AutoBuilder.pathfindToPose(new Pose2d(), pathConstraints));
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -193,6 +172,12 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
+
+    controller
+        .rightTrigger()
+        .whileTrue(
+        AutoBuilder.pathfindToPose(
+                new Pose2d(7.569, 4, Rotation2d.fromDegrees(180)), pathConstraints));
 
     // Lock to 0° when A button is held
     controller
@@ -235,6 +220,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  private void registerNamedCommands() {
+    NamedCommands.registerCommand("test", new PrintCommand("testing"));
   }
 
   //   public void sendVisionMeasurement() {

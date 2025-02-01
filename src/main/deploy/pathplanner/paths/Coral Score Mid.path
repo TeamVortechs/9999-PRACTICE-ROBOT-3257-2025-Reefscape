@@ -20,26 +20,21 @@
         "y": 4.0
       },
       "prevControl": {
-        "x": 6.332625,
-        "y": 4.020125
+        "x": 6.3330914915133025,
+        "y": 4.0
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "midcoralscoretop"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.0,
-      "rotationDegrees": 91.33645939912677
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.25,
-    "maxAcceleration": 0.75,
+    "maxVelocity": 0.75,
+    "maxAcceleration": 0.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -47,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -179.74007638102225
   },
   "reversed": false,
   "folder": null,
