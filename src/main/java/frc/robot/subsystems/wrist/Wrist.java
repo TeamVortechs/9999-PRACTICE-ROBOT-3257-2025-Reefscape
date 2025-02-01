@@ -58,8 +58,9 @@ public class Wrist extends SubsystemBase {
   }
 
   public boolean isOnTarget(){
-    return Math.abs(targetAngle - CurrentAngle) > 0.1 ||  Math.abs(targetAngle - CurrentAngle) < 0.1;
+    return  Math.abs(targetAngle - CurrentAngle) < 0.1;
   }
+  //Math.abs(targetAngle - CurrentAngle) > 0.1 || 
 
   public void setBraked(boolean braked) {
     wristIO.setBraked(braked);
@@ -89,8 +90,8 @@ public class Wrist extends SubsystemBase {
 
     private double angle;
 
-    private WristAngle(double angle) {
-      this.angle = angle;
+    private WristAngle(double angleRad) {
+      this.angle = angleRad;
     }
 
     public double getAngle() {
