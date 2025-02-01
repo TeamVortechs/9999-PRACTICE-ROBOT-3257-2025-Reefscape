@@ -15,8 +15,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -31,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.WristSpeedCommand;
+import frc.robot.commands.PathfindToClosestDepotCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -45,9 +44,6 @@ import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristIOTalonFX;
-import java.io.IOException;
-import java.util.List;
-import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -72,8 +68,9 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
+  // pathconstraints for pathplanner paths
   private final PathConstraints pathConstraints =
-      new PathConstraints(0.75, 0.5, Units.degreesToRadians(540), Units.degreesToRadians(720));
+      new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -159,14 +156,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    controller.leftTrigger().whileTrue(new PathfindToClosestDepotCommand(drive));
     // Default command, normal field-relative drive
-
-    List<Waypoint> waypoints =
-        PathPlannerPath.waypointsFromPoses(
-            new Pose2d(1, 0, Rotation2d.fromDegrees(0)),
-            new Pose2d(0, 1, Rotation2d.fromDegrees(1)));
-
-    PathPlannerPath path = null;
     // new PathPlannerPath(
     //     waypoints,
     //     pathConstraints,
@@ -174,18 +166,7 @@ public class RobotContainer {
     //     new GoalEndState(0.0, Rotation2d.fromDegrees(0)),
     //     false);
 
-    try {
-      path = PathPlannerPath.fromPathFile("CoralFeed");
-    } catch (IOException e) {
-      System.out.println("IO exception");
-    } catch (ParseException e) {
-      System.out.println("parse exception ");
-    }
-
-    controller.start().whileTrue(new WristSpeedCommand(wrist, 0.5));
-
-    controller.rightTrigger().whileTrue(AutoBuilder.pathfindThenFollowPath(path, pathConstraints));
-    controller.leftTrigger().whileTrue(AutoBuilder.pathfindToPose(new Pose2d(), pathConstraints));
+    // makes a path from the robot to the closest path and runs it
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -207,7 +188,13 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Reset gyro to 0° when B button is pressed
+    // controller
+    //     .leftTrigger()
+    //     .whileTrue(
+    //         PathfindingCommands.pathfindToDepotCommand(
+    //             PathfindingCommands.getClosestDepotPath(drive.getPose())));
+
+    // // Reset gyro to 0° when B button is pressed
     controller
         .b()
         .onTrue(
