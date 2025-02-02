@@ -1,13 +1,13 @@
-package frc.robot.commands;
+package frc.robot.commands.communication;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.drive.Drive;
 
 /*
 Names
 brief description
  */
-public class SetArmNeutralMode extends Command {
+public class PrintCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 
   /**
@@ -15,24 +15,23 @@ public class SetArmNeutralMode extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  private boolean mode;
+  private String output;
 
-  private Wrist wrist;
-
-  public SetArmNeutralMode(boolean mode, Wrist wrist) {
-    this.mode = mode;
-    this.wrist = wrist;
+  public PrintCommand(String output) {
+    // addRequirements(null);
+    this.output = output;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    wrist.setBraked(mode);
+    System.out.println(output);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+  }
 
   // Called once the command ends or is interrupted.
   @Override

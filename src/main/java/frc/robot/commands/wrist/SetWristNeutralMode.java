@@ -1,13 +1,13 @@
-package frc.robot.commands;
+package frc.robot.commands.wrist;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.wrist.Wrist;
 
 /*
 Names
 brief description
  */
-public class TestCommand extends Command {
+public class SetWristNeutralMode extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 
   /**
@@ -15,22 +15,24 @@ public class TestCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  private Drive drive;
+  private boolean mode;
 
-  public TestCommand(Drive drive) {
-    // addRequirements(null);
-    this.drive = drive;
+  private Wrist wrist;
+
+  public SetWristNeutralMode(boolean mode, Wrist wrist) {
+    this.mode = mode;
+    this.wrist = wrist;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    wrist.setBraked(mode);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    System.out.println(PathfindingCommands.getClosestDepotPath(drive.getPose()));
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -39,6 +41,6 @@ public class TestCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }
