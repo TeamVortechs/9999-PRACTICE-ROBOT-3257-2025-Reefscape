@@ -28,10 +28,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.ScoringCommands;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.PathfindToClosestDepotCommand;
+import frc.robot.commands.drive.PathfindingCommands;
 import frc.robot.commands.elevator.SetElevatorCommand;
 import frc.robot.commands.intake.IntakeSpeedCommand;
+import frc.robot.commands.misc.ControllerRumbleCommand;
 import frc.robot.commands.wrist.SetWristRollerSpeed;
 import frc.robot.commands.wrist.WristSetPosCommand;
 import frc.robot.generated.TunerConstants;
@@ -186,10 +189,38 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
-
+        
+        //SCORING
+        //command to pathfind the robot to the nearest depot
+        controller.leftTrigger().whileTrue(new PathfindToClosestDepotCommand(drive));
     
-    //command to pathfind the robot to the nearest depot
-    controller.leftTrigger().whileTrue(new PathfindToClosestDepotCommand(drive));
+        //moves the scoring mechanism to level 1 then rumbles controller to signify it is there on hold
+        controller.a().whileTrue(ScoringCommands.prepScoreCommand(1, elevator, wrist).andThen(new ControllerRumbleCommand(10, 1, controller)));
+        
+        //scores the mechanism on release(will finish moving if needed)
+        controller.a().onFalse(ScoringCommands.scoreCommand(1, elevator, wrist));
+
+        //rest of scoring
+        controller.b().whileTrue(ScoringCommands.prepScoreCommand(2, elevator, wrist).andThen(new ControllerRumbleCommand(10, 1, controller)));
+        controller.b().onFalse(ScoringCommands.scoreCommand(2, elevator, wrist));
+        controller.y().whileTrue(ScoringCommands.prepScoreCommand(3, elevator, wrist).andThen(new ControllerRumbleCommand(10, 1, controller)));
+        controller.y().onFalse(ScoringCommands.scoreCommand(3, elevator, wrist));
+
+        //INTAKING
+                //moves the robot to -126 so it can push up against the intake
+                controller
+                .x()
+                .whileTrue(
+                    DriveCommands.joystickDriveAtAngle(
+                        drive,
+                        () -> -controller.getLeftY(),
+                        () -> -controller.getLeftX(),
+                        () -> Rotation2d.fromDegrees(-126)));
+        
+        //pathfinds the robot to the intake with the right rotation so it can be fed. Also preps for the intake at the same time
+        controller.rightTrigger().whileTrue(PathfindingCommands.pathfindToIntakeCommand().alongWith(ScoringCommands.prepForStationIntakeCommand(elevator, wrist)));
+
+
     // Default command, normal field-relative drive
     // new PathPlannerPath(
     //     waypoints,

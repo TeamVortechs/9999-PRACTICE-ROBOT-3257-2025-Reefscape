@@ -12,6 +12,9 @@ import org.json.simple.parser.ParseException;
 
 public class PathfindingCommands {
   private static PathPlannerPath[] coralPaths = new PathPlannerPath[1];
+  private static PathPlannerPath intakePath = null;
+
+
   private static boolean initialized = false;
 
   private static final PathConstraints pathConstraints =
@@ -34,6 +37,8 @@ public class PathfindingCommands {
       coralPaths[4] = PathPlannerPath.fromPathFile("CoralFeed5");
       coralPaths[5] = PathPlannerPath.fromPathFile("CoralFeed6");
 
+      intakePath = PathPlannerPath.fromPathFile("IntakeFeed");
+
       for (int i = 0; i < coralPaths.length; i++) {
         System.out.println(coralPaths[i].name);
       }
@@ -45,6 +50,10 @@ public class PathfindingCommands {
       System.out.println(
           "Could not load the pathplanner coral paths from the file, Parse exception");
     }
+  }
+
+  public static Command pathfindToIntakeCommand() {
+    return AutoBuilder.pathfindThenFollowPath(intakePath, pathConstraints);
   }
 
   // returns the command that pathfinds the robot to the specific depot id

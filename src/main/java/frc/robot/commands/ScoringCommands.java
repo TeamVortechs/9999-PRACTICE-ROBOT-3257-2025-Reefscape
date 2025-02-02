@@ -16,4 +16,8 @@ public class ScoringCommands {
     public static Command scoreCommand(int level, Elevator elevator, Wrist wrist) {
         return new WaitCommand(0.01);
     }
+
+    public static Command prepForStationIntakeCommand(Elevator elevator, Wrist wrist) {
+        return new WaitCommand(1);
+    }
 }
