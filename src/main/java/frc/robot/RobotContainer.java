@@ -179,6 +179,16 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
+    //sets drive control to joysticks
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -controller.getLeftY(),
+            () -> -controller.getLeftX(),
+            () -> -controller.getRightX()));
+
+    
+    //command to pathfind the robot to the nearest depot
     controller.leftTrigger().whileTrue(new PathfindToClosestDepotCommand(drive));
     // Default command, normal field-relative drive
     // new PathPlannerPath(
@@ -189,26 +199,21 @@ public class RobotContainer {
     //     false);
 
     // makes a path from the robot to the closest path and runs it
+    
+    //DEFAULT CODE:
 
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+    // // Lock to 0° when A button is held
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -controller.getLeftY(),
+    //             () -> -controller.getLeftX(),
+    //             () -> new Rotation2d()));
 
-    // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
-
-    // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // // Switch to X pattern when X button is pressed
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // controller
     //     .leftTrigger()
@@ -217,24 +222,24 @@ public class RobotContainer {
     //             PathfindingCommands.getClosestDepotPath(drive.getPose())));
 
     // // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    // controller
+    //     .b()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
 
-    // add a free disturbance when pressing the y button to test vision
-    var disturbance =
-        new Transform2d(new Translation2d(1.0, 1.0), new Rotation2d(0.17 * 2 * Math.PI));
-    controller
-        .y()
-        .onTrue(
-            Commands.runOnce(() -> drive.setPose(drive.getPose().plus(disturbance)))
-                .ignoringDisable(true));
+    // // add a free disturbance when pressing the y button to test vision
+    // var disturbance =
+    //     new Transform2d(new Translation2d(1.0, 1.0), new Rotation2d(0.17 * 2 * Math.PI));
+    // controller
+    //     .y()
+    //     .onTrue(
+    //         Commands.runOnce(() -> drive.setPose(drive.getPose().plus(disturbance)))
+    //             .ignoringDisable(true));
   } // end configure bindings
 
   /**
