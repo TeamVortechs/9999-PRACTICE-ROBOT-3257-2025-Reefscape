@@ -56,11 +56,11 @@ public class Elevator extends SubsystemBase {
     elevatorModuleIO.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
 
+    if(isOnTarget) return;
+
     // calculate the needed position of each elevator
     currentHeight = elevatorModuleIO.getHeightMeters();
     double diffHeight = targetHeight - currentHeight;
-
-    if (diffHeight < 0.1) return;
 
     double elevatorSpeed = PID.calculate(diffHeight);
 

@@ -42,11 +42,11 @@ public class Wrist extends SubsystemBase {
     // advantageKit inputs updating
     wristIO.updateInputs(inputsAutoLogged);
     Logger.processInputs("Wrist", inputsAutoLogged);
+
+    if(isOnTarget()) return;
     
     CurrentAngle = wristIO.getAngleRad();
     double diffHeight = Math.abs(targetAngle - CurrentAngle);
-
-    if (diffHeight < 0.1) return;
 
     double wristSpeed = PID.calculate(diffHeight);
 
