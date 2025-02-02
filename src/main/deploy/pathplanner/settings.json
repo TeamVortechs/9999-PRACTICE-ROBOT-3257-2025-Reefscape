@@ -4,7 +4,7 @@
   "holonomicMode": true,
   "pathFolders": [
     "CoralFeed",
-    "Simple paths"
+    "algae paths"
   ],
   "autoFolders": [],
   "defaultMaxVel": 1.25,
