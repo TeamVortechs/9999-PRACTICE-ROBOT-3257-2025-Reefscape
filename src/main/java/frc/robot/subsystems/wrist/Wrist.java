@@ -17,9 +17,7 @@ public class Wrist extends SubsystemBase {
 
   private static double stageAngle = Math.toRadians(114.738651129);
   public static double intakeAngle = Math.toRadians(140);
-  private static double Stage2angle = Math.toRadians(90);
-
-  
+  private static double Stage2angle = Math.toRadians(90);   
 
   private double CurrentAngle = 0;
 

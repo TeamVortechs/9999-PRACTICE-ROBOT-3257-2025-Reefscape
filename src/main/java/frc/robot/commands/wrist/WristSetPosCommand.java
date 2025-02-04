@@ -28,6 +28,8 @@ public class WristSetPosCommand extends Command {
     // addRequirements(null);
     this.wrist = wrist;
     this.targetAngle= angle;
+
+    addRequirements(wrist);
   }
 
   public WristSetPosCommand(Wrist wrist, WristAngle wristangle){

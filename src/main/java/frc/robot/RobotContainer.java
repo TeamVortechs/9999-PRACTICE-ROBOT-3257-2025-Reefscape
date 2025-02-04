@@ -206,6 +206,8 @@ public class RobotContainer {
         controller.y().whileTrue(ScoringCommands.prepScoreCommand(3, elevator, wrist).andThen(new ControllerRumbleCommand(10, 1, controller)));
         controller.y().onFalse(ScoringCommands.scoreCommand(3, elevator, wrist));
 
+        controller.y().
+
         //INTAKING
                 //moves the robot to -126 so it can push up against the intake
                 controller

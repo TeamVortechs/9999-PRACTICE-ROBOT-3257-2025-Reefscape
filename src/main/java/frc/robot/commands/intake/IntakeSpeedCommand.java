@@ -25,6 +25,8 @@ public class IntakeSpeedCommand extends Command {
     this.intake = intake;
     this.speed = speed;
     this.limitSwitch = limitSwitch;
+
+    addRequirements(intake);
   }
 
   // Called when the command is initially scheduled.

@@ -9,6 +9,7 @@ import frc.robot.subsystems.wrist.Wrist;
 public class ScoringCommands {
     //WPI command the moves the arm into position for scoring but dosn't actually score yet
     public static Command prepScoreCommand(int level, Elevator elevator, Wrist wrist) {
+        //
         return new WaitCommand(1);
     }
 
