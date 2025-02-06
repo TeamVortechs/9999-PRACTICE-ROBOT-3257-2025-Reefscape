@@ -12,10 +12,11 @@ import org.json.simple.parser.ParseException;
 
 public class PathfindingCommands {
   private static PathPlannerPath[] coralPaths = new PathPlannerPath[1];
+  private static PathPlannerPath coralFeedPath = null;
   private static boolean initialized = false;
 
   private static final PathConstraints pathConstraints =
-      new PathConstraints(0.75, 0.5, Units.degreesToRadians(540), Units.degreesToRadians(720));
+      new PathConstraints(2.25, 1.75, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
   // creates the array of paths from hardcode path files
   private static void init() {
@@ -33,6 +34,8 @@ public class PathfindingCommands {
       coralPaths[3] = PathPlannerPath.fromPathFile("CoralFeed4");
       coralPaths[4] = PathPlannerPath.fromPathFile("CoralFeed5");
       coralPaths[5] = PathPlannerPath.fromPathFile("CoralFeed6");
+
+      coralFeedPath = PathPlannerPath.fromPathFile("CoralIntake");
 
       for (int i = 0; i < coralPaths.length; i++) {
         System.out.println(coralPaths[i].name);
@@ -65,6 +68,12 @@ public class PathfindingCommands {
     init();
 
     return AutoBuilder.pathfindThenFollowPath(coralPaths[depotID.get()], pathConstraints);
+  }
+
+  public static Command pathfindToIntakeCommand() {
+    init();
+
+    return AutoBuilder.pathfindThenFollowPath(coralFeedPath, pathConstraints);
   }
 
   public static Pose2d getDepotPose(int depotID) {

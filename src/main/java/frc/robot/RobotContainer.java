@@ -17,8 +17,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -27,8 +25,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.ControllerVibrateCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.PathfindToClosestDepotCommand;
+import frc.robot.commands.PathfindingCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -69,7 +69,7 @@ public class RobotContainer {
 
   // pathconstraints for pathplanner paths
   private final PathConstraints pathConstraints =
-      new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+      new PathConstraints(0.5, 0.75, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -157,6 +157,27 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     controller.leftTrigger().whileTrue(new PathfindToClosestDepotCommand(drive));
+
+    controller.a().onTrue(new ControllerVibrateCommand(controller, 10, 1));
+    controller.a().onFalse(new ControllerVibrateCommand(controller, 10, 1));
+
+    controller.b().onTrue(new ControllerVibrateCommand(controller, 10, 1));
+    controller.b().onFalse(new ControllerVibrateCommand(controller, 10, 1));
+
+    controller.y().onTrue(new ControllerVibrateCommand(controller, 10, 1));
+    controller.y().onFalse(new ControllerVibrateCommand(controller, 10, 1));
+
+    controller.rightTrigger().whileTrue(PathfindingCommands.pathfindToIntakeCommand());
+
+    controller
+        .x()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -controller.getLeftY() * 1.5,
+                () -> -controller.getLeftX() * 1.5,
+                () -> Rotation2d.fromDegrees(-127)));
+
     // Default command, normal field-relative drive
     // new PathPlannerPath(
     //     waypoints,
@@ -175,17 +196,17 @@ public class RobotContainer {
             () -> -controller.getRightX()));
 
     // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -controller.getLeftY(),
+    //             () -> -controller.getLeftX(),
+    //             () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // controller
     //     .leftTrigger()
@@ -195,7 +216,7 @@ public class RobotContainer {
 
     // // Reset gyro to 0° when B button is pressed
     controller
-        .b()
+        .rightBumper()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -204,14 +225,20 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // add a free disturbance when pressing the y button to test vision
-    var disturbance =
-        new Transform2d(new Translation2d(1.0, 1.0), new Rotation2d(0.17 * 2 * Math.PI));
     controller
-        .y()
-        .onTrue(
-            Commands.runOnce(() -> drive.setPose(drive.getPose().plus(disturbance)))
-                .ignoringDisable(true));
+        .leftBumper()
+        .whileTrue(
+            AutoBuilder.pathfindToPose(
+                new Pose2d(7.584, 1.918, Rotation2d.fromDegrees(180)), pathConstraints));
+
+    // add a free disturbance when pressing the y button to test vision
+    // var disturbance =
+    //     new Transform2d(new Translation2d(1.0, 1.0), new Rotation2d(0.17 * 2 * Math.PI));
+    // controller
+    //     .y()
+    //     .onTrue(
+    //         Commands.runOnce(() -> drive.setPose(drive.getPose().plus(disturbance)))
+    //             .ignoringDisable(true));
   } // end configure bindings
 
   /**
