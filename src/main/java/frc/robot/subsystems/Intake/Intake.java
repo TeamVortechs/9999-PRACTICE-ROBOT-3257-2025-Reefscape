@@ -12,13 +12,13 @@ public class Intake extends SubsystemBase {
     this.intakeIO = intakeIO;
     this.limitswitch = limitswitch;
   }
-  public void SetMotorSpeed(double speed){
+
+  public void SetMotorSpeed(double speed) {
     intakeIO.setMotorSpeed(speed);
   }
-  public boolean isDetected(DigitalInput limitswitch){
+
+  public boolean isDetected(DigitalInput limitswitch) {
     boolean isdetected = limitswitch.get();
     return isdetected;
   }
-
-
 }

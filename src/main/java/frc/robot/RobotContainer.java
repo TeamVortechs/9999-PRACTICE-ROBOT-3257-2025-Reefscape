@@ -31,13 +31,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.IntakeSpeedCommand;
-import frc.robot.commands.SetElevatorCommand;
-import frc.robot.commands.SetWristRollerSpeed;
-import frc.robot.commands.WristSetPosCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Intake.Intake;
-import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -47,8 +42,6 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorModuleIO;
-import frc.robot.subsystems.elevator.ElevatorModuleSparkMaxIO;
-import frc.robot.subsystems.elevator.Elevator.ElevatorLevel;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -56,8 +49,6 @@ import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristIOTalonFX;
-import frc.robot.subsystems.wrist.Wrist.WristAngle;
-
 import java.io.IOException;
 import java.util.List;
 import org.json.simple.parser.ParseException;
@@ -80,12 +71,9 @@ public class RobotContainer {
   private final Wrist wrist = new Wrist(new WristIOTalonFX());
   DigitalInput limitSwitch = new DigitalInput(0);
   private final Intake intake = new Intake(new IntakeIOTalonFX(), limitSwitch);
-  private final ElevatorModuleIO eModuleIO = new ElevatorModuleIO() {
-    
-  };
+  private final ElevatorModuleIO eModuleIO = new ElevatorModuleIO() {};
+
   private final Elevator elevator = new Elevator(eModuleIO);
-  
-  
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -204,14 +192,26 @@ public class RobotContainer {
       System.out.println("parse exception ");
     }
 
-    controller.start().whileTrue(new WristSetPosCommand(wrist, 0.25));
-    controller.back().whileTrue(new WristSetPosCommand(wrist, -0.25));
-    controller2.leftBumper().whileTrue(new IntakeSpeedCommand(intake, 0.75,limitSwitch));
-    controller2.rightBumper().whileTrue(new SetElevatorCommand(ElevatorLevel.FIRST_LEVEL,elevator));
-    controller2.rightTrigger().whileTrue(new SetElevatorCommand(ElevatorLevel.SECOND_LEVEL,elevator));
-    controller2.leftTrigger().whileTrue(new SetElevatorCommand(ElevatorLevel.THIRD_LEVEL,elevator));
-    controller2.a().whileTrue(new WristSetPosCommand(wrist, WristAngle.INTAKE_ANGLE).andThen(new SetWristRollerSpeed(wrist, -0.4)));
-    
+    // controller.start().whileTrue(new WristSetPosCommand(wrist, 0.25));
+    //  controller.back().whileTrue(new WristSetPosCommand(wrist, -0.25));
+    // controller2.leftBumper().whileTrue(new IntakeSpeedCommand(intake, 0.75, limitSwitch));
+    controller2.b().whileTrue(new Elevator(eModuleIO).runCurrentZeroing());
+
+    /*  controller2
+            .rightBumper()
+            .whileTrue(new SetElevatorCommand(ElevatorLevel.FIRST_LEVEL, elevator));
+        controller2
+            .rightTrigger()
+            .whileTrue(new SetElevatorCommand(ElevatorLevel.SECOND_LEVEL, elevator));
+        controller2
+            .leftTrigger()
+            .whileTrue(new SetElevatorCommand(ElevatorLevel.THIRD_LEVEL, elevator));
+        controller2
+            .a()
+            .whileTrue(
+                new WristSetPosCommand(wrist, WristAngle.INTAKE_ANGLE)
+                    .andThen(new SetWristRollerSpeed(wrist, -0.4)));
+    /* */
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,

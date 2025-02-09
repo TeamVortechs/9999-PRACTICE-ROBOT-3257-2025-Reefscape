@@ -11,7 +11,8 @@ public class WristIOTalonFX implements WristIO {
   public void setArmSpeed(double speed) {
     arm.set(speed);
   }
-  public void setRollerSpeed(double speed){
+
+  public void setRollerSpeed(double speed) {
     rollers.set(speed);
   }
 

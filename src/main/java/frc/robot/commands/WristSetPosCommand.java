@@ -3,7 +3,6 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.Wrist.WristAngle;
-import frc.robot.subsystems.wrist.WristIO;
 
 /*
 Names
@@ -17,8 +16,6 @@ public class WristSetPosCommand extends Command {
 
   private static WristAngle wristangle;
 
-
-
   /**
    * Creates a new ExampleCommand.
    *
@@ -27,10 +24,10 @@ public class WristSetPosCommand extends Command {
   public WristSetPosCommand(Wrist wrist, double angle) {
     // addRequirements(null);
     this.wrist = wrist;
-    this.targetAngle= angle;
+    this.targetAngle = angle;
   }
 
-  public WristSetPosCommand(Wrist wrist, WristAngle wristangle){
+  public WristSetPosCommand(Wrist wrist, WristAngle wristangle) {
     this.wrist = wrist;
     this.targetAngle = wristangle.getAngle();
   }
@@ -63,11 +60,11 @@ public class WristSetPosCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(wrist.isOnTarget()) {
+    if (wrist.isOnTarget()) {
       return true;
     }
 
-    if(Math.abs(targetAngle - wrist.getTargetAngle()) > 0.001) {
+    if (Math.abs(targetAngle - wrist.getTargetAngle()) > 0.001) {
       return true;
     }
 

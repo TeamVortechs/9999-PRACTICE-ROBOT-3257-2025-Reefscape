@@ -1,8 +1,7 @@
 package frc.robot.subsystems.wrist;
 
-import org.littletonrobotics.junction.AutoLog;
-
 import edu.wpi.first.wpilibj.Encoder;
+import org.littletonrobotics.junction.AutoLog;
 
 public interface WristIO {
   @AutoLog
@@ -19,8 +18,8 @@ public interface WristIO {
 
   // sets the speed of the wrist to the amount
   public default void setArmSpeed(double speed) {}
-  
-  public default void setRollerSpeed(double speed){}
+
+  public default void setRollerSpeed(double speed) {}
 
   // stops the wrist at the given angle, locks it
   public default void stopWrist() {}
@@ -28,7 +27,7 @@ public interface WristIO {
   // gets the current of the wrist in radians
   public default double getAngleRad() {
     Encoder encoder = new Encoder(0, 0);
-    double SensorPosition = Math.toRadians(encoder.get() * 90/500);
+    double SensorPosition = Math.toRadians(encoder.get() * 90 / 500);
     return SensorPosition;
   }
 

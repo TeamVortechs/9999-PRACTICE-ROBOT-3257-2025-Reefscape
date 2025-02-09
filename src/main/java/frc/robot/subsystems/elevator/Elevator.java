@@ -2,8 +2,8 @@ package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.KDoublePreferences;
 import frc.robot.KDoublePreferences.PElevator;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -24,7 +24,7 @@ public class Elevator extends SubsystemBase {
   private ElevatorModuleIO elevatorModuleIO;
 
   private static double Stage2 = 20.4999634796;
-  
+
   private static double Stage3 = 33.2499634796;
 
   private static double Stage4 = 72;
@@ -36,7 +36,8 @@ public class Elevator extends SubsystemBase {
           PElevator.proportional.getValue(),
           PElevator.integral.getValue(),
           PElevator.derivative.getValue(),
-          new TrapezoidProfile.Constraints(PElevator.speedlimit.getValue(), PElevator.accelerationLimit.getValue()));
+          new TrapezoidProfile.Constraints(
+              PElevator.speedlimit.getValue(), PElevator.accelerationLimit.getValue()));
 
   public Elevator(ElevatorModuleIO elevatorModuleIO) {
     this.elevatorModuleIO = elevatorModuleIO;
@@ -44,7 +45,6 @@ public class Elevator extends SubsystemBase {
 
   // PID controller so we don't need to do the logic ourselves. It just gets all of it's values from
   // preferences
-  
 
   // LOGIC
   @Override
@@ -68,20 +68,40 @@ public class Elevator extends SubsystemBase {
 
     elevatorModuleIO.setSpeed(elevatorSpeed);
 
+    if ((PElevator.MaxHeight.getValue() - currentHeight) < 0.1) {
+      elevatorModuleIO.setSpeed(elevatorSpeed);
+    } else {
+      elevatorModuleIO.setSpeed(-0.05);
+      elevatorModuleIO.setBraked(true);
+      System.out.println("TOO HIGH");
+    }
     // finish
+  }
+
+  public Command runCurrentZeroing() {
+    return this.run(() -> elevatorModuleIO.setVoltage(-0.5))
+        .until(() -> (inputs.elevatorMotor1CurrentAmps > 40))
+        .finallyDo(() -> elevatorModuleIO.resetEncoder());
   }
 
   // HELPER
   // gets the total height of all the added modules
   public double getHeight() {
     return elevatorModuleIO.getHeightMeters();
- }
+  }
 
   // GETTER/SETTER(simple)
   // sets the heihgt of the elevator using the pid system
 
   public void setTargetHeight(double height) {
     this.targetHeight = height;
+    if ((PElevator.MaxHeight.getValue() - currentHeight) < 0.1) {
+      System.out.println("Elevator is below Max Height");
+    } else {
+
+      targetHeight = PElevator.MaxHeight.getValue();
+      System.out.println("TOO HIGH");
+    }
   }
 
   // sets the height of the elevator but uses an enum to make it more expandable
@@ -97,7 +117,8 @@ public class Elevator extends SubsystemBase {
   // returns wether or not the elevator is currently on it's target or still trying to path to it
   public boolean isOnTarget() {
     // just checks to see if the difference is low enough
-    return Math.abs(currentHeight - targetHeight) < 0.04 || Math.abs(currentHeight - targetHeight) > 0.04;
+    return Math.abs(currentHeight - targetHeight) < 0.04
+        || Math.abs(currentHeight - targetHeight) > 0.04;
   }
 
   // enum for each level that the elevator could be

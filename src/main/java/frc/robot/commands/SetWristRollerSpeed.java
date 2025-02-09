@@ -2,8 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.wrist.Wrist;
-import frc.robot.subsystems.wrist.Wrist.WristAngle;
-import frc.robot.subsystems.wrist.WristIO;
+
 /*
 Names
 brief description
@@ -16,15 +15,14 @@ public class SetWristRollerSpeed extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
+  private double speed;
 
-   private double speed;
-   private Wrist wrist;
+  private Wrist wrist;
 
   public SetWristRollerSpeed(Wrist wrist, double speed) {
     // addRequirements(null);
     this.wrist = wrist;
     this.speed = speed;
-    
   }
 
   // Called when the command is initially scheduled.
@@ -45,6 +43,5 @@ public class SetWristRollerSpeed extends Command {
   @Override
   public boolean isFinished() {
     return true;
-    
   }
 }
