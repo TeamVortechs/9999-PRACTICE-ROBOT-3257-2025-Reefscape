@@ -64,7 +64,6 @@ public class ElevatorModuleSparkMaxIO implements ElevatorModuleIO {
 
   @Override
   public void resetEncoder() {
-    
 
   }
 }
