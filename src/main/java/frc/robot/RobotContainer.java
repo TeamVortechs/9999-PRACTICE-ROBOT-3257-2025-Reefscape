@@ -69,7 +69,8 @@ public class RobotContainer {
 
   // physical subsystems
   private final Wrist wrist = new Wrist(new WristIOTalonFX());
-  DigitalInput limitSwitch = new DigitalInput(0);
+  DigitalInput limitSwitch =
+      new DigitalInput(20); // !!!!! FAKE CHANNEL! CHANGE WHEN PROPERLY IMPLEMENTED !!!!!!
   private final Intake intake = new Intake(new IntakeIOTalonFX(), limitSwitch);
   private final ElevatorModuleIO eModuleIO = new ElevatorModuleIO() {};
 

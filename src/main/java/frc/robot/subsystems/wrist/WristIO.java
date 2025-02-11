@@ -1,6 +1,5 @@
 package frc.robot.subsystems.wrist;
 
-import edu.wpi.first.wpilibj.Encoder;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface WristIO {
@@ -25,9 +24,12 @@ public interface WristIO {
   public default void stopWrist() {}
 
   // gets the current of the wrist in radians
-  public default double getAngleRad() {
-    Encoder encoder = new Encoder(0, 0);
-    double SensorPosition = Math.toRadians(encoder.get() * 90 / 500);
+  public default double
+      getAngleRad() { // !!!!!! encoder functionality disabled because we don't have the device yet
+    // !!!!!!!!
+    // Encoder encoder = new Encoder(0, 0);
+    // double SensorPosition = Math.toRadians(encoder.get() * 90 / 500);
+    double SensorPosition = 0;
     return SensorPosition;
   }
 
