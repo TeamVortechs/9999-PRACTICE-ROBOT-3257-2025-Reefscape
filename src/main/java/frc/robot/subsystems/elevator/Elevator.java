@@ -66,20 +66,22 @@ public class Elevator extends SubsystemBase {
 
     // individually move each elevator to that position
 
-    elevatorModuleIO.setSpeed(elevatorSpeed);
+    if (targetHeight > PElevator.MaxHeight.getValue())
+      targetHeight = PElevator.MaxHeight.getValue();
 
     if ((PElevator.MaxHeight.getValue() - currentHeight) < 0.1) {
       elevatorModuleIO.setSpeed(elevatorSpeed);
     } else {
       elevatorModuleIO.setSpeed(-0.05);
-      elevatorModuleIO.setBraked(true);
+      // elevatorModuleIO.setBraked(true);
       System.out.println("TOO HIGH");
     }
     // finish
   }
 
   public Command runCurrentZeroing() {
-    return this.run(() -> elevatorModuleIO.setVoltage(-0.5))
+    System.out.println("Elevator is Homed");
+    return this.run(() -> elevatorModuleIO.setVoltage(-0.05))
         .until(() -> (inputs.elevatorMotor1CurrentAmps > 40))
         .finallyDo(() -> elevatorModuleIO.resetEncoder());
   }
