@@ -28,6 +28,9 @@ public interface ElevatorModuleIO {
   /** Stops the motor immediately */
   void stop();
 
+  /** Set motor speed */
+  void setSpeed(double speed);
+
   /**
    * Sets the neutral mode for the motors.
    *
