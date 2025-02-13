@@ -2,119 +2,142 @@ package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.KDoublePreferences;
 import frc.robot.KDoublePreferences.PElevator;
 import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
 
-// TODO: ADD WEIGHT MAP CODE
-// I PROBABLY WILL WANT TO REFACTOR ALL OF THIS CODE INTO DIFFERENT CODE FOR ELEVATOR MODULE
+/**
+ * Elevator subsystem that controls the elevator mechanism. Uses a PID controller to drive the
+ * elevator to a target height and then holds position by engaging Brake mode.
+ */
 public class Elevator extends SubsystemBase {
-  // VARIABLES
-
-  // Variables the encompass the elevator as a whole. The annotation means it is automatically
-  // logged in advantage kti
-  @AutoLogOutput private double currentHeight = 0;
-
-  @AutoLogOutput private double targetHeight = 0;
-
+  @AutoLogOutput private double currentHeight = 0.0;
+  @AutoLogOutput private double targetHeight = 0.0;
   @AutoLogOutput private boolean isOnTarget = false;
 
-  private ElevatorModuleIO elevatorModuleIO;
+  private final ElevatorModuleIO moduleIO;
+  private final DigitalInput homeSwitch; // Limit switch used for homing (assumed normally closed)
+  private final ProfiledPIDController pid;
+  private boolean manualOverride = false;
 
-  private ElevatorModuleIOInputsAutoLogged inputs = new ElevatorModuleIOInputsAutoLogged();
-
-  private ProfiledPIDController PID =
-      new ProfiledPIDController(
-          PElevator.proportional.getValue(),
-          PElevator.integral.getValue(),
-          PElevator.derivative.getValue(),
-          new TrapezoidProfile.Constraints(targetHeight, currentHeight));
-
-  public Elevator(ElevatorModuleIO elevatorModuleIO) {
-    this.elevatorModuleIO = elevatorModuleIO;
+  /**
+   * Constructor.
+   *
+   * @param moduleIO Implementation of the hardware interface.
+   * @param homeSwitch Digital input for the home limit switch.
+   */
+  public Elevator(ElevatorModuleIO moduleIO, DigitalInput homeSwitch) {
+    this.moduleIO = moduleIO;
+    this.homeSwitch = homeSwitch;
+    pid =
+        new ProfiledPIDController(
+            PElevator.proportional.getValue(),
+            PElevator.integral.getValue(),
+            PElevator.derivative.getValue(),
+            new TrapezoidProfile.Constraints(
+                PElevator.speedlimit.getValue(), PElevator.accelerationLimit.getValue()));
+    // Start with the current height as target.
+    targetHeight = moduleIO.getHeightMeters();
+    pid.setGoal(targetHeight);
   }
 
-  // PID controller so we don't need to do the logic ourselves. It just gets all of it's values from
-  // preferences
-  ProfiledPIDController elevatorPID =
-      new ProfiledPIDController(
-          KDoublePreferences.PElevator.proportional.getValue(),
-          KDoublePreferences.PElevator.integral.getValue(),
-          KDoublePreferences.PElevator.derivative.getValue(),
-          new TrapezoidProfile.Constraints(
-              KDoublePreferences.PElevator.speedlimit.getValue(),
-              KDoublePreferences.PElevator.accelerationLimit.getValue()));
-
-  // LOGIC
   @Override
   public void periodic() {
-    // skeleton for later:
+    // Update sensor data.
+    moduleIO.updateInputs();
+    currentHeight = moduleIO.getHeightMeters();
+    // Logger.processInputs("Elevator", this);
 
-    // logging
+    // If the home switch is activated (returns false when pressed), reset encoders.
+    if (!homeSwitch.get()) {
+      moduleIO.resetEncoder();
+      currentHeight = 0.0;
+      targetHeight = 0.0;
+      pid.reset(0.0);
+    }
 
-    elevatorModuleIO.updateInputs(inputs);
-    Logger.processInputs("Elevator", inputs);
+    // If manual override is active, do not run PID.
+    if (manualOverride) {
+      return;
+    }
 
-    // calculate the needed position of each elevator
+    // Clamp target height to maximum allowed.
+    double maxHeight = PElevator.MaxHeight.getValue();
+    if (targetHeight > maxHeight) {
+      targetHeight = maxHeight;
+      pid.setGoal(maxHeight);
+    }
 
-    double diffHeight = targetHeight - currentHeight;
+    // Compute PID output.
+    double output = pid.calculate(currentHeight, targetHeight);
+    isOnTarget = Math.abs(currentHeight - targetHeight) < PElevator.tolerance.getValue();
 
-    if (diffHeight < 0.1) return;
+    // Prevent downward motion if already at home.
+    if (output < 0 && !homeSwitch.get()) {
+      output = 0;
+    }
 
-    double elevatorSpeed = PID.calculate(diffHeight);
-
-    // individually move each elevator to that position
-
-    elevatorModuleIO.setSpeed(elevatorSpeed);
-
-    // finish
+    // When on target, engage Brake mode and set voltage to 0; otherwise, drive with PID output.
+    if (isOnTarget) {
+      moduleIO.setBraked(true);
+      moduleIO.setVoltage(0);
+    } else {
+      moduleIO.setBraked(false);
+      moduleIO.setVoltage(output);
+    }
   }
 
-  // HELPER
-  // gets the total height of all the added modules
-  public double getHeight() {
-    return elevatorModuleIO.getHeightMeters();
-  }
-
-  // GETTER/SETTER(simple)
-  // sets the heihgt of the elevator using the pid system
-
+  /**
+   * Sets a new target height for the elevator (using PID control).
+   *
+   * @param height Desired height in meters.
+   */
   public void setTargetHeight(double height) {
-    this.targetHeight = height;
+    targetHeight = height;
+    pid.setGoal(height);
+    manualOverride = false;
   }
 
-  // sets the height of the elevator but uses an enum to make it more expandable
-  public void setTargetHeight(ElevatorLevel level) {
-    setTargetHeight(level.getHeight());
+  /**
+   * Allows manual control of the elevator (bypassing PID).
+   *
+   * @param speed A value (typically between -1 and 1) representing the motor output.
+   */
+  public void setManualSpeed(double speed) {
+    manualOverride = true;
+    if (speed < 0 && !homeSwitch.get()) {
+      speed = 0;
+    }
+    moduleIO.setBraked(false);
+    moduleIO.setVoltage(speed);
   }
 
-  // gets the height that the pid loop is going to
-  public double getTargetHeight() {
-    return targetHeight;
+  /** For more accuracy, Re-engages PID control to hold the current position. */
+  public void holdPositionPID() {
+    manualOverride = false;
+    targetHeight = currentHeight;
+    pid.setGoal(currentHeight);
   }
 
-  // returns wether or not the elevator is currently on it's target or still trying to path to it
+  /** Hold position using break. */
+  public void holdPositionBreak() {
+    manualOverride = true;
+    targetHeight = currentHeight;
+    pid.setGoal(currentHeight);
+  }
+
+  /**
+   * @return The current elevator height in meters.
+   */
+  public double getCurrentHeight() {
+    return currentHeight;
+  }
+
+  /**
+   * @return True if the elevator is on target (within tolerance), false otherwise.
+   */
   public boolean isOnTarget() {
-    // just checks to see if the difference is low enough
-    return Math.abs(currentHeight - targetHeight) < 0.04;
-  }
-
-  // enum for each level that the elevator could be
-  public enum ElevatorLevel {
-    FIRST_LEVEL(1.0),
-    SECOND_LEVEL(2.0),
-    THIRD_LEVEL(3.0);
-
-    private double height;
-
-    private ElevatorLevel(double height) {
-      this.height = height;
-    }
-
-    public double getHeight() {
-      return height;
-    }
+    return isOnTarget;
   }
 }

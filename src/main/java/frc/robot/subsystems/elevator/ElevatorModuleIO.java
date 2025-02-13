@@ -1,33 +1,34 @@
 package frc.robot.subsystems.elevator;
 
-import org.littletonrobotics.junction.AutoLog;
-
-// this is just a prototype, will be more fleshed out later.
+/**
+ * Interface for Elevator Module IO implementations. This abstracts all hardware interactions for
+ * the elevator.
+ */
 public interface ElevatorModuleIO {
-  @AutoLog
-  public static class ElevatorModuleIOInputs {
-    double elevatorCurrentHeightMeter = 0.0;
-    double elevatorCurrentSpeedMeter = 0.0;
+  /** Update any sensor inputs if needed. */
+  default void updateInputs() {}
 
-    double elevatorCurrentAmps = 0.0;
-    double elevatorAppliedVolts = 0.0;
-  }
+  /**
+   * Returns the current elevator height (in meters).
+   *
+   * @return Elevator height.
+   */
+  double getHeightMeters();
 
-  // updates the given inputs with new values(advantage kit stuff)
-  public default void updateInputs(ElevatorModuleIOInputs inputs) {}
+  /**
+   * Sets the voltage to the elevator motors.
+   *
+   * @param volts Voltage command.
+   */
+  void setVoltage(double volts);
 
-  // sets the elevator height to the given number
-  public default void setSpeed(double height) {}
+  /** Resets the encoders (e.g., to zero at home). */
+  void resetEncoder();
 
-  // gets the highest possible height of the elevator in radians
-  public default double getMaxHeight() {
-    return 0.0;
-  }
-
-  // gets the height of the elevator in meters
-  public default double getHeightMeters() {
-    return 0.0;
-  }
-
-  // reminder for myself to use the given PID stuff
+  /**
+   * Sets the neutral mode for the motors.
+   *
+   * @param braked If true, motors will be in Brake mode; if false, in Coast mode.
+   */
+  default void setBraked(boolean braked) {}
 }
