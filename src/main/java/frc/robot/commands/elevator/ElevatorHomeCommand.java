@@ -33,7 +33,7 @@ public class ElevatorHomeCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     // Hold position once homing is complete.
-    elevator.holdPositionBreak();
+    elevator.holdPositionBrake();
     System.out.println("Elevator homed. Encoder reset.");
   }
 }

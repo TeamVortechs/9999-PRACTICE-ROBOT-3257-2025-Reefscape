@@ -27,6 +27,6 @@ public class ManualElevatorCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     // When manual control ends, hold the current position.
-    elevator.holdPositionBreak();
+    elevator.holdPositionBrake();
   }
 }

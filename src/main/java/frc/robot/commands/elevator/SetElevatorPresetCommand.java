@@ -31,6 +31,6 @@ public class SetElevatorPresetCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     // Once finished, hold the position.
-    elevator.holdPositionBreak();
+    elevator.holdPositionBrake();
   }
 }
