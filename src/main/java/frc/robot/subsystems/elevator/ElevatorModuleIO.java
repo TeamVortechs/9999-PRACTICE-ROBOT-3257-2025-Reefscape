@@ -43,6 +43,8 @@ public interface ElevatorModuleIO {
     if (Math.abs(getHeightMeters(0) - getHeightMeters(1)) > 0.1) {
       System.out.println(
           "PROBLEM!!!! GET HEIGHT OF ELEVATORS IS RETURNING SMTN DIFFERENT! (ELEVATOR MODULE)");
+      System.out.println(getHeightMeters(0));
+      System.out.println(getHeightMeters(1));
     }
 
     return (getHeightMeters(0) + getHeightMeters(1)) / 2;
@@ -55,5 +57,7 @@ public interface ElevatorModuleIO {
   public default boolean isMaxHeight() {
     return false;
   }
+  // public default void setPostion(double position){
+  // }
   // reminder for myself to use the given PID stuff
 }

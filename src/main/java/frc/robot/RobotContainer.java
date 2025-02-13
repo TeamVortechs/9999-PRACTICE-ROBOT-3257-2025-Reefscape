@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.SetElevatorPower;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIOTalonFX;
@@ -40,15 +41,13 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorModuleIO;
+import frc.robot.subsystems.elevator.Elevator2;
+import frc.robot.subsystems.elevator.ElevatorModuleTalonFXIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import frc.robot.subsystems.wrist.Wrist;
-import frc.robot.subsystems.wrist.WristIOTalonFX;
+// import frc.robot.subsystems.wrist.WristIOTalonFX;
 import java.io.IOException;
 import java.util.List;
 import org.json.simple.parser.ParseException;
@@ -68,13 +67,15 @@ public class RobotContainer {
   private final Vision vision;
 
   // physical subsystems
-  private final Wrist wrist = new Wrist(new WristIOTalonFX());
+  // private final Wrist wrist = new Wrist(new WristIOTalonFX());
   DigitalInput limitSwitch =
       new DigitalInput(20); // !!!!! FAKE CHANNEL! CHANGE WHEN PROPERLY IMPLEMENTED !!!!!!
   private final Intake intake = new Intake(new IntakeIOTalonFX(), limitSwitch);
-  private final ElevatorModuleIO eModuleIO = new ElevatorModuleIO() {};
-
-  private final Elevator elevator = new Elevator(eModuleIO);
+  // private final Elevator elevator = new Elevator(eModuleIO);
+  private final Elevator2 elevator2 = new Elevator2(new ElevatorModuleTalonFXIO(Constants.ELEVATOR_MOTOR_LEFT_ID, 
+  Constants.ELEVATOR_MOTOR_RIGHT_ID, 
+  Constants.ELEVATOR_CANBUS)
+  );
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -100,9 +101,9 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight));
         vision =
             new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVision(
-                    VisionConstants.camera0Name, VisionConstants.robotToCamera0)
+                drive::addVisionMeasurement, new VisionIO() {}
+                // new VisionIOPhotonVision(
+                //     VisionConstants.camera0Name, VisionConstants.robotToCamera0)
                 // new VisionIOPhotonVision(camera1Name, robotToCamera1)
                 );
         break;
@@ -196,8 +197,9 @@ public class RobotContainer {
     // controller.start().whileTrue(new WristSetPosCommand(wrist, 0.25));
     //  controller.back().whileTrue(new WristSetPosCommand(wrist, -0.25));
     // controller2.leftBumper().whileTrue(new IntakeSpeedCommand(intake, 0.75, limitSwitch));
-    controller2.b().whileTrue(new Elevator(eModuleIO).runCurrentZeroing());
-
+    // controller.b().whileTrue(elevator2.runCurrentZeroing());
+    controller.rightBumper().whileTrue(new SetElevatorPower(elevator2, 0.1));
+    controller.leftBumper().whileTrue(new SetElevatorPower(elevator2, -0.1));
     /*  controller2
             .rightBumper()
             .whileTrue(new SetElevatorCommand(ElevatorLevel.FIRST_LEVEL, elevator));

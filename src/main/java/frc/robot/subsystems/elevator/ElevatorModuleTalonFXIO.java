@@ -6,10 +6,18 @@ import frc.robot.Constants;
 import frc.robot.KDoublePreferences.PElevator;
 
 public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
-  private TalonFX elevatorMotorLeft = new TalonFX(Constants.ELEVATOR_MOTOR_LEFT_ID, "Canivore");
-  private TalonFX elevatorMotorRight = new TalonFX(Constants.ELEVATOR_MOTOR_RIGHT_ID, "Canivore");
+  private final TalonFX elevatorMotorLeft;
+  private final TalonFX elevatorMotorRight;
+  
+  public ElevatorModuleTalonFXIO(int motorIDLeft, int motorIDRight, String canbusName) {
+    this.elevatorMotorLeft = new TalonFX(motorIDLeft, canbusName);
+    this.elevatorMotorRight = new TalonFX(motorIDRight, canbusName);
+  }
+
   // private Encoder encoder = new Encoder(1, 1);
 
+  // this sets speed based on a -1 to 1 range
+  @Override
   public void setSpeed(double speed) {
     elevatorMotorLeft.set(speed);
     elevatorMotorRight.set(speed);
@@ -32,7 +40,8 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
 
   @Override
   public double getHeightMeters(int motor) {
-    return elevatorMotorLeft.getPosition().getValueAsDouble();
+    double rate = 0.0;
+    return elevatorMotorLeft.getPosition().getValueAsDouble() * rate;
   }
 
   @Override

@@ -38,10 +38,10 @@ public final class Constants {
     REPLAY
   }
 
-  // defines ID of elevator motors
-  public static final int ELEVATOR_MOTOR_LEFT_ID =
-      21; // !!!!! PLACEHOLDERS UNTIL I FIND OUT WHAT IT'S MEANT TO BE !!!!!!
+  // constants used for the elevator
+  public static final int ELEVATOR_MOTOR_LEFT_ID = 21;
   public static final int ELEVATOR_MOTOR_RIGHT_ID = 22;
+  public static final String ELEVATOR_CANBUS = "rio";
 
   public static class VisionConstants {
     // placeholder translation to use in the estimator(? i'm not sure how it'll detect the camera)

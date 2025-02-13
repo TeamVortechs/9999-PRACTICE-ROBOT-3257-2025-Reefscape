@@ -60,7 +60,7 @@ public class Elevator extends SubsystemBase {
     currentHeight = elevatorModuleIO.getHeightMeters();
     double diffHeight = targetHeight - currentHeight;
 
-    if (diffHeight < 0.1) return;
+    // if (diffHeight < 0.1) return;
 
     double elevatorSpeed = PID.calculate(diffHeight);
 
@@ -91,6 +91,10 @@ public class Elevator extends SubsystemBase {
   public double getHeight() {
     return elevatorModuleIO.getHeightMeters();
   }
+
+  // public void setPosition(){
+  // elevatorModuleIO.setPostion(62.8318531);
+  // }
 
   // GETTER/SETTER(simple)
   // sets the heihgt of the elevator using the pid system
