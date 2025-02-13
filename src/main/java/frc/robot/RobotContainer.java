@@ -35,6 +35,7 @@ import frc.robot.KDoublePreferences.PElevator;
 // import org.json.simple.parser.ParseException;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.elevator.ElevatorHomeCommand;
+import frc.robot.commands.elevator.ManualElevatorCommand;
 import frc.robot.commands.elevator.SetElevatorPresetCommand;
 import frc.robot.generated.TunerConstants;
 // import frc.robot.subsystems.Intake.Intake;
@@ -171,6 +172,8 @@ public class RobotContainer {
     // ----- Elevator Commands (using controller2) -----
     // Home the elevator when the B button is held.
     controller2.b().whileTrue(new ElevatorHomeCommand(elevator));
+
+
     // Move to preset heights using the bumper and trigger buttons.
     controller2
         .rightBumper()
