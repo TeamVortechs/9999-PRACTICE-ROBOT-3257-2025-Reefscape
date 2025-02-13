@@ -77,6 +77,13 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
     rightMotor.setPosition(0);
   }
 
+  /** Stops the motor immediately */
+  @Override
+  public void stop() {
+    leftMotor.stopMotor();
+    rightMotor.stopMotor();
+  }
+
   /**
    * Sets the neutral mode for both motors.
    *

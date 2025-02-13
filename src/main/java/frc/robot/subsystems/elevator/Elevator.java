@@ -1,6 +1,5 @@
 package frc.robot.subsystems.elevator;
 
-import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -10,12 +9,12 @@ import frc.robot.KDoublePreferences.PElevator;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 /**
- * Elevator subsystem that controls the robot's lifting mechanism.
- * Utilizes PID control and feedforward for smooth and accurate movement.
- * Prevents unsafe movement using limit switches and software constraints.
+ * Elevator subsystem that controls the robot's lifting mechanism. Utilizes PID control and
+ * feedforward for smooth and accurate movement. Prevents unsafe movement using limit switches and
+ * software constraints.
  */
 public class Elevator extends SubsystemBase {
-  
+
   @AutoLogOutput private double currentHeight = 0.0;
   @AutoLogOutput private double targetHeight = 0.0;
   @AutoLogOutput private boolean isOnTarget = false;
@@ -25,15 +24,8 @@ public class Elevator extends SubsystemBase {
   private final ProfiledPIDController pid;
   private boolean manualOverride = false;
 
-  // Feedforward constants for smooth movement (must be tuned)
-  private static final double kS = 0.1; // Static friction
-  private static final double kG = 0.4; // Gravity compensation
-  private static final double kV = 0.2; // Velocity gain
-  private static final double kA = 0.05; // Acceleration gain
-  private final ElevatorFeedforward feedforward = new ElevatorFeedforward(kS, kG, kV, kA);
-
   /**
-   * Constructor for Elevator subsystem.
+   * Constructor for the Elevator subsystem.
    *
    * @param moduleIO Hardware interface implementation for elevator motors.
    * @param homeSwitch Digital input limit switch for homing.
@@ -42,17 +34,15 @@ public class Elevator extends SubsystemBase {
     this.moduleIO = moduleIO;
     this.homeSwitch = homeSwitch;
 
-    pid = new ProfiledPIDController(
-        PElevator.proportional.getValue(),
-        PElevator.integral.getValue(),
-        PElevator.derivative.getValue(),
-        new TrapezoidProfile.Constraints(
-            PElevator.speedlimit.getValue(), 
-            PElevator.accelerationLimit.getValue()
-        )
-    );
+    pid =
+        new ProfiledPIDController(
+            PElevator.proportional.getValue(),
+            PElevator.integral.getValue(),
+            PElevator.derivative.getValue(),
+            new TrapezoidProfile.Constraints(
+                PElevator.speedlimit.getValue(), PElevator.accelerationLimit.getValue()));
 
-    // Start with the current height as the target
+    // Initialize the elevator's target height to the current position
     targetHeight = moduleIO.getHeightMeters();
     pid.setGoal(targetHeight);
   }
@@ -71,7 +61,7 @@ public class Elevator extends SubsystemBase {
       pid.reset(0.0);
     }
 
-    // If manual override is enabled, skip PID control
+    // Skip PID control if manual override is enabled
     if (manualOverride) return;
 
     // Clamp the target height to prevent exceeding limits
@@ -79,25 +69,19 @@ public class Elevator extends SubsystemBase {
     targetHeight = Math.max(0.0, Math.min(targetHeight, maxHeight));
     pid.setGoal(targetHeight);
 
-    // Compute PID output and apply feedforward compensation
+    // Compute PID output and prevent downward movement if at home position
     double pidOutput = pid.calculate(currentHeight, targetHeight);
-    double feedforwardOutput = feedforward.calculate(pid.getSetpoint().velocity);
-    double finalOutput = pidOutput + feedforwardOutput;
-
-    // Prevent downward movement if at home position
-    if (finalOutput < 0 && !homeSwitch.get()) {
-      finalOutput = 0;
+    if (pidOutput < 0 && !homeSwitch.get()) {
+      pidOutput = 0;
     }
 
-    // Engage brake if on target; otherwise, apply voltage
+    // Stop motor when reaching the target instead of setting voltage to 0
     if (Math.abs(currentHeight - targetHeight) < PElevator.tolerance.getValue()) {
       isOnTarget = true;
-      moduleIO.setBraked(true);
-      moduleIO.setVoltage(0);
+      moduleIO.stop(); // Stop the motor instead of setting voltage to 0
     } else {
       isOnTarget = false;
-      moduleIO.setBraked(false);
-      moduleIO.setVoltage(finalOutput);
+      moduleIO.setVoltage(pidOutput);
     }
 
     // SmartDashboard logging for debugging
@@ -108,7 +92,7 @@ public class Elevator extends SubsystemBase {
   }
 
   /**
-   * Sets a new target height for the elevator (using PID control).
+   * Sets a new target height for the elevator using PID control.
    *
    * @param height Desired height in meters.
    */
@@ -119,7 +103,7 @@ public class Elevator extends SubsystemBase {
   }
 
   /**
-   * Allows manual control of the elevator (bypassing PID).
+   * Allows manual control of the elevator, bypassing PID.
    *
    * @param speed A value (typically between -1 and 1) representing the motor output.
    */
@@ -132,18 +116,22 @@ public class Elevator extends SubsystemBase {
     moduleIO.setVoltage(speed);
   }
 
-  /** Holds the current position using PID. */
+  /**
+   * Holds the current position using PID control. Prevents unnecessary PID recalculations when
+   * already at the target.
+   */
   public void holdPositionPID() {
     manualOverride = false;
-    targetHeight = currentHeight;
-    pid.setGoal(currentHeight);
+    if (Math.abs(targetHeight - currentHeight) > PElevator.tolerance.getValue()) {
+      targetHeight = currentHeight;
+      pid.setGoal(currentHeight);
+    }
   }
 
-  /** Holds the current position using braking mode. */
+  /** Holds the current position using braking mode, stopping the motor immediately. */
   public void holdPositionBrake() {
     manualOverride = true;
-    targetHeight = currentHeight;
-    pid.setGoal(currentHeight);
+    moduleIO.stop(); // Stop the motor
   }
 
   /** Emergency stop function that immediately disables motor output. */
@@ -152,21 +140,21 @@ public class Elevator extends SubsystemBase {
     manualOverride = true;
   }
 
-   /**
-   * @return The current elevator height in meters.
+  /**
+   * Gets the current elevator height in meters.
+   *
+   * @return The current elevator height.
    */
-  public double getCurrentHeight() { return currentHeight; }
+  public double getCurrentHeight() {
+    return currentHeight;
+  }
 
   /**
-   * @return True if the elevator is on target (within tolerance), false otherwise.
+   * Checks if the elevator is at the target height within tolerance.
+   *
+   * @return True if the elevator is on target, false otherwise.
    */
-  public boolean isOnTarget() { return isOnTarget; }
+  public boolean isOnTarget() {
+    return isOnTarget;
+  }
 }
-
-
-
-
-
-
-
-  

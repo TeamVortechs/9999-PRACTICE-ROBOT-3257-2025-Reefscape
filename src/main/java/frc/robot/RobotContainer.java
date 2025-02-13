@@ -35,7 +35,6 @@ import frc.robot.KDoublePreferences.PElevator;
 // import org.json.simple.parser.ParseException;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.elevator.ElevatorHomeCommand;
-import frc.robot.commands.elevator.ManualElevatorCommand;
 import frc.robot.commands.elevator.SetElevatorPresetCommand;
 import frc.robot.generated.TunerConstants;
 // import frc.robot.subsystems.Intake.Intake;
@@ -73,9 +72,9 @@ public class RobotContainer {
   private final Wrist wrist = new Wrist(new WristIOTalonFX());
 
   // Intake subsystem with its limit switch (placeholder channel)
-  @SuppressWarnings("unused")
-  private final DigitalInput intakeLimitSwitch =
-      new DigitalInput(20); // FAKE CHANNEL – update when implemented
+  //   @SuppressWarnings("unused")
+  //   private final DigitalInput intakeLimitSwitch =
+  //       new DigitalInput(20); // FAKE CHANNEL – update when implemented
   //   private final Intake intake = new Intake(new IntakeIOTalonFX(), intakeLimitSwitch);
 
   // Elevator subsystem: using our TalonFX-based IO and a dedicated home switch
@@ -172,7 +171,6 @@ public class RobotContainer {
     // ----- Elevator Commands (using controller2) -----
     // Home the elevator when the B button is held.
     controller2.b().whileTrue(new ElevatorHomeCommand(elevator));
-
 
     // Move to preset heights using the bumper and trigger buttons.
     controller2

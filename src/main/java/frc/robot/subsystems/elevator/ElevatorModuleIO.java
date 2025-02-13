@@ -25,6 +25,9 @@ public interface ElevatorModuleIO {
   /** Resets the encoders (e.g., to zero at home). */
   void resetEncoder();
 
+  /** Stops the motor immediately */
+  void stop();
+
   /**
    * Sets the neutral mode for the motors.
    *
