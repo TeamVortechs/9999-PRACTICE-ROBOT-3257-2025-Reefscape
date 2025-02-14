@@ -19,6 +19,7 @@ public class SetElevatorPresetCommand extends Command {
 
   @Override
   public void initialize() {
+    System.out.println("attempting an elevator preset command with the height " + presetHeight);
     elevator.setTargetHeight(presetHeight);
   }
 

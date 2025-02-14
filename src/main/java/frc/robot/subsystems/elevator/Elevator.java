@@ -48,6 +48,14 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // check to see if the elevator is stalling; if so, then stop the motors and cancel the next
+    // movement
+    if (moduleIO.checkIfStalled()) {
+      System.out.println("I HAVE STALLED AUUUUUUUUUUGH");
+      moduleIO.stop();
+      return;
+    }
+
     moduleIO.updateInputs();
     currentHeight = moduleIO.getHeightMeters();
 
@@ -103,6 +111,7 @@ public class Elevator extends SubsystemBase {
     if (speed < 0 && !homeSwitch.get()) {
       speed = 0;
     }
+    System.out.println(("Doing this speed: " + speed));
     moduleIO.setSpeed(speed);
   }
 

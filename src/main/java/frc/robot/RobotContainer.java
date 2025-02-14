@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.KDoublePreferences.PElevator;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.elevator.ElevatorHomeCommand;
+import frc.robot.commands.elevator.ManualElevatorCommand;
 import frc.robot.commands.elevator.SetElevatorPresetCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -62,32 +63,14 @@ public class RobotContainer {
   @SuppressWarnings("unused")
   private final Vision vision;
 
-  // physical subsystems
-  // private final Wrist wrist = new Wrist(new WristIOTalonFX());
-  DigitalInput limitSwitch =
-      new DigitalInput(20); // !!!!! FAKE CHANNEL! CHANGE WHEN PROPERLY IMPLEMENTED !!!!!!
-  //   private final Intake intake = new Intake(new IntakeIOTalonFX(), limitSwitch);
-  // private final Elevator elevator = new Elevator(eModuleIO);
-  //   private final Elevator2 elevator2 =
-  //       new Elevator2(
-  //           new ElevatorModuleTalonFXIO(
-  //               Constants.ELEVATOR_MOTOR_LEFT_ID,
-  //               Constants.ELEVATOR_MOTOR_RIGHT_ID,
-  //               Constants.ELEVATOR_CANBUS));
-
-  // Intake subsystem with its limit switch (placeholder channel)
-  //   @SuppressWarnings("unused")
-  //   private final DigitalInput intakeLimitSwitch =
-  //       new DigitalInput(20); // FAKE CHANNEL – update when implemented
-  //   private final Intake intake = new Intake(new IntakeIOTalonFX(), intakeLimitSwitch);
-
   // Elevator subsystem: using our TalonFX-based IO and a dedicated home switch
   private final ElevatorModuleIO eModuleIO =
       new ElevatorModuleTalonFXIO(
           Constants.ELEVATOR_MOTOR_LEFT_ID,
           Constants.ELEVATOR_MOTOR_RIGHT_ID,
           Constants.ELEVATOR_CANBUS);
-  private final DigitalInput elevatorHomeSwitch = new DigitalInput(20); // Update channel as needed
+  private final DigitalInput elevatorHomeSwitch =
+      new DigitalInput(Constants.LIMIT_SWITCH_ID); // Update channel as needed
   private final Elevator elevator = new Elevator(eModuleIO, elevatorHomeSwitch);
 
   // Controllers for operator input
@@ -192,7 +175,9 @@ public class RobotContainer {
     controller2
         .leftTrigger()
         .whileTrue(new SetElevatorPresetCommand(elevator, PElevator.ThirdLevel.getValue()));
-
+    controller2
+        .leftBumper()
+        .whileTrue(new ManualElevatorCommand(elevator, () -> -controller2.getRightY()));
     // ----- Drive & Vision Commands (using controller) -----
     // Set the default command for the drive subsystem (field-relative joystick drive).
     // Default command, normal field-relative drive

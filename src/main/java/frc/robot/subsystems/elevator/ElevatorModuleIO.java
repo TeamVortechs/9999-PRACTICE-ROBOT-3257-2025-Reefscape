@@ -31,6 +31,9 @@ public interface ElevatorModuleIO {
   /** Stops the motor immediately */
   void stop();
 
+  /** returns true if either motor has exceeded 40 amps of torque current */
+  boolean checkIfStalled();
+
   // gets the highest possible height of the elevator in radians
   public default double getMaxHeight() {
     return 0.0;

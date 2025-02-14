@@ -42,6 +42,8 @@ public final class Constants {
   public static final int ELEVATOR_MOTOR_LEFT_ID = 21;
   public static final int ELEVATOR_MOTOR_RIGHT_ID = 22;
   public static final String ELEVATOR_CANBUS = "rio";
+  public static final int CANRANGE_ID = 20;
+  public static final int LIMIT_SWITCH_ID = 23;
 
   // constants used for the intake
   public static final int INTAKE_MOTOR_ID = 99; // placeholder

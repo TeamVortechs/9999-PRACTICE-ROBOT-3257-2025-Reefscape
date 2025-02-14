@@ -24,10 +24,10 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
 
     // Configure motor inversions
     MotorOutputConfigs leftMotorOutput = new MotorOutputConfigs();
-    leftMotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    // leftMotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     MotorOutputConfigs rightMotorOutput = new MotorOutputConfigs();
-    rightMotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    // rightMotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     leftConfig.MotorOutput = leftMotorOutput;
     rightConfig.MotorOutput = rightMotorOutput;
@@ -40,11 +40,15 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
     rightMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
-  /** Returns the current elevator height in meters by averaging both motor encoders. */
+  /**
+   * Returns the current elevator height in meters by averaging both motor encoders. this won't work
+   * until we do the math with the gears to find out how much one rotation is in length
+   */
   @Override
   public double getHeightMeters() {
     double leftHeight = leftMotor.getPosition().getValueAsDouble();
     double rightHeight = rightMotor.getPosition().getValueAsDouble();
+    System.out.println("left height: " + leftHeight +" right height: " + rightHeight + " average: " + (leftHeight + rightHeight) / 2.0);
     return (leftHeight + rightHeight) / 2.0;
   }
 
@@ -69,9 +73,20 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
     rightMotor.stopMotor();
   }
 
+  /** returns true if either motor has exceeded 40 amps of torque current
+   * currently nonfunctional
+  */
+  @Override
+  public boolean checkIfStalled() {
+    // return (Math.abs(leftMotor.getTorqueCurrent().getValueAsDouble()) > 40
+    //     || Math.abs(rightMotor.getTorqueCurrent().getValueAsDouble()) > 40);
+    return false;
+  }
+
   /** Sets the speed of the motors (manual control mode). */
   @Override
   public void setSpeed(double speed) {
+    System.out.println("ModuleIO receiving this speed: " + speed);
     leftMotor.set(speed);
     rightMotor.set(speed);
   }
