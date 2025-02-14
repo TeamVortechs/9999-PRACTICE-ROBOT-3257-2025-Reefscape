@@ -20,10 +20,12 @@ public interface ElevatorModuleIO {
 
     double elevatorMotor2CurrentSpeedMeter = 0;
     double elevatorMotor2CurrentHeightMeter = 0;
+
+    boolean stalled;
   }
 
   // updates the given inputs with new values(advantage kit stuff)
-  public default void updateInputs() {}
+  public default void updateInputs(ElevatorModuleIOInputsAutoLogged inputs) {}
 
   // sets the elevator height to the given number
   public default void setSpeed(double Speed) {}

@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.KDoublePreferences.PElevator;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * Elevator subsystem responsible for controlling the lifting mechanism. Uses PID control for
@@ -21,8 +22,11 @@ public class Elevator extends SubsystemBase {
   private final ElevatorModuleIO moduleIO;
   private final DigitalInput homeSwitch;
   private final ProfiledPIDController pid;
-  private boolean manualOverride = false;
-  private int loopCount = 0; // Counter to reduce SmartDashboard updates
+
+  @AutoLogOutput private boolean manualOverride = false;
+  @AutoLogOutput private int loopCount = 0; // Counter to reduce SmartDashboard updates
+
+  private ElevatorModuleIOInputsAutoLogged inputsAutoLogged = null;
 
   /**
    * Constructor for the Elevator subsystem.
@@ -50,21 +54,24 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     // check to see if the elevator is stalling; if so, then stop the motors and cancel the next
     // movement
+
+    moduleIO.updateInputs(inputsAutoLogged);
+    Logger.processInputs("Elevator", inputsAutoLogged);
+
     if (moduleIO.checkIfStalled()) {
       System.out.println("I HAVE STALLED AUUUUUUUUUUGH");
       moduleIO.stop();
       return;
     }
 
-    moduleIO.updateInputs();
     currentHeight = moduleIO.getHeightMeters();
 
-    // Reset encoder if home switch is pressed
-    if (!homeSwitch.get()) {
-      moduleIO.resetEncoder();
-      currentHeight = 0.0;
-      targetHeight = 0.0;
-      pid.reset(0.0);
+    //reset encoder if home switch is pressed
+    if(!homeSwitch.get()) {
+     moduleIO.resetEncoder();
+     currentHeight = 0.0;
+     targetHeight = 0.0;
+     pid.reset(0.0);
     }
 
     if (manualOverride) return;
@@ -143,4 +150,28 @@ public class Elevator extends SubsystemBase {
   public boolean isOnTarget() {
     return isOnTarget;
   }
+
+  // resets the encoder of the elevator. Not sure if we need this a lot
+  public void resetElevatorEncoder() {
+    moduleIO.resetEncoder();
+    currentHeight = 0.0;
+    targetHeight = 0.0;
+    pid.reset(0.0);
+  }
+
+    // enum for each level that the elevator could be
+    public enum ElevatorHeightMeters {
+
+      STAGE_1(1);
+  
+      private double height;
+  
+      private ElevatorHeightMeters(double height) {
+        this.height = height;
+      }
+  
+      public double getHeight() {
+        return height;
+      }
+    }
 }

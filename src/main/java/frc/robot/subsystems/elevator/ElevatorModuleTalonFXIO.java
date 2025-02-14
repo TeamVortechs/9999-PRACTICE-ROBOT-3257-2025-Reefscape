@@ -3,7 +3,6 @@ package frc.robot.subsystems.elevator;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 /**
@@ -40,6 +39,23 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
     rightMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
+  @Override
+  public void updateInputs(ElevatorModuleIOInputsAutoLogged inputs) {
+    inputs.elevatorMotor1CurrentHeightMeter = getHeightMeters(0);
+    inputs.elevatorMotor1CurrentSpeedMeter = leftMotor.get();
+
+    inputs.elevatorMotor1CurrentAmps = leftMotor.getStatorCurrent().getValueAsDouble();
+    inputs.elevatorMotor1AppliedVolts = leftMotor.getMotorVoltage().getValueAsDouble();
+
+    inputs.elevatorMotor2CurrentHeightMeter = getHeightMeters(0);
+    inputs.elevatorMotor2CurrentSpeedMeter = rightMotor.get();
+
+    inputs.elevatorMotor2CurrentAmps = rightMotor.getStatorCurrent().getValueAsDouble();
+    inputs.elevatorMotor2AppliedVolts = rightMotor.getMotorVoltage().getValueAsDouble();
+
+    inputs.stalled = checkIfStalled();
+  }
+
   /**
    * Returns the current elevator height in meters by averaging both motor encoders. this won't work
    * until we do the math with the gears to find out how much one rotation is in length
@@ -48,8 +64,15 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
   public double getHeightMeters() {
     double leftHeight = leftMotor.getPosition().getValueAsDouble();
     double rightHeight = rightMotor.getPosition().getValueAsDouble();
-    System.out.println("left height: " + leftHeight +" right height: " + rightHeight + " average: " + (leftHeight + rightHeight) / 2.0);
+    System.out.println(
+        "left height: "
+            + leftHeight
+            + " right height: "
+            + rightHeight
+            + " average: "
+            + (leftHeight + rightHeight) / 2.0);
     return (leftHeight + rightHeight) / 2.0;
+    //UPDATE WITH CANRANGE
   }
 
   /** Sets the voltage to both motors. */
@@ -73,9 +96,7 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
     rightMotor.stopMotor();
   }
 
-  /** returns true if either motor has exceeded 40 amps of torque current
-   * currently nonfunctional
-  */
+  /** returns true if either motor has exceeded 40 amps of torque current currently nonfunctional */
   @Override
   public boolean checkIfStalled() {
     // return (Math.abs(leftMotor.getTorqueCurrent().getValueAsDouble()) > 40

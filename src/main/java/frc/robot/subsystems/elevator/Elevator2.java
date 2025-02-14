@@ -23,7 +23,7 @@ public class Elevator2 extends SubsystemBase {
 
   @Override
   public void periodic() {
-    elevatorModuleIO.updateInputs();
+    elevatorModuleIO.updateInputs(inputs);
     Logger.processInputs("Elevator2", inputs);
   }
 
