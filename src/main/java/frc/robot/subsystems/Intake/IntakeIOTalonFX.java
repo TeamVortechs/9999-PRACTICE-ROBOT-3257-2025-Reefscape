@@ -3,7 +3,11 @@ package frc.robot.subsystems.Intake;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 public class IntakeIOTalonFX implements IntakeIO {
-  private TalonFX intakemotor = new TalonFX(0);
+  private TalonFX intakemotor;
+
+  public IntakeIOTalonFX(int intakeMotorID) {
+    this.intakemotor = new TalonFX(intakeMotorID);
+  }
 
   public void SetMotorSpeed(double Speed) {
     intakemotor.set(Speed);

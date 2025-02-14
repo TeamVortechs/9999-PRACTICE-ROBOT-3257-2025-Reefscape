@@ -43,6 +43,9 @@ public final class Constants {
   public static final int ELEVATOR_MOTOR_RIGHT_ID = 22;
   public static final String ELEVATOR_CANBUS = "rio";
 
+  // constants used for the intake
+  public static final int INTAKE_MOTOR_ID = 99; // placeholder
+
   public static class VisionConstants {
     // placeholder translation to use in the estimator(? i'm not sure how it'll detect the camera)
     public static final Transform3d robotToCam =

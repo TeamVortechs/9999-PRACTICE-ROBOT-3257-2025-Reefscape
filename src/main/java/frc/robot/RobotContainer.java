@@ -15,31 +15,24 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
-// import com.pathplanner.lib.path.PathPlannerPath;
-// import com.pathplanner.lib.path.Waypoint;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.KDoublePreferences.PElevator;
-// import java.io.IOException;
-// import java.util.List;
-// import org.json.simple.parser.ParseException;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.elevator.ElevatorHomeCommand;
 import frc.robot.commands.elevator.SetElevatorPresetCommand;
 import frc.robot.generated.TunerConstants;
-// import frc.robot.subsystems.Intake.Intake;
-// import frc.robot.subsystems.Intake.IntakeIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -53,7 +46,6 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-// import frc.robot.subsystems.wrist.WristIOTalonFX;
 import java.io.IOException;
 import java.util.List;
 import org.json.simple.parser.ParseException;
@@ -74,12 +66,14 @@ public class RobotContainer {
   // private final Wrist wrist = new Wrist(new WristIOTalonFX());
   DigitalInput limitSwitch =
       new DigitalInput(20); // !!!!! FAKE CHANNEL! CHANGE WHEN PROPERLY IMPLEMENTED !!!!!!
-  private final Intake intake = new Intake(new IntakeIOTalonFX(), limitSwitch);
+  //   private final Intake intake = new Intake(new IntakeIOTalonFX(), limitSwitch);
   // private final Elevator elevator = new Elevator(eModuleIO);
-  private final Elevator2 elevator2 = new Elevator2(new ElevatorModuleTalonFXIO(Constants.ELEVATOR_MOTOR_LEFT_ID, 
-  Constants.ELEVATOR_MOTOR_RIGHT_ID, 
-  Constants.ELEVATOR_CANBUS)
-  );
+  //   private final Elevator2 elevator2 =
+  //       new Elevator2(
+  //           new ElevatorModuleTalonFXIO(
+  //               Constants.ELEVATOR_MOTOR_LEFT_ID,
+  //               Constants.ELEVATOR_MOTOR_RIGHT_ID,
+  //               Constants.ELEVATOR_CANBUS));
 
   // Intake subsystem with its limit switch (placeholder channel)
   //   @SuppressWarnings("unused")
@@ -88,7 +82,11 @@ public class RobotContainer {
   //   private final Intake intake = new Intake(new IntakeIOTalonFX(), intakeLimitSwitch);
 
   // Elevator subsystem: using our TalonFX-based IO and a dedicated home switch
-  private final ElevatorModuleIO eModuleIO = new ElevatorModuleTalonFXIO();
+  private final ElevatorModuleIO eModuleIO =
+      new ElevatorModuleTalonFXIO(
+          Constants.ELEVATOR_MOTOR_LEFT_ID,
+          Constants.ELEVATOR_MOTOR_RIGHT_ID,
+          Constants.ELEVATOR_CANBUS);
   private final DigitalInput elevatorHomeSwitch = new DigitalInput(20); // Update channel as needed
   private final Elevator elevator = new Elevator(eModuleIO, elevatorHomeSwitch);
 
@@ -224,8 +222,8 @@ public class RobotContainer {
     //  controller.back().whileTrue(new WristSetPosCommand(wrist, -0.25));
     // controller2.leftBumper().whileTrue(new IntakeSpeedCommand(intake, 0.75, limitSwitch));
     // controller.b().whileTrue(elevator2.runCurrentZeroing());
-    controller.rightBumper().whileTrue(new SetElevatorPower(elevator2, 0.1));
-    controller.leftBumper().whileTrue(new SetElevatorPower(elevator2, -0.1));
+    // controller.rightBumper().whileTrue(new SetElevatorPower(elevator2, 0.1));
+    // controller.leftBumper().whileTrue(new SetElevatorPower(elevator2, -0.1));
     /*  controller2
             .rightBumper()
             .whileTrue(new SetElevatorCommand(ElevatorLevel.FIRST_LEVEL, elevator));

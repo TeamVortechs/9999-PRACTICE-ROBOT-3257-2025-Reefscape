@@ -1,5 +1,7 @@
 package frc.robot.subsystems.elevator;
 
+import org.littletonrobotics.junction.AutoLog;
+
 /**
  * Interface for Elevator Module IO implementations. This abstracts all hardware interactions for
  * the elevator.
@@ -21,10 +23,13 @@ public interface ElevatorModuleIO {
   }
 
   // updates the given inputs with new values(advantage kit stuff)
-  public default void updateInputs(ElevatorModuleIOInputsAutoLogged inputs) {}
+  public default void updateInputs() {}
 
   // sets the elevator height to the given number
   public default void setSpeed(double Speed) {}
+
+  /** Stops the motor immediately */
+  void stop();
 
   // gets the highest possible height of the elevator in radians
   public default double getMaxHeight() {
