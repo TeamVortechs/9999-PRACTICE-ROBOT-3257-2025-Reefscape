@@ -2,6 +2,7 @@ package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -12,6 +13,9 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
   private final TalonFX leftMotor;
   private final TalonFX rightMotor;
+
+  //canrange code
+  //private final CANrange CANrange;
 
   /** Constructs the TalonFX-based elevator module. */
   public ElevatorModuleTalonFXIO(int motorIDLeft, int motorIDRight, String canbusName) {
@@ -37,6 +41,9 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
     // Set both motors to Brake mode by default.
     leftMotor.setNeutralMode(NeutralModeValue.Brake);
     rightMotor.setNeutralMode(NeutralModeValue.Brake);
+
+    //can range code:
+    //CANrange = new CANrange(canRangeID);
   }
 
   @Override
@@ -72,6 +79,9 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
             + " average: "
             + (leftHeight + rightHeight) / 2.0);
     return (leftHeight + rightHeight) / 2.0;
+
+    //canrange cdoe
+    //return CANrange.getDistance().getValueAsDouble();
     //UPDATE WITH CANRANGE
   }
 
