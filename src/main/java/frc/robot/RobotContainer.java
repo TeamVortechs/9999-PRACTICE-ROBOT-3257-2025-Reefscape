@@ -15,8 +15,8 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
+// import com.pathplanner.lib.path.PathPlannerPath;
+// import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -30,18 +30,24 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.KDoublePreferences.PElevator;
+// import java.io.IOException;
+// import java.util.List;
+// import org.json.simple.parser.ParseException;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.SetElevatorPower;
+import frc.robot.commands.elevator.ElevatorHomeCommand;
+import frc.robot.commands.elevator.SetElevatorPresetCommand;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Intake.Intake;
-import frc.robot.subsystems.Intake.IntakeIOTalonFX;
+// import frc.robot.subsystems.Intake.Intake;
+// import frc.robot.subsystems.Intake.IntakeIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.elevator.Elevator2;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorModuleIO;
 import frc.robot.subsystems.elevator.ElevatorModuleTalonFXIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
@@ -54,10 +60,8 @@ import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and button mappings) should be declared here.
+ * RobotContainer is the central hub for subsystems, commands, and operator interface bindings. It
+ * instantiates all subsystems, sets up autonomous routines, and binds buttons to commands.
  */
 public class RobotContainer {
   // Subsystems
@@ -77,21 +81,37 @@ public class RobotContainer {
   Constants.ELEVATOR_CANBUS)
   );
 
-  // Controller
+  // Intake subsystem with its limit switch (placeholder channel)
+  //   @SuppressWarnings("unused")
+  //   private final DigitalInput intakeLimitSwitch =
+  //       new DigitalInput(20); // FAKE CHANNEL – update when implemented
+  //   private final Intake intake = new Intake(new IntakeIOTalonFX(), intakeLimitSwitch);
+
+  // Elevator subsystem: using our TalonFX-based IO and a dedicated home switch
+  private final ElevatorModuleIO eModuleIO = new ElevatorModuleTalonFXIO();
+  private final DigitalInput elevatorHomeSwitch = new DigitalInput(20); // Update channel as needed
+  private final Elevator elevator = new Elevator(eModuleIO, elevatorHomeSwitch);
+
+  // Controllers for operator input
   private final CommandXboxController controller = new CommandXboxController(0);
   private final CommandXboxController controller2 = new CommandXboxController(1);
 
-  // Dashboard inputs
+  // Autonomous chooser and path constraints
   private final LoggedDashboardChooser<Command> autoChooser;
 
+  @SuppressWarnings("unused")
   private final PathConstraints pathConstraints =
       new PathConstraints(0.75, 0.5, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /**
+   * Constructs the RobotContainer by instantiating subsystems, configuring autonomous routines, and
+   * binding controls.
+   */
   public RobotContainer() {
+    // Instantiate drive and vision subsystems based on the current mode.
     switch (Constants.currentMode) {
       case REAL:
-        // Real robot, instantiate hardware IO implementations
+        // Real robot: instantiate hardware IO implementations
         drive =
             new Drive(
                 new GyroIOPigeon2(),
@@ -109,7 +129,7 @@ public class RobotContainer {
         break;
 
       case SIM:
-        // Sim robot, instantiate physics sim IO implementations
+        // Simulation: instantiate sim IO implementations
         drive =
             new Drive(
                 new GyroIO() {},
@@ -125,7 +145,7 @@ public class RobotContainer {
         break;
 
       default:
-        // Replayed robot, disable IO implementations
+        // Replayed robot: disable IO implementations
         drive =
             new Drive(
                 new GyroIO() {},
@@ -133,18 +153,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        vision =
-            new Vision(
-                drive::addVisionMeasurement, new VisionIO() {}
-                // new VisionIO() {}
-                );
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {});
         break;
     }
 
-    // Set up auto routines
+    // Set up autonomous routines using the PathPlanner auto builder.
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
-    // Set up SysId routines
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     autoChooser.addOption(
@@ -160,17 +174,29 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    // Configure the button bindings
+    // Configure button bindings.
     configureButtonBindings();
   }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
+  /** Configures operator interface button bindings. */
   private void configureButtonBindings() {
+    // ----- Elevator Commands (using controller2) -----
+    // Home the elevator when the B button is held.
+    controller2.b().whileTrue(new ElevatorHomeCommand(elevator));
+
+    // Move to preset heights using the bumper and trigger buttons.
+    controller2
+        .rightBumper()
+        .whileTrue(new SetElevatorPresetCommand(elevator, PElevator.FirstLevel.getValue()));
+    controller2
+        .rightTrigger()
+        .whileTrue(new SetElevatorPresetCommand(elevator, PElevator.SecondLevel.getValue()));
+    controller2
+        .leftTrigger()
+        .whileTrue(new SetElevatorPresetCommand(elevator, PElevator.ThirdLevel.getValue()));
+
+    // ----- Drive & Vision Commands (using controller) -----
+    // Set the default command for the drive subsystem (field-relative joystick drive).
     // Default command, normal field-relative drive
 
     List<Waypoint> waypoints =
@@ -222,7 +248,8 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    // Lock to 0° when A button is held
+    // Additional drive controls:
+    // Lock drive to 0° when the A button is held.
     controller
         .a()
         .whileTrue(
@@ -231,11 +258,9 @@ public class RobotContainer {
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
                 () -> new Rotation2d()));
-
-    // Switch to X pattern when X button is pressed
+    // Stop the drive with an X-pattern when the X button is pressed.
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-
-    // Reset gyro to 0° when B button is pressed
+    // Reset the gyro to 0° when the B button is pressed.
     controller
         .b()
         .onTrue(
@@ -245,8 +270,7 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-
-    // add a free disturbance when pressing the y button to test vision
+    // Apply a free disturbance to the drive pose (for vision testing) when the Y button is pressed.
     var disturbance =
         new Transform2d(new Translation2d(1.0, 1.0), new Rotation2d(0.17 * 2 * Math.PI));
     controller
@@ -254,35 +278,18 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> drive.setPose(drive.getPose().plus(disturbance)))
                 .ignoringDisable(true));
-  } // end configure bindings
+  }
 
   /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
+   * Returns the autonomous command selected via the dashboard chooser.
    *
-   * @return the command to run in autonomous
+   * @return The autonomous command.
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
   }
 
-  //   public void sendVisionMeasurement() {
-  //     // Correct pose estimate with vision measurements
-  //     var visionEst = vision.getEstimatedGlobalPose();
-  //     visionEst.ifPresent(
-  //         est -> {
-  //           // Change our trust in the measurement based on the tags we can see
-  //           var estStdDevs = vision.getEstimationStdDevs();
-
-  //           drive.addVisionMeasurement(
-  //               est.estimatedPose.toPose2d(),
-  //               est.timestampSeconds,
-  //               estStdDevs); // !!! note: the standard deviation in the constants has to be
-  // tweaked
-  //         });
-  //   }
-
-  // intended for testing usage only
-  // puts sendables on shuffleboard
+  /** Puts drivetrain position data on the SmartDashboard. */
   public void putPositionData() {
     SmartDashboard.putNumber("x position:", drive.getPose().getX());
     SmartDashboard.putNumber("y position:", drive.getPose().getY());

@@ -1,79 +1,87 @@
 package frc.robot.subsystems.elevator;
 
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import frc.robot.Constants;
-import frc.robot.KDoublePreferences.PElevator;
 
+/**
+ * Implementation of ElevatorModuleIO using two TalonFX motor controllers.
+ * The two motors drive the same gear but are mounted oppositely.
+ */
 public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
-  private final TalonFX elevatorMotorLeft;
-  private final TalonFX elevatorMotorRight;
-  
-  public ElevatorModuleTalonFXIO(int motorIDLeft, int motorIDRight, String canbusName) {
-    this.elevatorMotorLeft = new TalonFX(motorIDLeft, canbusName);
-    this.elevatorMotorRight = new TalonFX(motorIDRight, canbusName);
-  }
+    private final TalonFX leftMotor;
+    private final TalonFX rightMotor;
 
-  // private Encoder encoder = new Encoder(1, 1);
+    /** Constructs the TalonFX-based elevator module. */
+    public ElevatorModuleTalonFXIO() {
+        leftMotor = new TalonFX(Constants.ELEVATOR_MOTOR_LEFT_ID, "Canivore");
+        rightMotor = new TalonFX(Constants.ELEVATOR_MOTOR_RIGHT_ID, "Canivore");
 
-  // this sets speed based on a -1 to 1 range
-  @Override
-  public void setSpeed(double speed) {
-    elevatorMotorLeft.set(speed);
-    elevatorMotorRight.set(speed);
-  }
+        TalonFXConfiguration leftConfig = new TalonFXConfiguration();
+        TalonFXConfiguration rightConfig = new TalonFXConfiguration();
 
-  @Override
-  public void updateInputs(ElevatorModuleIOInputsAutoLogged inputs) {
-    inputs.elevatorMotor1CurrentHeightMeter = getHeightMeters(0);
-    inputs.elevatorMotor1CurrentSpeedMeter = elevatorMotorLeft.getVelocity().getValueAsDouble();
+        // Configure motor inversions
+        MotorOutputConfigs leftMotorOutput = new MotorOutputConfigs();
+        leftMotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-    inputs.elevatorMotor1CurrentAmps = elevatorMotorLeft.getStatorCurrent().getValueAsDouble();
-    inputs.elevatorMotor1AppliedVolts = elevatorMotorLeft.getMotorVoltage().getValueAsDouble();
+        MotorOutputConfigs rightMotorOutput = new MotorOutputConfigs();
+        rightMotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-    inputs.elevatorMotor2CurrentAmps = elevatorMotorRight.getStatorCurrent().getValueAsDouble();
-    inputs.elevatorMotor2AppliedVolts = elevatorMotorRight.getMotorVoltage().getValueAsDouble();
+        leftConfig.MotorOutput = leftMotorOutput;
+        rightConfig.MotorOutput = rightMotorOutput;
 
-    inputs.elevatorMotor2CurrentSpeedMeter = elevatorMotorRight.getVelocity().getValueAsDouble();
-    inputs.elevatorMotor2CurrentHeightMeter = getHeightMeters(1);
-  }
+        leftMotor.getConfigurator().apply(leftConfig);
+        rightMotor.getConfigurator().apply(rightConfig);
 
-  @Override
-  public double getHeightMeters(int motor) {
-    double rate = 0.0;
-    return elevatorMotorLeft.getPosition().getValueAsDouble() * rate;
-  }
-
-  @Override
-  public void setBraked(boolean braked) {
-    if (braked) {
-      elevatorMotorLeft.setNeutralMode(NeutralModeValue.Brake);
-      elevatorMotorRight.setNeutralMode(NeutralModeValue.Brake);
-    } else {
-      elevatorMotorLeft.setNeutralMode(NeutralModeValue.Coast);
-      elevatorMotorLeft.setNeutralMode(NeutralModeValue.Coast);
+        // Set both motors to Brake mode by default.
+        leftMotor.setNeutralMode(NeutralModeValue.Brake);
+        rightMotor.setNeutralMode(NeutralModeValue.Brake);
     }
-  }
 
-  @Override
-  public boolean isMaxHeight() {
-    if ((PElevator.MaxHeight.getValue() - getHeightMeters()) < 0.1) {
-      return false;
-    } else {
-      setBraked(true);
-      return true;
+    /** Returns the current elevator height in meters by averaging both motor encoders. */
+    @Override
+    public double getHeightMeters() {
+        double leftHeight = leftMotor.getPosition().getValueAsDouble();
+        double rightHeight = rightMotor.getPosition().getValueAsDouble();
+        return (leftHeight + rightHeight) / 2.0;
     }
-  }
 
-  @Override
-  public void setVoltage(double volt) {
-    elevatorMotorLeft.setVoltage(volt);
-    elevatorMotorRight.setVoltage(volt);
-  }
+    /** Sets the voltage to both motors. */
+    @Override
+    public void setVoltage(double volts) {
+        leftMotor.setVoltage(volts);
+        rightMotor.setVoltage(volts);
+    }
 
-  @Override
-  public void resetEncoder() {
-    elevatorMotorLeft.setPosition(0);
-    elevatorMotorRight.setPosition(0);
-  }
+    /** Resets both motor encoders to zero. */
+    @Override
+    public void resetEncoder() {
+        leftMotor.setPosition(0);
+        rightMotor.setPosition(0);
+    }
+
+    /** Stops the motor immediately. */
+    @Override
+    public void stop() {
+        leftMotor.stopMotor();
+        rightMotor.stopMotor();
+    }
+
+    /** Sets the speed of the motors (manual control mode). */
+    @Override
+    public void setSpeed(double speed) {
+        leftMotor.set(speed);
+        rightMotor.set(speed);
+    }
+
+    /** Sets the neutral mode for both motors (Brake or Coast). */
+    @Override
+    public void setBraked(boolean braked) {
+        NeutralModeValue mode = braked ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+        leftMotor.setNeutralMode(mode);
+        rightMotor.setNeutralMode(mode);
+    }
 }

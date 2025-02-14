@@ -1,8 +1,9 @@
 package frc.robot.subsystems.elevator;
 
-import org.littletonrobotics.junction.AutoLog;
-
-// this is just a prototype, will be more fleshed out later.
+/**
+ * Interface for Elevator Module IO implementations. This abstracts all hardware interactions for
+ * the elevator.
+ */
 public interface ElevatorModuleIO {
   @AutoLog
   public static class ElevatorModuleIOInputs {

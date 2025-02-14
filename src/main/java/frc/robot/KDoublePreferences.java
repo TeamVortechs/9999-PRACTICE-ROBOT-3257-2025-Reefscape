@@ -17,6 +17,11 @@ public class KDoublePreferences {
         new KDoublePref("elevator acceleration limit", 0.01);
     public static KDoublePref MaxHeight = new KDoublePref("Elevator Max height", 1.6637);
     public static KDoublePref MinHeight = new KDoublePref("Elevator Min height", 0);
+
+    public static KDoublePref tolerance = new KDoublePref("Elevator Target Tolerance", 0.1);
+    public static KDoublePref FirstLevel = new KDoublePref("Elevator First Level", .1);
+    public static KDoublePref SecondLevel = new KDoublePref("Elevator Second Level", .2);
+    public static KDoublePref ThirdLevel = new KDoublePref("Elevator Third Level", .3);
   }
 
   public static class PDrivetrain {
