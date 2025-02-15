@@ -11,10 +11,6 @@ import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
-
 // again I'm not adding stuff to this class while we don't whats gonna go here
 public class Wrist extends SubsystemBase {
 
@@ -44,6 +40,7 @@ public class Wrist extends SubsystemBase {
               PWrist.speedLimit.getValue(), PWrist.accelerationLimit.getValue()));
 
   public Wrist(WristIO wristIO) {
+    this.wristIO = wristIO;
   }
 
   @Override
@@ -73,7 +70,6 @@ public class Wrist extends SubsystemBase {
 
     // set target position to 100 rotations
     wristIO.PIDVoltage(targetAngle);
-
 
     // Math.abs(pidOutput) > PWrist.speedLimit.getValue()
     //     ? Math.copySign(PWrist.speedLimit.getValue(), pidOutput) // change later
