@@ -15,7 +15,7 @@ public class KDoublePreferences {
     public static KDoublePref speedlimit = new KDoublePref("elevator speed limit", 2);
     public static KDoublePref accelerationLimit = new KDoublePref("elevator acceleration limit", 1);
     public static KDoublePref MaxHeight =
-        new KDoublePref("Elevator Max height", 29); // formerly 1.6637
+        new KDoublePref("Elevator Max height", 29.754); // formerly 1.6637
     public static KDoublePref MinHeight = new KDoublePref("Elevator Min height", 0);
 
     public static KDoublePref tolerance = new KDoublePref("Elevator Target Tolerance", 0.1);

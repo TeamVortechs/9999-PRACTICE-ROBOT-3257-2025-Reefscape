@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.ControllerVibrateCommand;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.elevator.ManualElevatorCommand;
 import frc.robot.commands.wrist.IntakeWristCommand;
 // import frc.robot.commands.SetWristRollerSpeed;
 import frc.robot.commands.wrist.ManualSetWristSpeedCommand;
@@ -263,6 +264,10 @@ public class RobotContainer {
     controller
         .leftBumper()
         .whileTrue(new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle()));
+
+    controller.leftTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> -0.2));
+    controller.rightTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> 0.2));
+
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
