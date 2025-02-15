@@ -48,6 +48,12 @@ public final class Constants {
   public static final int ROLLER_MOTOR_ID = 23;
   public static final int ARM_MOTOR_ID = 24;
 
+  public static final double WRIST_ANGLE_DROP = 2.4;
+  public static final double WRIST_HIGHEST_ANGLE = 2.56;
+
+  // public static final double ELEVATOR_HEIGHT_1 = 6.803;
+  // public static final double ELEVATOR_HEIGHT_2 = 17.343;
+
   public static class VisionConstants {
     // placeholder translation to use in the estimator(? i'm not sure how it'll detect the camera)
     public static final Transform3d robotToCam =

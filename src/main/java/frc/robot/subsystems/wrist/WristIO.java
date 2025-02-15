@@ -2,11 +2,13 @@ package frc.robot.subsystems.wrist;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+
 public interface WristIO {
   @AutoLog
   public static class WristIOInputs {
     double wristLocationRotations = 0.0;
-    double wristSpeedRad = 0.0;
+    double wristSpeedRotations = 0.0;
 
     double wristCurrentAmps = 0.0;
     double wristAppliedVoltage = 0.0;
@@ -26,10 +28,16 @@ public interface WristIO {
   // sets the speed of the wrist to the amount
   public default void setArmSpeed(double speed) {}
 
+  public default void setArmVoltage(double voltage) {}
+
   public default void setRollerSpeed(double speed) {}
 
   // stops the wrist at the given angle, locks it
   public default void stopWrist() {}
+
+  public default void PIDVoltage(double targetAngle) {
+
+  }
 
   // gets the current of the wrist in radians
   // public default double getAngleRad() {

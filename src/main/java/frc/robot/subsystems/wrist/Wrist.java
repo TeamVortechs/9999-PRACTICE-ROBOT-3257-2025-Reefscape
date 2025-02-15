@@ -5,10 +5,15 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.KDoublePreferences.PWrist;
 import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
 // again I'm not adding stuff to this class while we don't whats gonna go here
 public class Wrist extends SubsystemBase {
@@ -16,13 +21,15 @@ public class Wrist extends SubsystemBase {
   private WristIO wristIO;
   private WristIOInputsAutoLogged inputsAutoLogged = new WristIOInputsAutoLogged();
 
-  private static double stageAngle = Math.toRadians(114.738651129);
-  public static double intakeAngle = Math.toRadians(140);
-  private static double Stage2angle = Math.toRadians(90);
+  // private static double stageAngle = Math.toRadians(114.738651129);
+  // public static double intakeAngle = Math.toRadians(140);
+  // private static double Stage2angle = Math.toRadians(90);
 
   @AutoLogOutput private double CurrentAngle = 0;
 
   @AutoLogOutput private double targetAngle = 0;
+
+  @AutoLogOutput private double pidOutput;
 
   private final double targetBuffer = 0.05;
 
@@ -37,7 +44,6 @@ public class Wrist extends SubsystemBase {
               PWrist.speedLimit.getValue(), PWrist.accelerationLimit.getValue()));
 
   public Wrist(WristIO wristIO) {
-    this.wristIO = wristIO;
   }
 
   @Override
@@ -49,22 +55,34 @@ public class Wrist extends SubsystemBase {
     wristIO.updateInputs(inputsAutoLogged);
     Logger.processInputs("Wrist", inputsAutoLogged);
 
+    CurrentAngle = wristIO.getAngleRotations();
+
+    if (getAngleRotations() > Constants.WRIST_HIGHEST_ANGLE || getAngleRotations() < -0.2) {
+      setManualSpeed(0);
+      System.out.println("WRIST OUT OF BOUNDS");
+    }
+
     if (manualOverride) {
       System.out.println("MANUAL OVERRIDE WRIST ENGAGED");
       return;
     }
 
-    CurrentAngle = wristIO.getAngleRotations();
     double diffHeight = targetAngle - CurrentAngle;
 
     if (diffHeight < targetBuffer) return;
 
-    double wristSpeed = PID.calculate(diffHeight);
+    // set target position to 100 rotations
+    wristIO.PIDVoltage(targetAngle);
 
+
+    // Math.abs(pidOutput) > PWrist.speedLimit.getValue()
+    //     ? Math.copySign(PWrist.speedLimit.getValue(), pidOutput) // change later
+    //     : pidOutput;
+
+    // double wristSpeed = PID.calculate(CurrentAngle, targetAngle);
     // individually move each elevator to that position
 
     // sets the speed of the wrist
-    wristIO.setArmSpeed(wristSpeed);
   }
 
   public boolean isOnTarget() {
@@ -76,7 +94,7 @@ public class Wrist extends SubsystemBase {
     wristIO.setBraked(braked);
   }
 
-  public double getAngleRad() {
+  public double getAngleRotations() {
     return wristIO.getAngleRotations();
   }
 
@@ -126,9 +144,9 @@ public class Wrist extends SubsystemBase {
 
   // enum for each level that the wrist could be
   public enum WristAngle {
-    STAGE1_ANGLE(stageAngle),
-    STAGE2_ANGLE(Stage2angle),
-    INTAKE_ANGLE(intakeAngle);
+    STAGE1_ANGLE(Constants.WRIST_ANGLE_DROP);
+    // STAGE2_ANGLE(Stage2angle),
+    // INTAKE_ANGLE(Constant);
 
     private double angle;
 

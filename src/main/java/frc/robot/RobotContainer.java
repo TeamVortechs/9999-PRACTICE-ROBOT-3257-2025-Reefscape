@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.wrist.ManualSetWristSpeedCommand;
+import frc.robot.commands.wrist.SetWristTargetAngleCommand;
 import frc.robot.generated.TunerConstants;
 // import frc.robot.subsystems.Intake.Intake;
 // import frc.robot.subsystems.Intake.IntakeIOTalonFX;
@@ -49,8 +50,9 @@ import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.wrist.Wrist;
-import frc.robot.subsystems.wrist.WristIOTalonFX;
+import frc.robot.subsystems.wrist.Wrist.WristAngle;
 // import frc.robot.subsystems.wrist.WristIOTalonFX;
+import frc.robot.subsystems.wrist.WristIOTalonFX;
 import java.io.IOException;
 import java.util.List;
 import org.json.simple.parser.ParseException;
@@ -86,7 +88,8 @@ public class RobotContainer {
           new ElevatorModuleTalonFXIO(
               Constants.ELEVATOR_MOTOR_LEFT_ID,
               Constants.ELEVATOR_MOTOR_RIGHT_ID,
-              Constants.ELEVATOR_CANBUS));
+              Constants.ELEVATOR_CANBUS),
+          wrist);
   //   private final Elevator2 elevator2 =
   //       new Elevator2(
   //           new ElevatorModuleTalonFXIO(
@@ -239,11 +242,15 @@ public class RobotContainer {
         .rightBumper()
         .onTrue(
             new InstantCommand(() -> elevator.resetEncoders())
+                .ignoringDisable(true)
                 .alongWith(new InstantCommand(() -> wrist.resetWristEncoder()))
                 .ignoringDisable(true));
 
-    controller.b().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> 0.01));
-    controller.x().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> -0.01));
+    controller.b().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> 0.05));
+    controller.x().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> -0.05));
+    controller
+        .leftBumper()
+        .whileTrue(new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle()));
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,

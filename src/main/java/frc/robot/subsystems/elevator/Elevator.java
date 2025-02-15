@@ -5,6 +5,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.KDoublePreferences.PElevator;
+import frc.robot.subsystems.wrist.Wrist;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -29,18 +30,26 @@ public class Elevator extends SubsystemBase {
   @AutoLogOutput private boolean manualOverride = false;
   @AutoLogOutput private int loopCount = 0; // Counter to reduce SmartDashboard updates
 
+  private Wrist wrist;
+
+  @AutoLogOutput public boolean wristAngleValid = true;
+
   /**
    * Constructor for the Elevator subsystem.
    *
    * @param moduleIO Hardware interface for elevator motors.
    * @param homeSwitch Digital input limit switch for homing.
    */
-  public Elevator(ElevatorModuleIO moduleIO
-      // , DigitalInput homeSwitch
-      ) {
+  public Elevator(
+      ElevatorModuleIO moduleIO
+          // , DigitalInput homeSwitch
+          ,
+      Wrist wrist) {
     // setPreferences();
     this.moduleIO = moduleIO;
     // this.homeSwitch = homeSwitch;
+
+    this.wrist = wrist;
 
     pid =
         new ProfiledPIDController(
@@ -59,6 +68,8 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     moduleIO.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
+
+    wristAngleValid = (wrist.getAngleRotations() > 1);
 
     // check to see if the elevator is stalling; if so, then stop the motors and cancel the next
     // movement
@@ -99,6 +110,22 @@ public class Elevator extends SubsystemBase {
    * during disabled time
    */
   public void moveToTargetHeight() {
+
+    if (!wristAngleValid) {
+      System.out.println("ELEVATOR IS NOT MOVING! THE WRIST ANGLE IS NOT VALID");
+      moduleIO.setSpeed(0);
+      return;
+    }
+
+    if (manualOverride) {
+
+      if (getCurrentHeight() < PElevator.MinHeight.getValue()
+          || getCurrentHeight() > PElevator.MaxHeight.getValue()) {
+        System.out.println("ELEVATOR OUT OF BOUDNS");
+        setManualSpeed(0);
+      }
+      return;
+    }
 
     if (Math.abs(currentHeight - targetHeight) < PElevator.tolerance.getValue()) {
       isOnTarget = true;
@@ -180,20 +207,21 @@ public class Elevator extends SubsystemBase {
     pid.reset(currentHeight);
   }
 
-  private void setPreferences() {
-    // to help lock in values in simulation as well as ensuring they are properly set on the field
-    PElevator.proportional.setValue(0.4);
-    PElevator.integral.setValue(0);
-    PElevator.derivative.setValue(0);
+  // private void setPreferences() {
+  //   // to help lock in values in simulation as well as ensuring they are properly set on the
+  // field
+  //   PElevator.proportional.setValue(0.4);
+  //   PElevator.integral.setValue(0);
+  //   PElevator.derivative.setValue(0);
 
-    PElevator.speedlimit.setValue(0.2);
-    PElevator.accelerationLimit.setValue(0.1);
-    PElevator.MaxHeight.setValue(10);
-    PElevator.MinHeight.setValue(0);
+  //   PElevator.speedlimit.setValue(0.2);
+  //   PElevator.accelerationLimit.setValue(0.1);
+  //   PElevator.MaxHeight.setValue(10);
+  //   PElevator.MinHeight.setValue(0);
 
-    PElevator.tolerance.setValue(0.1);
-    PElevator.FirstLevel.setValue(2);
-    PElevator.SecondLevel.setValue(5);
-    PElevator.ThirdLevel.setValue(9);
-  }
+  //   PElevator.tolerance.setValue(0.1);
+  //   PElevator.FirstLevel.setValue(2);
+  //   PElevator.SecondLevel.setValue(5);
+  //   PElevator.ThirdLevel.setValue(9);
+  // }
 }
