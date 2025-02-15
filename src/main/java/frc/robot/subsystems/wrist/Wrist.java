@@ -27,7 +27,7 @@ public class Wrist extends SubsystemBase {
 
   @AutoLogOutput private double pidOutput;
 
-  private final double targetBuffer = 0.05;
+  private final double targetBuffer = 0.1;
 
   @AutoLogOutput private boolean manualOverride = false;
 

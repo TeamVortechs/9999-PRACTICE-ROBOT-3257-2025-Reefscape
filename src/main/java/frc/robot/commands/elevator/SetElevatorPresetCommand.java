@@ -2,17 +2,20 @@ package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.wrist.Wrist;
 
 public class SetElevatorPresetCommand extends Command {
   private final Elevator elevator;
+  private final Wrist wrist;
   private final double presetHeight;
 
   /**
    * @param elevator The elevator subsystem.
    * @param presetHeight The target height (from preferences).
    */
-  public SetElevatorPresetCommand(Elevator elevator, double presetHeight) {
+  public SetElevatorPresetCommand(Elevator elevator, Wrist wrist, double presetHeight) {
     this.elevator = elevator;
+    this.wrist = wrist;
     this.presetHeight = presetHeight;
     addRequirements(elevator);
   }

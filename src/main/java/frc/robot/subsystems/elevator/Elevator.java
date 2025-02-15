@@ -67,8 +67,6 @@ public class Elevator extends SubsystemBase {
     moduleIO.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
 
-    wristAngleValid = (wrist.getAngleRotations() > 1);
-
     // check to see if the elevator is stalling; if so, then stop the motors and cancel the next
     // movement
 
@@ -101,15 +99,7 @@ public class Elevator extends SubsystemBase {
     //   targetHeight = 0.0;
     //   pid.reset(0.0);
     // }
-  }
-
-  /**
-   * this is the default command of the elevator so that the PID does not attempt to keep increasing
-   * during disabled time
-   */
-  public void moveToTargetHeight() {
-
-    if (!wristAngleValid) {
+    if (!wrist.isOnTarget()) {
       System.out.println("ELEVATOR IS NOT MOVING! THE WRIST ANGLE IS NOT VALID");
       moduleIO.setSpeed(0);
       return;
@@ -117,7 +107,7 @@ public class Elevator extends SubsystemBase {
 
     if (manualOverride) {
 
-      if (getCurrentHeight() < PElevator.MinHeight.getValue()
+      if (getCurrentHeight() < PElevator.MinHeight.getValue() - PElevator.tolerance.getValue()
           || getCurrentHeight() > PElevator.MaxHeight.getValue()) {
         System.out.println("ELEVATOR OUT OF BOUDNS");
         setManualSpeed(0);
@@ -128,7 +118,7 @@ public class Elevator extends SubsystemBase {
     if (Math.abs(currentHeight - targetHeight) < PElevator.tolerance.getValue()) {
       isOnTarget = true;
       System.out.println("On target is true! I am stopping the motors now");
-      moduleIO.stop();
+      // moduleIO.stop();
     } else {
       isOnTarget = false;
       // Clamp target height to prevent exceeding limits
@@ -151,6 +141,55 @@ public class Elevator extends SubsystemBase {
       moduleIO.PIDVoltage(targetHeight);
     }
   }
+
+  /**
+   * this is the default command of the elevator so that the PID does not attempt to keep increasing
+   * during disabled time
+   */
+  // public void moveToTargetHeight() {
+
+  //   if (!wrist.isOnTarget()) {
+  //     System.out.println("ELEVATOR IS NOT MOVING! THE WRIST ANGLE IS NOT VALID");
+  //     moduleIO.setSpeed(0);
+  //     return;
+  //   }
+
+  //   if (manualOverride) {
+
+  //     if (getCurrentHeight() < PElevator.MinHeight.getValue()
+  //         || getCurrentHeight() > PElevator.MaxHeight.getValue()) {
+  //       System.out.println("ELEVATOR OUT OF BOUDNS");
+  //       setManualSpeed(0);
+  //     }
+  //     return;
+  //   }
+
+  //   if (Math.abs(currentHeight - targetHeight) < PElevator.tolerance.getValue()) {
+  //     isOnTarget = true;
+  //     System.out.println("On target is true! I am stopping the motors now");
+  //     moduleIO.stop();
+  //   } else {
+  //     isOnTarget = false;
+  //     // Clamp target height to prevent exceeding limits
+  //     maxHeight = PElevator.MaxHeight.getValue();
+  //     targetHeight = Math.max(0.0, Math.min(targetHeight, maxHeight));
+  //     // pid.setGoal(targetHeight);
+
+  //     // // Compute PID output and prevent downward motion at home
+  //     // pidOutput = pid.calculate(currentHeight, targetHeight);
+  //     // // if (pidOutput < 0 && !homeSwitch.get()) {
+  //     // //   pidOutput = 0;
+  //     // // }
+  //     // System.out.println("Target height: " + targetHeight);
+  //     // System.out.println("Height diff: " + Math.abs(currentHeight - targetHeight));
+  //     // System.out.println("this is the pid output: " + pidOutput);
+  //     // if (Math.abs(pidOutput) > 1)
+  //     //   pidOutput = Math.copySign(PElevator.speedlimit.getValue(), pidOutput);
+  //     // moduleIO.setSpeed(pidOutput);
+
+  //     moduleIO.PIDVoltage(targetHeight);
+  //   }
+  // }
 
   /** Sets a new target height for the elevator using PID control. */
   public void setTargetHeight(double height) {

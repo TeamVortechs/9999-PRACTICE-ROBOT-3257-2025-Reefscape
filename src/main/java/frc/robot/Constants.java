@@ -44,6 +44,9 @@ public final class Constants {
   public static final String ELEVATOR_CANBUS = "rio";
   public static final int CANRANGE_ID = 60;
 
+  public static final double ELEVATOR_MAX_HEIGHT = 29.754;
+  public static final double ELEVATOR_MIN_HEIGHT = 0;
+
   // constants used for the arm
   public static final int ROLLER_MOTOR_ID = 23;
   public static final int ARM_MOTOR_ID = 24;

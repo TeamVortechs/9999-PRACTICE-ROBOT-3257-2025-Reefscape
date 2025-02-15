@@ -24,12 +24,13 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.KDoublePreferences.PElevator;
 import frc.robot.commands.ControllerVibrateCommand;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.elevator.ManualElevatorCommand;
 import frc.robot.commands.wrist.IntakeWristCommand;
 // import frc.robot.commands.SetWristRollerSpeed;
 import frc.robot.commands.wrist.ManualSetWristSpeedCommand;
@@ -253,7 +254,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     controller.b().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> 0.05));
-    controller.x().whileTrue(new SetWristTargetAngleCommand(wrist, 0));
+    // controller.x().whileTrue(new SetWristTargetAngleCommand(wrist, 0));
     controller
         .a()
         .whileTrue(
@@ -265,9 +266,20 @@ public class RobotContainer {
         .leftBumper()
         .whileTrue(new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle()));
 
-    controller.leftTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> -0.2));
-    controller.rightTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> 0.2));
-
+    // controller.leftTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> -0.2));
+    // controller.rightTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> 0.2));
+    controller
+        .leftTrigger()
+        .whileTrue(
+            new InstantCommand(() -> elevator.setTargetHeight(PElevator.FirstLevel.getValue())));
+    controller
+        .rightTrigger()
+        .whileTrue(
+            new InstantCommand(() -> elevator.setTargetHeight(PElevator.SecondLevel.getValue())));
+    controller
+        .x()
+        .whileTrue(
+            new InstantCommand(() -> elevator.setTargetHeight(PElevator.MinHeight.getValue())));
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
@@ -289,15 +301,26 @@ public class RobotContainer {
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    // controller
-    //     .b()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () ->
-    //                     drive.setPose(
-    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-    //                 drive)
-    //             .ignoringDisable(true));
+    controller
+        .povDown()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
+
+    controller
+        .povUp()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(
+                                drive.getPose().getTranslation(), Rotation2d.fromDegrees(180))),
+                    drive)
+                .ignoringDisable(true));
 
     // add a free disturbance when pressing the y button to test vision
     // var disturbance =
