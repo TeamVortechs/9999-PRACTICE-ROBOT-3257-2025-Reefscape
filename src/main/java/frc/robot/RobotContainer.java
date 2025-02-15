@@ -19,19 +19,20 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.ControllerVibrateCommand;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.wrist.IntakeWristCommand;
+// import frc.robot.commands.SetWristRollerSpeed;
 import frc.robot.commands.wrist.ManualSetWristSpeedCommand;
+import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
 import frc.robot.commands.wrist.SetWristTargetAngleCommand;
 import frc.robot.generated.TunerConstants;
 // import frc.robot.subsystems.Intake.Intake;
@@ -238,6 +239,10 @@ public class RobotContainer {
     //                 new SetWristRollerSpeed(wrist, -0.01)
     //                     .unless(() -> wrist.isCanCloserThan(0.1))));
 
+    wrist.setDefaultCommand(
+        new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle())
+            .unless(() -> !wrist.isCanCloserThan(0.1)));
+
     controller
         .rightBumper()
         .onTrue(
@@ -247,7 +252,14 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     controller.b().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> 0.05));
-    controller.x().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> -0.05));
+    controller.x().whileTrue(new SetWristTargetAngleCommand(wrist, 0));
+    controller
+        .a()
+        .whileTrue(
+            new IntakeWristCommand(wrist, -0.2)
+                .andThen(new ControllerVibrateCommand(0.7, controller)));
+
+    controller.y().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.5));
     controller
         .leftBumper()
         .whileTrue(new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle()));
@@ -283,13 +295,13 @@ public class RobotContainer {
     //             .ignoringDisable(true));
 
     // add a free disturbance when pressing the y button to test vision
-    var disturbance =
-        new Transform2d(new Translation2d(1.0, 1.0), new Rotation2d(0.17 * 2 * Math.PI));
-    controller
-        .y()
-        .onTrue(
-            Commands.runOnce(() -> drive.setPose(drive.getPose().plus(disturbance)))
-                .ignoringDisable(true));
+    // var disturbance =
+    //     new Transform2d(new Translation2d(1.0, 1.0), new Rotation2d(0.17 * 2 * Math.PI));
+    // controller
+    //     .y()
+    //     .onTrue(
+    //         Commands.runOnce(() -> drive.setPose(drive.getPose().plus(disturbance)))
+    //             .ignoringDisable(true));
   } // end configure bindings
 
   /**

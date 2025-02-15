@@ -33,10 +33,10 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
     slot0Configs.kD = 0.1; // A velocity error of 1 rps results in 0.1 V output
 
     var motionMagicConfigs = elevatorConfigs.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
+    motionMagicConfigs.MotionMagicCruiseVelocity = 2; // Target cruise velocity of 80 rps
     motionMagicConfigs.MotionMagicAcceleration =
-        160; // Target acceleration of 160 rps/s (0.5 seconds)
-    motionMagicConfigs.MotionMagicJerk = 1600; // Target jerk of 1600 rps/s/s (0.1 seconds)
+        1.5; // Target acceleration of 160 rps/s (0.5 seconds)
+    motionMagicConfigs.MotionMagicJerk = 10; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
     leftMotor.getConfigurator().apply(elevatorConfigs);
     rightMotor.getConfigurator().apply(elevatorConfigs);
