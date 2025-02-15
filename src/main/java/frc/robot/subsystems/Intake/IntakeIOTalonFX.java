@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Intake;
+/*package frc.robot.subsystems.Intake;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -14,4 +14,4 @@ public class IntakeIOTalonFX implements IntakeIO {
     inputs.CurrentMotorVoltage = intakemotor.getMotorVoltage(true).getValueAsDouble();
     inputs.CurrentMotorAmps = intakemotor.getStatorCurrent().getValueAsDouble();
   }
-}
+/* */

@@ -42,6 +42,12 @@ public final class Constants {
   public static final int ELEVATOR_MOTOR_LEFT_ID = 21;
   public static final int ELEVATOR_MOTOR_RIGHT_ID = 22;
   public static final String ELEVATOR_CANBUS = "rio";
+  public static final int CANRANGE_ID = 60;
+
+  // needs to be changed for future reference
+  public static final int ARM_MOTOR_ID = 5;
+  public static final int ROLLER_MOTOR_ID = 4;
+  public static final int ARM_ENCODER_ID = 3;
 
   public static class VisionConstants {
     // placeholder translation to use in the estimator(? i'm not sure how it'll detect the camera)

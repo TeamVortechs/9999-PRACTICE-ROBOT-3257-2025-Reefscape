@@ -1,8 +1,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.Elevator.ElevatorLevel;
+import frc.robot.subsystems.elevator.Elevator2;
+import frc.robot.subsystems.elevator.Elevator2.ElevatorLevel;
 
 /*
 Ben
@@ -18,22 +18,22 @@ public class SetElevatorCommand extends Command {
    */
   private double wantedHeight;
 
-  private Elevator elevator;
+  private Elevator2 elevator2;
 
-  public SetElevatorCommand(double wantedHeight, Elevator elevator) {
+  public SetElevatorCommand(double wantedHeight, Elevator2 elevator2) {
     this.wantedHeight = wantedHeight;
-    this.elevator = elevator;
+    this.elevator2 = elevator2;
   }
 
-  public SetElevatorCommand(ElevatorLevel elevatorLevel, Elevator elevator) {
+  public SetElevatorCommand(ElevatorLevel elevatorLevel, Elevator2 elevator2) {
     this.wantedHeight = elevatorLevel.getHeight();
-    this.elevator = elevator;
+    this.elevator2 = elevator2;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    elevator.setTargetHeight(wantedHeight);
+    elevator2.setTargetHeight(wantedHeight);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -50,12 +50,12 @@ public class SetElevatorCommand extends Command {
   public boolean isFinished() {
 
     // just a way to ask if the doubles are not equal which works for innacuracies
-    if (Math.abs(wantedHeight - elevator.getTargetHeight()) > 0.0001) {
+    if (Math.abs(wantedHeight - elevator2.getTargetHeight()) > 0.0001) {
       return true;
     }
 
     // returns true if the heihgt of the elevator is really close to the wanted height
-    if (Math.abs(wantedHeight - elevator.getHeight()) > 0.1) {
+    if (Math.abs(wantedHeight - elevator2.getHeight()) > 0.1) {
       return true;
     }
 

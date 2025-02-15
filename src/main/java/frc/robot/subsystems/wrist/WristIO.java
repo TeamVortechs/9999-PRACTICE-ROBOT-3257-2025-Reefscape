@@ -12,6 +12,14 @@ public interface WristIO {
     double wristAppliedVoltage = 0.0;
   }
 
+  public default boolean isDetected() {
+    return false;
+  }
+
+  public default double getDistance() {
+    return 0.0;
+  }
+
   // updates the given inputs with new values(advantage kit stuff)
   public default void updateInputs(WristIOInputsAutoLogged inputs) {}
 
@@ -24,13 +32,8 @@ public interface WristIO {
   public default void stopWrist() {}
 
   // gets the current of the wrist in radians
-  public default double
-      getAngleRad() { // !!!!!! encoder functionality disabled because we don't have the device yet
-    // !!!!!!!!
-    // Encoder encoder = new Encoder(0, 0);
-    // double SensorPosition = Math.toRadians(encoder.get() * 90 / 500);
-    double SensorPosition = 0;
-    return SensorPosition;
+  public default double getAngleRad() {
+    return 0.0;
   }
 
   public default void setBraked(boolean braked) {}

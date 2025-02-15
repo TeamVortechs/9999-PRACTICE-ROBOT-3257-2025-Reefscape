@@ -22,7 +22,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,10 +30,14 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.SetElevatorCommand;
 import frc.robot.commands.SetElevatorPower;
+import frc.robot.commands.SetWristRollerSpeed;
+import frc.robot.commands.TellCommand;
+import frc.robot.commands.wrist.ManualSetWristSpeedCommand;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Intake.Intake;
-import frc.robot.subsystems.Intake.IntakeIOTalonFX;
+// import frc.robot.subsystems.Intake.Intake;
+// import frc.robot.subsystems.Intake.IntakeIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -42,11 +45,14 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator2;
+import frc.robot.subsystems.elevator.Elevator2.ElevatorLevel;
 import frc.robot.subsystems.elevator.ElevatorModuleTalonFXIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristIOTalonFX;
 // import frc.robot.subsystems.wrist.WristIOTalonFX;
 import java.io.IOException;
 import java.util.List;
@@ -67,15 +73,25 @@ public class RobotContainer {
   private final Vision vision;
 
   // physical subsystems
-  // private final Wrist wrist = new Wrist(new WristIOTalonFX());
-  DigitalInput limitSwitch =
-      new DigitalInput(20); // !!!!! FAKE CHANNEL! CHANGE WHEN PROPERLY IMPLEMENTED !!!!!!
-  private final Intake intake = new Intake(new IntakeIOTalonFX(), limitSwitch);
+  private final Wrist wrist =
+      new Wrist(
+          new WristIOTalonFX(
+              Constants.ARM_MOTOR_ID,
+              Constants.ROLLER_MOTOR_ID,
+              Constants.ELEVATOR_CANBUS,
+              Constants.ARM_ENCODER_ID, 
+              Constants.CANRANGE_ID));
+
+  // DigitalInput limitSwitch =
+  // new DigitalInput(20); // !!!!! FAKE CHANNEL! CHANGE WHEN PROPERLY IMPLEMENTED !!!!!!
+  // private final Intake intake = new Intake(new IntakeIOTalonFX(), limitSwitch);
   // private final Elevator elevator = new Elevator(eModuleIO);
-  private final Elevator2 elevator2 = new Elevator2(new ElevatorModuleTalonFXIO(Constants.ELEVATOR_MOTOR_LEFT_ID, 
-  Constants.ELEVATOR_MOTOR_RIGHT_ID, 
-  Constants.ELEVATOR_CANBUS)
-  );
+  private final Elevator2 elevator2 =
+      new Elevator2(
+          new ElevatorModuleTalonFXIO(
+              Constants.ELEVATOR_MOTOR_LEFT_ID,
+              Constants.ELEVATOR_MOTOR_RIGHT_ID,
+              Constants.ELEVATOR_CANBUS));
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -198,23 +214,28 @@ public class RobotContainer {
     //  controller.back().whileTrue(new WristSetPosCommand(wrist, -0.25));
     // controller2.leftBumper().whileTrue(new IntakeSpeedCommand(intake, 0.75, limitSwitch));
     // controller.b().whileTrue(elevator2.runCurrentZeroing());
-    controller.rightBumper().whileTrue(new SetElevatorPower(elevator2, 0.1));
-    controller.leftBumper().whileTrue(new SetElevatorPower(elevator2, -0.1));
-    /*  controller2
-            .rightBumper()
-            .whileTrue(new SetElevatorCommand(ElevatorLevel.FIRST_LEVEL, elevator));
-        controller2
-            .rightTrigger()
-            .whileTrue(new SetElevatorCommand(ElevatorLevel.SECOND_LEVEL, elevator));
-        controller2
-            .leftTrigger()
-            .whileTrue(new SetElevatorCommand(ElevatorLevel.THIRD_LEVEL, elevator));
-        controller2
-            .a()
-            .whileTrue(
-                new WristSetPosCommand(wrist, WristAngle.INTAKE_ANGLE)
-                    .andThen(new SetWristRollerSpeed(wrist, -0.4)));
-    /* */
+    // controller.rightBumper().whileTrue(new SetElevatorPower(elevator2, 0.1));
+    // controller.leftBumper().whileTrue(new SetElevatorPower(elevator2, -0.1));
+    // controller
+    //     .rightBumper()
+    //     .whileTrue(new SetElevatorCommand(ElevatorLevel.FIRST_LEVEL, elevator2));
+    // controller
+    //     .rightTrigger()
+    //     .whileTrue(new SetElevatorCommand(ElevatorLevel.SECOND_LEVEL, elevator2));
+    // controller
+    //     .leftTrigger()
+    //     .whileTrue(new SetElevatorCommand(ElevatorLevel.THIRD_LEVEL, elevator2));
+
+
+
+    controller
+        .a()
+        .whileTrue(
+            new TellCommand()
+                .andThen(new SetWristRollerSpeed(wrist, -0.01).unless(() -> wrist.isCanCloserThan(0.1))));
+
+    controller.b().whileTrue(new ManualSetWristSpeedCommand(wrist,() -> 0.01));
+    controller.x().whileFalse(new ManualSetWristSpeedCommand(wrist,() -> -0.01));
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
@@ -223,28 +244,28 @@ public class RobotContainer {
             () -> -controller.getRightX()));
 
     // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -controller.getLeftY(),
+    //             () -> -controller.getLeftX(),
+    //             () -> new Rotation2d( )));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    // controller
+    //     .b()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
 
     // add a free disturbance when pressing the y button to test vision
     var disturbance =
