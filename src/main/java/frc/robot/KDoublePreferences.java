@@ -7,7 +7,7 @@ import frc.robot.util.KDoublePref;
 public class KDoublePreferences {
   public static class PElevator {
     // should switch this all to a set value when we finish tuning
-    public static KDoublePref proportional = new KDoublePref("elevator proportional", 1.6);
+    public static KDoublePref proportional = new KDoublePref("elevator proportional", 0.1);
     public static KDoublePref integral = new KDoublePref("elevator integral", 0.0002);
     public static KDoublePref derivative =
         new KDoublePref("elevator derivative", 0.0); // should be tweaked
@@ -15,6 +15,8 @@ public class KDoublePreferences {
     public static KDoublePref speedlimit = new KDoublePref("elevator speed limit", 0.01);
     public static KDoublePref accelerationLimit =
         new KDoublePref("elevator acceleration limit", 0.01);
+    public static KDoublePref MaxHeight = new KDoublePref("Elevator Max height", 1.6637);
+    public static KDoublePref MinHeight = new KDoublePref("Elevator Min height", 0);
   }
 
   public static class PDrivetrain {

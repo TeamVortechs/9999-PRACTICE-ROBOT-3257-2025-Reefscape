@@ -38,6 +38,20 @@ public final class Constants {
     REPLAY
   }
 
+  // constants used for the elevator
+  public static final int ELEVATOR_MOTOR_LEFT_ID = 21;
+  public static final int ELEVATOR_MOTOR_RIGHT_ID = 22;
+  public static final String ELEVATOR_CANBUS = "rio";
+  public static final int CANRANGE_ID = 60;
+
+  // needs to be changed for future reference
+  public static final int ARM_MOTOR_ID = 24;
+  public static final int ROLLER_MOTOR_ID = 23;
+  // public static final int ARM_ENCODER_ID = 3;
+
+  public static final double ARM_LIMIT = 90;
+  public static final double LOWER_ARM_LIMIT = -30;
+
   public static class VisionConstants {
     // placeholder translation to use in the estimator(? i'm not sure how it'll detect the camera)
     public static final Transform3d robotToCam =

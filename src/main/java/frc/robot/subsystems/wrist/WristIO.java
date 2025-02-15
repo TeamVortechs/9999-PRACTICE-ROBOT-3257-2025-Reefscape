@@ -12,12 +12,21 @@ public interface WristIO {
     double wristAppliedVoltage = 0.0;
   }
 
+  public default boolean isDetected() {
+    return false;
+  }
+
+  public default double getDistance() {
+    return 0.0;
+  }
+
   // updates the given inputs with new values(advantage kit stuff)
-  public default void updateInputs(WristIOInputs inputs) {}
+  public default void updateInputs(WristIOInputsAutoLogged inputs) {}
 
   // sets the speed of the wrist to the amount
-  public default void setSpeed(double speed) {}
-  ;
+  public default void setArmSpeed(double speed) {}
+
+  public default void setRollerSpeed(double speed) {}
 
   // stops the wrist at the given angle, locks it
   public default void stopWrist() {}
@@ -26,6 +35,8 @@ public interface WristIO {
   public default double getAngleRad() {
     return 0.0;
   }
+
+  public default void setBraked(boolean braked) {}
 
   // gets the lowest possible angle of the wrist in radians
   public default double getLowestAngleRad() {

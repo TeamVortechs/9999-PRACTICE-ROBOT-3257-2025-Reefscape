@@ -1,9 +1,9 @@
-package frc.robot.subsystems.elevator;
+/*package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.KDoublePreferences;
 import frc.robot.KDoublePreferences.PElevator;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -23,6 +23,12 @@ public class Elevator extends SubsystemBase {
 
   private ElevatorModuleIO elevatorModuleIO;
 
+  private static double Stage2 = 20.4999634796;
+
+  private static double Stage3 = 33.2499634796;
+
+  private static double Stage4 = 72;
+
   private ElevatorModuleIOInputsAutoLogged inputs = new ElevatorModuleIOInputsAutoLogged();
 
   private ProfiledPIDController PID =
@@ -30,7 +36,8 @@ public class Elevator extends SubsystemBase {
           PElevator.proportional.getValue(),
           PElevator.integral.getValue(),
           PElevator.derivative.getValue(),
-          new TrapezoidProfile.Constraints(targetHeight, currentHeight));
+          new TrapezoidProfile.Constraints(
+              PElevator.speedlimit.getValue(), PElevator.accelerationLimit.getValue()));
 
   public Elevator(ElevatorModuleIO elevatorModuleIO) {
     this.elevatorModuleIO = elevatorModuleIO;
@@ -38,14 +45,6 @@ public class Elevator extends SubsystemBase {
 
   // PID controller so we don't need to do the logic ourselves. It just gets all of it's values from
   // preferences
-  ProfiledPIDController elevatorPID =
-      new ProfiledPIDController(
-          KDoublePreferences.PElevator.proportional.getValue(),
-          KDoublePreferences.PElevator.integral.getValue(),
-          KDoublePreferences.PElevator.derivative.getValue(),
-          new TrapezoidProfile.Constraints(
-              KDoublePreferences.PElevator.speedlimit.getValue(),
-              KDoublePreferences.PElevator.accelerationLimit.getValue()));
 
   // LOGIC
   @Override
@@ -58,18 +57,33 @@ public class Elevator extends SubsystemBase {
     Logger.processInputs("Elevator", inputs);
 
     // calculate the needed position of each elevator
-
+    currentHeight = elevatorModuleIO.getHeightMeters();
     double diffHeight = targetHeight - currentHeight;
 
-    if (diffHeight < 0.1) return;
+    // if (diffHeight < 0.1) return;
 
     double elevatorSpeed = PID.calculate(diffHeight);
 
     // individually move each elevator to that position
 
-    elevatorModuleIO.setSpeed(elevatorSpeed);
+    if (targetHeight > PElevator.MaxHeight.getValue())
+      targetHeight = PElevator.MaxHeight.getValue();
 
+    if ((PElevator.MaxHeight.getValue() - currentHeight) < 0.1) {
+      elevatorModuleIO.setSpeed(elevatorSpeed);
+    } else {
+      elevatorModuleIO.setSpeed(-0.05);
+      // elevatorModuleIO.setBraked(true);
+      System.out.println("TOO HIGH");
+    }
     // finish
+  }
+
+  public Command runCurrentZeroing() {
+    System.out.println("Elevator is Homed");
+    return this.run(() -> elevatorModuleIO.setVoltage(-0.05))
+        .until(() -> (inputs.elevatorMotor1CurrentAmps > 40))
+        .finallyDo(() -> elevatorModuleIO.resetEncoder());
   }
 
   // HELPER
@@ -78,11 +92,22 @@ public class Elevator extends SubsystemBase {
     return elevatorModuleIO.getHeightMeters();
   }
 
+  // public void setPosition(){
+  // elevatorModuleIO.setPostion(62.8318531);
+  // }
+
   // GETTER/SETTER(simple)
   // sets the heihgt of the elevator using the pid system
 
   public void setTargetHeight(double height) {
     this.targetHeight = height;
+    if ((PElevator.MaxHeight.getValue() - currentHeight) < 0.1) {
+      System.out.println("Elevator is below Max Height");
+    } else {
+
+      targetHeight = PElevator.MaxHeight.getValue();
+      System.out.println("TOO HIGH");
+    }
   }
 
   // sets the height of the elevator but uses an enum to make it more expandable
@@ -98,14 +123,15 @@ public class Elevator extends SubsystemBase {
   // returns wether or not the elevator is currently on it's target or still trying to path to it
   public boolean isOnTarget() {
     // just checks to see if the difference is low enough
-    return Math.abs(currentHeight - targetHeight) < 0.04;
+    return Math.abs(currentHeight - targetHeight) < 0.04
+        || Math.abs(currentHeight - targetHeight) > 0.04;
   }
 
   // enum for each level that the elevator could be
   public enum ElevatorLevel {
-    FIRST_LEVEL(1.0),
-    SECOND_LEVEL(2.0),
-    THIRD_LEVEL(3.0);
+    FIRST_LEVEL(Stage2),
+    SECOND_LEVEL(Stage3),
+    THIRD_LEVEL(Stage4);
 
     private double height;
 
@@ -118,3 +144,4 @@ public class Elevator extends SubsystemBase {
     }
   }
 }
+/* */
