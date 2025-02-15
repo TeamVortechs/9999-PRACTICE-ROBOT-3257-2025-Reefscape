@@ -3,28 +3,25 @@ package frc.robot.subsystems.wrist;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class WristIOTalonFX implements WristIO {
   private TalonFX arm = null;
-  private PWMSparkMax rollers = null;
-  private Encoder armEncoder;
+  private SparkMax rollers = null;
   private CANrange Canrange;
 
-  public WristIOTalonFX(
-      int armID, int rollerID, String canbusName, int armEncoderID, int CanrangeID) {
+  public WristIOTalonFX(int armID, int rollerID, String canbusName, int CanrangeID) {
 
     this.arm = new TalonFX(armID, canbusName);
-    this.rollers = new PWMSparkMax(rollerID);
-    this.armEncoder = new Encoder(armEncoderID, armEncoderID);
+    this.rollers = new SparkMax(rollerID, MotorType.kBrushless);
     this.Canrange = new CANrange(CanrangeID);
   }
 
   @Override
   public void setArmSpeed(double speed) {
-    // arm.set(speed);
+    arm.set(speed);
   }
 
   public void setRollerSpeed(double speed) {
@@ -33,7 +30,11 @@ public class WristIOTalonFX implements WristIO {
 
   @Override
   public double getAngleRad() {
-    return armEncoder.get() * (90 / 500);
+    double angle = arm.getPosition().getValue().baseUnitMagnitude() * 2 * Math.PI;
+
+    SmartDashboard.putNumber("measured angle", angle);
+
+    return angle;
   }
 
   @Override
@@ -41,7 +42,7 @@ public class WristIOTalonFX implements WristIO {
     inputs.wristAppliedVoltage = arm.getMotorVoltage().getValueAsDouble();
     inputs.wristCurrentAmps = arm.getStatorCurrent().getValueAsDouble();
     inputs.wristSpeedRad = arm.get();
-    inputs.wristLocationRad = armEncoder.get() * (90 / 500);
+    inputs.wristLocationRad = getAngleRad();
   }
 
   @Override

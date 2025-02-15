@@ -1,6 +1,5 @@
 package frc.robot.subsystems.elevator;
 
-import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import frc.robot.KDoublePreferences.PElevator;
@@ -9,11 +8,9 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
   private final TalonFX elevatorMotorLeft;
   private final TalonFX elevatorMotorRight;
 
-  public ElevatorModuleTalonFXIO(
-      int motorIDLeft, int motorIDRight, String canbusName) {
+  public ElevatorModuleTalonFXIO(int motorIDLeft, int motorIDRight, String canbusName) {
     this.elevatorMotorLeft = new TalonFX(motorIDLeft, canbusName);
     this.elevatorMotorRight = new TalonFX(motorIDRight, canbusName);
-    
   }
 
   // private Encoder encoder = new Encoder(1, 1);

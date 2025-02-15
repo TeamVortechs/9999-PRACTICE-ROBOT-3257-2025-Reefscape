@@ -30,8 +30,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.SetElevatorCommand;
-import frc.robot.commands.SetElevatorPower;
 import frc.robot.commands.SetWristRollerSpeed;
 import frc.robot.commands.TellCommand;
 import frc.robot.commands.wrist.ManualSetWristSpeedCommand;
@@ -45,7 +43,6 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator2;
-import frc.robot.subsystems.elevator.Elevator2.ElevatorLevel;
 import frc.robot.subsystems.elevator.ElevatorModuleTalonFXIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
@@ -79,7 +76,6 @@ public class RobotContainer {
               Constants.ARM_MOTOR_ID,
               Constants.ROLLER_MOTOR_ID,
               Constants.ELEVATOR_CANBUS,
-              Constants.ARM_ENCODER_ID, 
               Constants.CANRANGE_ID));
 
   // DigitalInput limitSwitch =
@@ -226,16 +222,17 @@ public class RobotContainer {
     //     .leftTrigger()
     //     .whileTrue(new SetElevatorCommand(ElevatorLevel.THIRD_LEVEL, elevator2));
 
-
-
     controller
         .a()
         .whileTrue(
             new TellCommand()
-                .andThen(new SetWristRollerSpeed(wrist, -0.01).unless(() -> wrist.isCanCloserThan(0.1))));
+                .andThen(
+                    new SetWristRollerSpeed(wrist, -0.01)
+                        .unless(() -> wrist.isCanCloserThan(0.1))));
 
-    controller.b().whileTrue(new ManualSetWristSpeedCommand(wrist,() -> 0.01));
-    controller.x().whileFalse(new ManualSetWristSpeedCommand(wrist,() -> -0.01));
+    controller.b().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> 0.01));
+    controller.x().whileFalse(new ManualSetWristSpeedCommand(wrist, () -> -0.01));
+
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
