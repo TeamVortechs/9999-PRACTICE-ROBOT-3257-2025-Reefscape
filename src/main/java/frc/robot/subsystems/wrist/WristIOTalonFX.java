@@ -3,37 +3,46 @@ package frc.robot.subsystems.wrist;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public class WristIOTalonFX implements WristIO {
-  private TalonFX arm = null;
-  private PWMSparkMax rollers = null;
-  private Encoder armEncoder;
-  private CANrange Canrange;
+  private TalonFX arm;
+  private SparkMax rollers;
+  private CANrange canRange;
 
-  public WristIOTalonFX(
-      int armID, int rollerID, String canbusName, int armEncoderID, int CanrangeID) {
+  @AutoLogOutput private double angle;
+
+  public WristIOTalonFX(int armID, int rollerID, String canbusName, int CanrangeID) {
 
     this.arm = new TalonFX(armID, canbusName);
-    this.rollers = new PWMSparkMax(rollerID);
-    this.armEncoder = new Encoder(armEncoderID, armEncoderID);
-    this.Canrange = new CANrange(CanrangeID);
+    this.rollers = new SparkMax(rollerID, MotorType.kBrushless);
+    this.canRange = new CANrange(CanrangeID);
   }
 
   @Override
   public void setArmSpeed(double speed) {
-    // arm.set(speed);
+    arm.set(speed);
   }
 
   public void setRollerSpeed(double speed) {
     rollers.set(speed);
   }
 
+  // @Override
+  // public double getAngleRad() {
+  //   angle = arm.getPosition().getValue().baseUnitMagnitude()*2*Math.PI;
+  //   SmartDashboard.putNumber("Wrist angle: ", angle);
+  //   return angle;
+  // }
+
   @Override
-  public double getAngleRad() {
-    return armEncoder.get() * (90 / 500);
+  public double getAngleRotations() {
+    angle = arm.getPosition().getValueAsDouble();
+    SmartDashboard.putNumber("Wrist angle: ", angle);
+    return angle;
   }
 
   @Override
@@ -41,7 +50,7 @@ public class WristIOTalonFX implements WristIO {
     inputs.wristAppliedVoltage = arm.getMotorVoltage().getValueAsDouble();
     inputs.wristCurrentAmps = arm.getStatorCurrent().getValueAsDouble();
     inputs.wristSpeedRad = arm.get();
-    inputs.wristLocationRad = armEncoder.get() * (90 / 500);
+    inputs.wristLocationRotations = getAngleRotations();
   }
 
   @Override
@@ -55,11 +64,16 @@ public class WristIOTalonFX implements WristIO {
 
   @Override
   public boolean isDetected() {
-    return Canrange.getIsDetected().getValue();
+    return canRange.getIsDetected().getValue();
   }
 
   @Override
   public double getDistance() {
-    return Canrange.getDistance().getValueAsDouble();
+    return canRange.getDistance().getValueAsDouble();
+  }
+
+  @Override
+  public void zeroArmEncoder() {
+    arm.setPosition(0);
   }
 }

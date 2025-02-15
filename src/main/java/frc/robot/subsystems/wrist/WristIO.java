@@ -5,7 +5,7 @@ import org.littletonrobotics.junction.AutoLog;
 public interface WristIO {
   @AutoLog
   public static class WristIOInputs {
-    double wristLocationRad = 0.0;
+    double wristLocationRotations = 0.0;
     double wristSpeedRad = 0.0;
 
     double wristCurrentAmps = 0.0;
@@ -32,8 +32,12 @@ public interface WristIO {
   public default void stopWrist() {}
 
   // gets the current of the wrist in radians
-  public default double getAngleRad() {
-    return 0.0;
+  // public default double getAngleRad() {
+  //   return 0.0;
+  // }
+
+  public default double getAngleRotations() {
+    return 0;
   }
 
   public default void setBraked(boolean braked) {}
@@ -47,4 +51,6 @@ public interface WristIO {
   public default double getHighestAngleRad() {
     return 0.0;
   }
+
+  public void zeroArmEncoder();
 }

@@ -54,7 +54,7 @@ public class Wrist extends SubsystemBase {
       return;
     }
 
-    CurrentAngle = wristIO.getAngleRad();
+    CurrentAngle = wristIO.getAngleRotations();
     double diffHeight = targetAngle - CurrentAngle;
 
     if (diffHeight < targetBuffer) return;
@@ -77,7 +77,7 @@ public class Wrist extends SubsystemBase {
   }
 
   public double getAngleRad() {
-    return wristIO.getAngleRad();
+    return wristIO.getAngleRotations();
   }
 
   // public boolean isDetected() {
@@ -104,6 +104,10 @@ public class Wrist extends SubsystemBase {
 
   public double getCanDistance() {
     return wristIO.getDistance();
+  }
+
+  public void resetWristEncoder() {
+    wristIO.zeroArmEncoder();
   }
 
   // public boolean isCanDetected() {
