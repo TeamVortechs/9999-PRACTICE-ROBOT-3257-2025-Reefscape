@@ -1,7 +1,5 @@
 package frc.robot.subsystems.elevator;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.KDoublePreferences.PElevator;
@@ -22,11 +20,11 @@ public class Elevator extends SubsystemBase {
   @AutoLogOutput private boolean isOnTarget = false;
 
   @AutoLogOutput double maxHeight;
-  @AutoLogOutput double pidOutput;
+  // @AutoLogOutput double pidOutput;
 
   private final ElevatorModuleIO moduleIO;
   // private final DigitalInput homeSwitch;
-  private final ProfiledPIDController pid;
+  // private final ProfiledPIDController pid;
   @AutoLogOutput private boolean manualOverride = false;
   @AutoLogOutput private int loopCount = 0; // Counter to reduce SmartDashboard updates
 
@@ -51,17 +49,17 @@ public class Elevator extends SubsystemBase {
 
     this.wrist = wrist;
 
-    pid =
-        new ProfiledPIDController(
-            PElevator.proportional.getValue(),
-            PElevator.integral.getValue(),
-            PElevator.derivative.getValue(),
-            new TrapezoidProfile.Constraints(
-                PElevator.speedlimit.getValue(), PElevator.accelerationLimit.getValue()));
+    // pid =
+    //     new ProfiledPIDController(
+    //         PElevator.proportional.getValue(),
+    //         PElevator.integral.getValue(),
+    //         PElevator.derivative.getValue(),
+    //         new TrapezoidProfile.Constraints(
+    //             PElevator.speedlimit.getValue(), PElevator.accelerationLimit.getValue()));
 
     currentHeight = moduleIO.getHeightMeters();
     targetHeight = moduleIO.getHeightMeters();
-    pid.setGoal(targetHeight);
+    // pid.setGoal(targetHeight);
   }
 
   @Override
@@ -89,6 +87,11 @@ public class Elevator extends SubsystemBase {
       SmartDashboard.putNumber("Target Height", targetHeight);
       SmartDashboard.putBoolean("At Target", isOnTarget);
       SmartDashboard.putBoolean("Manual Override", manualOverride);
+
+      if (manualOverride) {
+        System.out.println("I AM IN MANUAL OVERRIDE AUUUUUUUUGH");
+        return;
+      }
     }
 
     // Reset encoder if home switch is pressed
@@ -98,11 +101,6 @@ public class Elevator extends SubsystemBase {
     //   targetHeight = 0.0;
     //   pid.reset(0.0);
     // }
-
-    if (manualOverride) {
-      System.out.println("I AM IN MANUAL OVERRIDE AUUUUUUUUGH");
-      return;
-    }
   }
 
   /**
@@ -136,19 +134,21 @@ public class Elevator extends SubsystemBase {
       // Clamp target height to prevent exceeding limits
       maxHeight = PElevator.MaxHeight.getValue();
       targetHeight = Math.max(0.0, Math.min(targetHeight, maxHeight));
-      pid.setGoal(targetHeight);
+      // pid.setGoal(targetHeight);
 
-      // Compute PID output and prevent downward motion at home
-      pidOutput = pid.calculate(currentHeight, targetHeight);
-      // if (pidOutput < 0 && !homeSwitch.get()) {
-      //   pidOutput = 0;
-      // }
-      System.out.println("Target height: " + targetHeight);
-      System.out.println("Height diff: " + Math.abs(currentHeight - targetHeight));
-      System.out.println("this is the pid output: " + pidOutput);
-      if (Math.abs(pidOutput) > 1)
-        pidOutput = Math.copySign(PElevator.speedlimit.getValue(), pidOutput);
-      moduleIO.setSpeed(pidOutput);
+      // // Compute PID output and prevent downward motion at home
+      // pidOutput = pid.calculate(currentHeight, targetHeight);
+      // // if (pidOutput < 0 && !homeSwitch.get()) {
+      // //   pidOutput = 0;
+      // // }
+      // System.out.println("Target height: " + targetHeight);
+      // System.out.println("Height diff: " + Math.abs(currentHeight - targetHeight));
+      // System.out.println("this is the pid output: " + pidOutput);
+      // if (Math.abs(pidOutput) > 1)
+      //   pidOutput = Math.copySign(PElevator.speedlimit.getValue(), pidOutput);
+      // moduleIO.setSpeed(pidOutput);
+
+      moduleIO.PIDVoltage(targetHeight);
     }
   }
 
@@ -156,7 +156,7 @@ public class Elevator extends SubsystemBase {
   public void setTargetHeight(double height) {
     manualOverride = false;
     targetHeight = Math.max(0.0, Math.min(height, PElevator.MaxHeight.getValue()));
-    pid.setGoal(targetHeight);
+    // pid.setGoal(targetHeight);
   }
 
   /** Allows manual control of the elevator, bypassing PID. */
@@ -176,7 +176,8 @@ public class Elevator extends SubsystemBase {
     manualOverride = false;
     if (Math.abs(targetHeight - currentHeight) > PElevator.tolerance.getValue()) {
       targetHeight = currentHeight;
-      pid.setGoal(currentHeight);
+      moduleIO.PIDVoltage(targetHeight);
+      // pid.setGoal(currentHeight);
     }
   }
 
@@ -204,7 +205,7 @@ public class Elevator extends SubsystemBase {
   /** resets encoders to read 0 and resets PID (setting it to begin at current height) */
   public void resetEncoders() {
     moduleIO.resetEncoders();
-    pid.reset(currentHeight);
+    // pid.reset(currentHeight);
   }
 
   // private void setPreferences() {

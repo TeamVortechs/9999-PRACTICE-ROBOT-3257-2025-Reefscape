@@ -1,7 +1,7 @@
 package frc.robot.subsystems.elevator;
 
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -22,21 +22,24 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
     this.leftMotor = new TalonFX(motorIDLeft, canbusName);
     this.rightMotor = new TalonFX(motorIDRight, canbusName);
 
-    TalonFXConfiguration leftConfig = new TalonFXConfiguration();
-    TalonFXConfiguration rightConfig = new TalonFXConfiguration();
+    TalonFXConfiguration elevatorConfigs = new TalonFXConfiguration();
 
-    // Configure motor inversions
-    MotorOutputConfigs leftMotorOutput = new MotorOutputConfigs();
-    // leftMotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    var slot0Configs = elevatorConfigs.Slot0;
+    slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
+    slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
+    slot0Configs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
+    slot0Configs.kP = 4.8; // A position error of 2.5 rotations results in 12 V output
+    slot0Configs.kI = 0; // no output for integrated error
+    slot0Configs.kD = 0.1; // A velocity error of 1 rps results in 0.1 V output
 
-    MotorOutputConfigs rightMotorOutput = new MotorOutputConfigs();
-    // rightMotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    var motionMagicConfigs = elevatorConfigs.MotionMagic;
+    motionMagicConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
+    motionMagicConfigs.MotionMagicAcceleration =
+        160; // Target acceleration of 160 rps/s (0.5 seconds)
+    motionMagicConfigs.MotionMagicJerk = 1600; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
-    leftConfig.MotorOutput = leftMotorOutput;
-    rightConfig.MotorOutput = rightMotorOutput;
-
-    leftMotor.getConfigurator().apply(leftConfig);
-    rightMotor.getConfigurator().apply(rightConfig);
+    leftMotor.getConfigurator().apply(elevatorConfigs);
+    rightMotor.getConfigurator().apply(elevatorConfigs);
 
     // Set both motors to Brake mode by default.
     leftMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -85,6 +88,15 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
     rightMotor.setVoltage(volts);
 
     System.out.println("setting voltage to " + volts);
+  }
+
+  @Override
+  public void PIDVoltage(double targetAngle) {
+    final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
+
+    // set target position to 100 rotations
+    leftMotor.setControl(m_request.withPosition(targetAngle));
+    rightMotor.setControl(m_request.withPosition(targetAngle));
   }
 
   /** Resets both motor encoders to zero. */

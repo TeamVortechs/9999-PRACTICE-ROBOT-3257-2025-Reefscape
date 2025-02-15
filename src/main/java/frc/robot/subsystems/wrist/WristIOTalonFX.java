@@ -7,8 +7,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-
-import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.littletonrobotics.junction.AutoLogOutput;
 
@@ -25,8 +23,7 @@ public class WristIOTalonFX implements WristIO {
     this.rollers = new SparkMax(rollerID, MotorType.kBrushless);
     this.canRange = new CANrange(CanrangeID);
 
-     TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
-
+    TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
 
     var slot0Configs = talonFXConfigs.Slot0;
     slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
@@ -38,7 +35,8 @@ public class WristIOTalonFX implements WristIO {
 
     var motionMagicConfigs = talonFXConfigs.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
-    motionMagicConfigs.MotionMagicAcceleration = 160; // Target acceleration of 160 rps/s (0.5 seconds)
+    motionMagicConfigs.MotionMagicAcceleration =
+        160; // Target acceleration of 160 rps/s (0.5 seconds)
     motionMagicConfigs.MotionMagicJerk = 1600; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
     arm.getConfigurator().apply(talonFXConfigs);
