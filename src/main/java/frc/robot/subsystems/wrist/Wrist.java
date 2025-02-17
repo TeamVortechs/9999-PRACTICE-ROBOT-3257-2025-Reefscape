@@ -98,6 +98,11 @@ public class Wrist extends SubsystemBase {
   //   return wristIO.isDetected();
   // }
 
+  //returns wether or not the arm is clear from the elevator
+  public boolean isClearFromElevator() {
+    return wristIO.getAngleRotations() > 2;
+  }
+
   public void setManualSpeed(double speed) {
     manualOverride = true;
     wristIO.setArmSpeed(speed);

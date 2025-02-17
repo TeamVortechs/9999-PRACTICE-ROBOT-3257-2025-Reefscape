@@ -99,7 +99,7 @@ public class Elevator extends SubsystemBase {
     //   targetHeight = 0.0;
     //   pid.reset(0.0);
     // }
-    if (!wrist.isOnTarget()) {
+    if (!wrist.isClearFromElevator()) {
       System.out.println("ELEVATOR IS NOT MOVING! THE WRIST ANGLE IS NOT VALID");
       moduleIO.setSpeed(0);
       return;
