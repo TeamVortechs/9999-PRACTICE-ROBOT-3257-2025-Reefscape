@@ -147,7 +147,8 @@ public class Wrist extends SubsystemBase {
 
   // enum for each level that the wrist could be
   public enum WristAngle {
-    STAGE1_ANGLE(Constants.WRIST_ANGLE_DROP);
+    STAGE1_ANGLE(Constants.WRIST_ANGLE_DROP),
+    INTAKE_ANGLE(0);
     // STAGE2_ANGLE(Stage2angle),
     // INTAKE_ANGLE(Constant);
 
