@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.pathfindingCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
@@ -41,7 +41,7 @@ public class PathfindToClosestIntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    int curPoseID = PathfindingCommands.getClosestDepotPath(drive.getPose());
+    int curPoseID = PathfindingCommands.getClosestIntakePath(drive.getPose());
 
     if (!lockedIn) {
       targetPoseID = curPoseID;
@@ -49,7 +49,6 @@ public class PathfindToClosestIntakeCommand extends Command {
     }
 
     if (targetPoseID != curPoseID) {
-      // depotPathCommands[targetPoseID].cancel();
       targetPoseID = curPoseID;
       intakePathCommands[targetPoseID].schedule();
       ;
@@ -60,10 +59,6 @@ public class PathfindToClosestIntakeCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     intakePathCommands[targetPoseID].cancel();
-
-    // for(int i = 0; i < depotPathCommands.length; i++) {
-    //   depotPathCommands[i].cancel();
-    // }
 
     lockedIn = false;
   }

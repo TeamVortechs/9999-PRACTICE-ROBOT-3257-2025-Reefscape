@@ -1,11 +1,16 @@
-package frc.robot.commands;
+package frc.robot.commands.pathfindingCommands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.autoCommands.DriveCommands;
+import frc.robot.subsystems.drive.Drive;
+
 import java.io.IOException;
 import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
@@ -55,6 +60,24 @@ public class PathfindingCommands {
   }
 
   //INTAKE COMMDANDS
+  //aligns with the given intake id
+  public static Command alignToIntakeCommand(int intakeID, Drive drive, CommandXboxController controller, double speedModifier) {
+    init();
+
+    double angle;
+
+    if(intakeID == 0) {
+      angle = -126;
+    } else {
+      angle = 141;
+    }
+
+    return DriveCommands.joystickDriveAtAngle(
+    drive,
+    () -> -controller.getLeftY() * speedModifier,
+    () -> -controller.getLeftX() * speedModifier,
+    () -> Rotation2d.fromDegrees(angle));
+  }
 
   //pathfinds to the given intake id
   public static Command pathfindToIntakeCommand(int intakeID) {
@@ -92,6 +115,8 @@ public class PathfindingCommands {
   
       return lowestDistID;
     }
+
+    //DEPOT COMMANDS
 
   
 
