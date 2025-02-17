@@ -47,7 +47,7 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
     rightMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
-  //advantage kit logging stuff(everything in here gets logged every tick)
+  // advantage kit logging stuff(everything in here gets logged every tick)
   @Override
   public void updateInputs(ElevatorModuleIOInputsAutoLogged inputs) {
     inputs.elevatorMotor1CurrentHeightMeter = leftMotor.get();
@@ -89,7 +89,7 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
     leftMotor.setVoltage(volts);
     rightMotor.setVoltage(volts);
 
-    System.out.println("setting voltage to " + volts);
+    // System.out.println("setting voltage to " + volts);
   }
 
   @Override
@@ -126,7 +126,7 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
   /** Sets the speed of the motors (manual control mode). */
   @Override
   public void setSpeed(double speed) {
-    System.out.println("ModuleIO receiving this speed: " + speed);
+    // System.out.println("ModuleIO receiving this speed: " + speed);
     leftMotor.set(speed);
     rightMotor.set(speed);
   }

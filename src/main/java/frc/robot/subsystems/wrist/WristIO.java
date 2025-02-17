@@ -16,7 +16,6 @@ public interface WristIO {
     double rollersCurrent = 0.0;
     double rollersEncoder = 0.0;
     double rollersSpeed = 0.0;
-
   }
 
   public default boolean isDetected() {

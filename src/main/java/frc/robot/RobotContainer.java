@@ -14,9 +14,8 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -31,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.KDoublePreferences.PElevator;
 import frc.robot.commands.ControllerVibrateCommand;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.TellCommand;
 import frc.robot.commands.wrist.IntakeWristCommand;
 // import frc.robot.commands.SetWristRollerSpeed;
 import frc.robot.commands.wrist.ManualSetWristSpeedCommand;
@@ -56,9 +56,6 @@ import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.Wrist.WristAngle;
 // import frc.robot.subsystems.wrist.WristIOTalonFX;
 import frc.robot.subsystems.wrist.WristIOTalonFX;
-import java.io.IOException;
-import java.util.List;
-import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -183,6 +180,9 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    // configure the autonomous named commands
+    registerNamedCommandsAuto();
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -195,27 +195,6 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-
-    List<Waypoint> waypoints =
-        PathPlannerPath.waypointsFromPoses(
-            new Pose2d(1, 0, Rotation2d.fromDegrees(0)),
-            new Pose2d(0, 1, Rotation2d.fromDegrees(1)));
-
-    PathPlannerPath path = null;
-    // new PathPlannerPath(
-    //     waypoints,
-    //     pathConstraints,
-    //     null,
-    //     new GoalEndState(0.0, Rotation2d.fromDegrees(0)),
-    //     false);
-
-    try {
-      path = PathPlannerPath.fromPathFile("CoralFeed");
-    } catch (IOException e) {
-      System.out.println("IO exception");
-    } catch (ParseException e) {
-      System.out.println("parse exception ");
-    }
 
     // controller.start().whileTrue(new WristSetPosCommand(wrist, 0.25));
     //  controller.back().whileTrue(new WristSetPosCommand(wrist, -0.25));
@@ -339,6 +318,11 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  // registers pathplanner's named commands
+  private void registerNamedCommandsAuto() {
+    NamedCommands.registerCommand("testing", new TellCommand("testing autoCOmmand"));
   }
 
   //   public void sendVisionMeasurement() {

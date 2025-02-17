@@ -3,11 +3,9 @@ package frc.robot.subsystems.wrist;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.KDoublePreferences.PWrist;
-import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -81,18 +79,18 @@ public class Wrist extends SubsystemBase {
     // sets the speed of the wrist
   }
 
-  //returns wether or not the wrist is on target
+  // returns wether or not the wrist is on target
   public boolean isOnTarget() {
     return Math.abs(targetAngle - CurrentAngle) < targetBuffer;
   }
   // Math.abs(targetAngle - CurrentAngle) > 0.1 ||
 
-  //sets wether or not the wrist is braked(NOTE: THIS DOES NOT ACTUALLY STOP THE WRIST)
+  // sets wether or not the wrist is braked(NOTE: THIS DOES NOT ACTUALLY STOP THE WRIST)
   public void setBraked(boolean braked) {
     wristIO.setBraked(braked);
   }
 
-  //gets the rotation of the arm
+  // gets the rotation of the arm
   public double getAngleRotations() {
     return wristIO.getAngleRotations();
   }
@@ -106,34 +104,34 @@ public class Wrist extends SubsystemBase {
     return wristIO.getAngleRotations() > 2;
   }
 
-  //turns manual override and sets the manual speeed
+  // turns manual override and sets the manual speeed
   public void setManualSpeed(double speed) {
     manualOverride = true;
     wristIO.setArmSpeed(speed);
   }
 
-  //sets the target angle of the PID
+  // sets the target angle of the PID
   public void setTargetAngle(double angle) {
     manualOverride = false;
     this.targetAngle = angle;
   }
 
-  //gets the angle that the PID is pathing to 
+  // gets the angle that the PID is pathing to
   public double getTargetAngle() {
     return targetAngle;
   }
 
-  //sets the roller speed
+  // sets the roller speed
   public void setRollerSpeed(double speed) {
     wristIO.setRollerSpeed(speed);
   }
 
-  //gets the distance of the can Range
+  // gets the distance of the can Range
   public double getCanDistance() {
     return wristIO.getDistance();
   }
 
-  //resets the encoder of the wrist
+  // resets the encoder of the wrist
   public void resetWristEncoder() {
     wristIO.zeroArmEncoder();
   }
@@ -142,13 +140,13 @@ public class Wrist extends SubsystemBase {
   //   return wristIO.isDetected();
   // }
 
-  //returns wether or not the canRange is closer than the given distance
+  // returns wether or not the canRange is closer than the given distance
   public boolean isCanCloserThan(double distance) {
     return getCanDistance() < distance;
   }
 
   // commands
-  //this does not work! that is why it is commented out
+  // this does not work! that is why it is commented out
   // public Command rollWristUntilDetectedCommand(double speed, double distanceModifier) {
   //   return new SetWristRollerSpeedCommand(this, speed)
   //       .unless(() -> isCanCloserThan(distanceModifier));

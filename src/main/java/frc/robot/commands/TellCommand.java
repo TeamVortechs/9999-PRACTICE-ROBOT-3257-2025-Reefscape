@@ -14,18 +14,26 @@ public class TellCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public TellCommand() {
+  private String message;
+
+  private boolean messaged = false;
+
+  public TellCommand(String message) {
     // addRequirements(null);
+    this.message = message;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    // messaged = false;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("testing");
+    System.out.println(message);
+    // messaged = true;
   }
 
   // Called once the command ends or is interrupted.

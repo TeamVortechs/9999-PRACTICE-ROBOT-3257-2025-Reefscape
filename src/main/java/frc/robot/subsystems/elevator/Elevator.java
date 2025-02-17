@@ -71,7 +71,7 @@ public class Elevator extends SubsystemBase {
     // movement
 
     if (moduleIO.checkIfStalled()) {
-      System.out.println("I HAVE STALLED AUUUUUUUUUUGH");
+      System.out.println("ELEVATOR HAS STALLED ");
       moduleIO.stop();
       return;
     }
@@ -87,7 +87,7 @@ public class Elevator extends SubsystemBase {
       SmartDashboard.putBoolean("Manual Override", manualOverride);
 
       if (manualOverride) {
-        System.out.println("I AM IN MANUAL OVERRIDE AUUUUUUUUGH");
+        // System.out.println("ELEVATOR IS IN MANUAL OVERRIDE");
         return;
       }
     }
@@ -100,7 +100,7 @@ public class Elevator extends SubsystemBase {
     //   pid.reset(0.0);
     // }
     if (!wrist.isClearFromElevator()) {
-      System.out.println("ELEVATOR IS NOT MOVING! THE WRIST ANGLE IS NOT VALID");
+      // System.out.println("ELEVATOR IS NOT MOVING! THE WRIST ANGLE IS NOT VALID");
       moduleIO.setSpeed(0);
       return;
     }
@@ -117,7 +117,7 @@ public class Elevator extends SubsystemBase {
 
     if (Math.abs(currentHeight - targetHeight) < PElevator.tolerance.getValue()) {
       isOnTarget = true;
-      System.out.println("On target is true! I am stopping the motors now");
+      // System.out.println("On target is true! I am stopping the motors now");
       // moduleIO.stop();
     } else {
       isOnTarget = false;
@@ -233,12 +233,12 @@ public class Elevator extends SubsystemBase {
     manualOverride = true;
   }
 
-  //gest the current height of the elevator motor
+  // gest the current height of the elevator motor
   public double getCurrentHeight() {
     return currentHeight;
   }
 
-  //returns wether or not the elevaotr is on target
+  // returns wether or not the elevaotr is on target
   public boolean isOnTarget() {
     return isOnTarget;
   }

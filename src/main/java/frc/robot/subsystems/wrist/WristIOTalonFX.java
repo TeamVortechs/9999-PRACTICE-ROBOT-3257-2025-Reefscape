@@ -42,7 +42,7 @@ public class WristIOTalonFX implements WristIO {
     arm.getConfigurator().apply(talonFXConfigs);
   }
 
-  //sets the PID target angle
+  // sets the PID target angle
   @Override
   public void PIDVoltage(double targetAngle) {
     final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
@@ -51,13 +51,13 @@ public class WristIOTalonFX implements WristIO {
     arm.setControl(m_request.withPosition(targetAngle));
   }
 
-  //sets the speed of the arm
+  // sets the speed of the arm
   @Override
   public void setArmSpeed(double speed) {
     arm.set(speed);
   }
 
-  //sets the speed of the orllers
+  // sets the speed of the orllers
   public void setRollerSpeed(double speed) {
     rollers.set(speed);
   }
@@ -69,7 +69,7 @@ public class WristIOTalonFX implements WristIO {
   //   return angle;
   // }
 
-  //gets the angle of the arm
+  // gets the angle of the arm
   @Override
   public double getAngleRotations() {
     angle = arm.getPosition().getValueAsDouble();
@@ -77,7 +77,7 @@ public class WristIOTalonFX implements WristIO {
     return angle;
   }
 
-  //advantage kti logging stuff
+  // advantage kti logging stuff
   @Override
   public void updateInputs(WristIOInputsAutoLogged inputs) {
     inputs.wristAppliedVoltage = arm.getMotorVoltage().getValueAsDouble();
@@ -92,7 +92,7 @@ public class WristIOTalonFX implements WristIO {
     inputs.rollersSpeed = rollers.get();
   }
 
-  //sets the arm motor to brake(DOES ACTUALY STOP THE ARM MOTORO)
+  // sets the arm motor to brake(DOES ACTUALY STOP THE ARM MOTORO)
   @Override
   public void setBraked(boolean braked) {
     if (braked) {
@@ -102,25 +102,25 @@ public class WristIOTalonFX implements WristIO {
     }
   }
 
-  //returns wether or not the can range is detected
+  // returns wether or not the can range is detected
   @Override
   public boolean isDetected() {
     return canRange.getIsDetected().getValue();
   }
 
-  //gets the distance from the can range
+  // gets the distance from the can range
   @Override
   public double getDistance() {
     return canRange.getDistance().getValueAsDouble();
   }
 
-  //sets the voltage of the arm
+  // sets the voltage of the arm
   @Override
   public void setArmVoltage(double voltage) {
     arm.setVoltage(voltage);
   }
 
-  //resets the arm encoder
+  // resets the arm encoder
   @Override
   public void zeroArmEncoder() {
     arm.setPosition(0);
