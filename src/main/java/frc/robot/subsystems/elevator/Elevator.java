@@ -233,10 +233,12 @@ public class Elevator extends SubsystemBase {
     manualOverride = true;
   }
 
+  //gest the current height of the elevator motor
   public double getCurrentHeight() {
     return currentHeight;
   }
 
+  //returns wether or not the elevaotr is on target
   public boolean isOnTarget() {
     return isOnTarget;
   }

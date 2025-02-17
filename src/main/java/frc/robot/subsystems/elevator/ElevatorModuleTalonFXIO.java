@@ -47,6 +47,7 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
     rightMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
+  //advantage kit logging stuff(everything in here gets logged every tick)
   @Override
   public void updateInputs(ElevatorModuleIOInputsAutoLogged inputs) {
     inputs.elevatorMotor1CurrentHeightMeter = leftMotor.get();
