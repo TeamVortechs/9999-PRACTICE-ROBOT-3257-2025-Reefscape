@@ -62,13 +62,6 @@ public class WristIOTalonFX implements WristIO {
     rollers.set(speed);
   }
 
-  // @Override
-  // public double getAngleRad() {
-  //   angle = arm.getPosition().getValue().baseUnitMagnitude()*2*Math.PI;
-  //   SmartDashboard.putNumber("Wrist angle: ", angle);
-  //   return angle;
-  // }
-
   // gets the angle of the arm
   @Override
   public double getAngleRotations() {

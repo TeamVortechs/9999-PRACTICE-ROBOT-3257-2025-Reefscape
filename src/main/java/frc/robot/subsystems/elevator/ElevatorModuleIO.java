@@ -75,7 +75,5 @@ public interface ElevatorModuleIO {
   public default boolean isMaxHeight() {
     return false;
   }
-  // public default void setPostion(double position){
-  // }
-  // reminder for myself to use the given PID stuff
+
 }

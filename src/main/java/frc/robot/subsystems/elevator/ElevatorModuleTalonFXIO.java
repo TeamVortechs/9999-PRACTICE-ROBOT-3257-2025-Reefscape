@@ -73,13 +73,7 @@ public class ElevatorModuleTalonFXIO implements ElevatorModuleIO {
   public double getHeightMeters() {
     leftHeight = leftMotor.getPosition().getValueAsDouble();
     rightHeight = rightMotor.getPosition().getValueAsDouble();
-    // System.out.println(
-    //     "left height: "
-    //         + leftHeight
-    //         + " right height: "
-    //         + rightHeight
-    //         + " average: "
-    //         + (leftHeight + rightHeight) / 2.0);
+
     return (leftHeight + rightHeight) / 2.0;
   }
 

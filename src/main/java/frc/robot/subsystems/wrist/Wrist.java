@@ -145,13 +145,6 @@ public class Wrist extends SubsystemBase {
     return getCanDistance() < distance;
   }
 
-  // commands
-  // this does not work! that is why it is commented out
-  // public Command rollWristUntilDetectedCommand(double speed, double distanceModifier) {
-  //   return new SetWristRollerSpeedCommand(this, speed)
-  //       .unless(() -> isCanCloserThan(distanceModifier));
-  // }
-
   // enum for each level that the wrist could be
   public enum WristAngle {
     STAGE1_ANGLE(Constants.WRIST_ANGLE_DROP);
