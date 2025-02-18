@@ -87,10 +87,10 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
+                // new VisionIOPhotonVision(
+                //     VisionConstants.ARDUCAM_LEFT_NAME, VisionConstants.ROBOT_TO_ARDUCAM_LEFT),
                 new VisionIOPhotonVision(
-                    VisionConstants.arducam0Name, VisionConstants.robotToArducam0)
-                // , new VisionIOPhotonVision(arducam1Name, robotToArducam1)
-                );
+                    VisionConstants.ARDUCAM_RIGHT_NAME, VisionConstants.ROBOT_TO_ARDUCAM_RIGHT));
         break;
 
       case SIM:
@@ -106,9 +106,13 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(
-                    VisionConstants.arducam0Name, VisionConstants.robotToArducam0, drive::getPose),
+                    VisionConstants.ARDUCAM_LEFT_NAME,
+                    VisionConstants.ROBOT_TO_ARDUCAM_LEFT,
+                    drive::getPose),
                 new VisionIOPhotonVisionSim(
-                    VisionConstants.arducam1Name, VisionConstants.robotToArducam1, drive::getPose));
+                    VisionConstants.ARDUCAM_RIGHT_NAME,
+                    VisionConstants.ROBOT_TO_ARDUCAM_RIGHT,
+                    drive::getPose));
         break;
 
       default:
