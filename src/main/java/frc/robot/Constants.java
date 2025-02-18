@@ -54,7 +54,7 @@ public final class Constants {
   public static final double WRIST_ANGLE_DROP = 2.4;
   public static final double WRIST_HIGHEST_ANGLE = 2.56;
 
-  public static boolean simulatingAuto = false;
+  public static boolean simulatingAuto = true;
 
   // public static final double ELEVATOR_HEIGHT_1 = 6.803;
   // public static final double ELEVATOR_HEIGHT_2 = 17.343;
