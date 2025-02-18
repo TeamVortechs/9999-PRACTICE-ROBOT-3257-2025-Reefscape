@@ -31,7 +31,6 @@ public class SetElevatorPresetCommand extends Command {
     // Finish when the elevator is within tolerance of the target.
     // return elevator.isOnTarget();
 
-
     return elevator.isOnTarget();
   }
 

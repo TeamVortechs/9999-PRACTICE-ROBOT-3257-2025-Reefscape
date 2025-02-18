@@ -4,20 +4,14 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.autoCommands.DriveCommands;
-import frc.robot.subsystems.drive.Drive;
-
 import java.io.IOException;
 import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
 
 public class PathfindingCommands {
   private static PathPlannerPath[] coralPaths = new PathPlannerPath[1];
-  private static PathPlannerPath[] intakePaths = null;
 
   private static boolean initialized = false;
 
@@ -41,11 +35,6 @@ public class PathfindingCommands {
       coralPaths[4] = PathPlannerPath.fromPathFile("CoralFeed5");
       coralPaths[5] = PathPlannerPath.fromPathFile("CoralFeed6");
 
-      intakePaths[0] = PathPlannerPath.fromPathFile("IntakeFeed1");
-      intakePaths[1] = PathPlannerPath.fromPathFile("IntakeFeed2");
-
-
-
       for (int i = 0; i < coralPaths.length; i++) {
         System.out.println(coralPaths[i].name);
       }
@@ -59,73 +48,15 @@ public class PathfindingCommands {
     }
   }
 
-  //INTAKE COMMDANDS
-  //aligns with the given intake id
-  public static Command alignToIntakeCommand(int intakeID, Drive drive, CommandXboxController controller, double speedModifier) {
-    init();
-
-    double angle;
-
-    if(intakeID == 0) {
-      angle = -126;
-    } else {
-      angle = 141;
-    }
-
-    return DriveCommands.joystickDriveAtAngle(
-    drive,
-    () -> -controller.getLeftY() * speedModifier,
-    () -> -controller.getLeftX() * speedModifier,
-    () -> Rotation2d.fromDegrees(angle));
-  }
-
-  //pathfinds to the given intake id
-  public static Command pathfindToIntakeCommand(int intakeID) {
-
-    init();
-
-    return AutoBuilder.pathfindThenFollowPath(intakePaths[intakeID], pathConstraints);
-  }
-
-  //gets the closest intake id
-    public static int getClosestIntakePath(Pose2d curLocation) {
-
-      init();
-  
-      double lowestDist = Double.MAX_VALUE;
-      int lowestDistID = 0;
-  
-      // System.out.println("pose " + curLocation);
-  
-      for (int i = 0; i < intakePaths.length; i++) {
-        Pose2d testPose = intakePaths[i].getPathPoses().get(0);
-  
-        double dist = testPose.getTranslation().getDistance(curLocation.getTranslation());
-  
-        if (dist < lowestDist) {
-          lowestDistID = i;
-          lowestDist = dist;
-        }
-  
-        // System.out.println("pose: " + testPose.toString() + " dist " + dist + " id: " +
-        // lowestDistID);
-      }
-  
-      // System.out.println("lowest dist ID: " + lowestDistID);
-  
-      return lowestDistID;
-    }
-
-    //DEPOT COMMANDS
-
-  
+  // DEPOT COMMANDS
 
   // returns the command that pathfinds the robot to the specific depot id
   public static Command pathfindToDepotCommand(int depotID) {
     // initializes the REPO if it isn't already
     init();
     // System.out.println("depot id: " + depotID);
-    // System.out.println("path with depot: " + coralPaths[depotID].getPathPoses().get(0).toString());
+    // System.out.println("path with depot: " +
+    // coralPaths[depotID].getPathPoses().get(0).toString());
 
     // for (int i = 0; i < coralPaths.length; i++) {
     //   System.out.println(i + " " + coralPaths[i].getPathPoses().get(0));

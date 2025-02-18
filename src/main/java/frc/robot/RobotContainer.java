@@ -27,14 +27,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.KDoublePreferences.PElevator;
 import frc.robot.commands.autoCommands.DriveCommands;
-import frc.robot.commands.communication.ControllerVibrateCommand;
+import frc.robot.commands.autoCommands.IntakingCommands;
 import frc.robot.commands.communication.TellCommand;
-import frc.robot.commands.wrist.IntakeWristCommand;
 // import frc.robot.commands.SetWristRollerSpeed;
-import frc.robot.commands.wrist.ManualSetWristSpeedCommand;
-import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
 import frc.robot.commands.wrist.SetWristTargetAngleCommand;
 import frc.robot.generated.TunerConstants;
 // import frc.robot.subsystems.Intake.Intake;
@@ -232,33 +228,34 @@ public class RobotContainer {
                 .alongWith(new InstantCommand(() -> wrist.resetWristEncoder()))
                 .ignoringDisable(true));
 
-    controller.b().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> 0.05));
-    // controller.x().whileTrue(new SetWristTargetAngleCommand(wrist, 0));
-    controller
-        .a()
-        .whileTrue(
-            new IntakeWristCommand(wrist, -0.2)
-                .andThen(new ControllerVibrateCommand(0.7, controller)));
+    // controller.b().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> 0.05));
+    // // controller.x().whileTrue(new SetWristTargetAngleCommand(wrist, 0));
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         new IntakeWristCommand(wrist, -0.2)
+    //             .andThen(new ControllerVibrateCommand(0.7, controller)));
 
-    controller.y().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.5));
-    controller
-        .leftBumper()
-        .whileTrue(new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle()));
+    // controller.y().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.5));
+    // controller
+    //     .leftBumper()
+    //     .whileTrue(new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle()));
 
     // controller.leftTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> -0.2));
     // controller.rightTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> 0.2));
-    controller
-        .leftTrigger()
-        .whileTrue(
-            new InstantCommand(() -> elevator.setTargetHeight(PElevator.FirstLevel.getValue())));
-    controller
-        .rightTrigger()
-        .whileTrue(
-            new InstantCommand(() -> elevator.setTargetHeight(PElevator.SecondLevel.getValue())));
-    controller
-        .x()
-        .whileTrue(
-            new InstantCommand(() -> elevator.setTargetHeight(PElevator.MinHeight.getValue())));
+    // controller
+    //     .leftTrigger()
+    //     .whileTrue(
+    //         new InstantCommand(() -> elevator.setTargetHeight(PElevator.FirstLevel.getValue())));
+    // controller
+    //     .rightTrigger()
+    //     .whileTrue(
+    //         new InstantCommand(() ->
+    // elevator.setTargetHeight(PElevator.SecondLevel.getValue())));
+    // controller
+    //     .x()
+    //     .whileTrue(
+    //         new InstantCommand(() -> elevator.setTargetHeight(PElevator.MinHeight.getValue())));
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
