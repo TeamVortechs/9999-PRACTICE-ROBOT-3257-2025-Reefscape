@@ -33,6 +33,7 @@ import frc.robot.KDoublePreferences.PElevator;
 import frc.robot.commands.autoCommands.DriveCommands;
 import frc.robot.commands.autoCommands.IntakingCommands;
 import frc.robot.commands.autoCommands.ScoringCommands;
+import frc.robot.commands.communication.ControllerVibrateCommand;
 import frc.robot.commands.communication.TellCommand;
 import frc.robot.commands.elevator.SetElevatorPresetCommand;
 import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
@@ -224,6 +225,7 @@ public class RobotContainer {
     //         new SetWristTargetAngleCommand(wrist, 0),
     //         () - !wrist.isCanCloserThan(0.1)));
     /* */
+    //resets encoders. THIS WILL BREAK THE ROBOT
     controller
         .start()
         .onTrue(
@@ -232,16 +234,28 @@ public class RobotContainer {
                 .alongWith(new InstantCommand(() -> wrist.resetWristEncoder()))
                 .ignoringDisable(true));
 
+
+    //eject note as long as button as help
     controller.rightBumper().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.3));
 
+    //moves elevator and wrist to the scoring positions level 2 after the right button is tapped
     controller.leftTrigger().whileTrue(ScoringCommands.prepForScoring(1, wrist, elevator));
+
+    //moves elevator and wrist to the scoring positions level 2 after the right button is tapped
     controller.leftBumper().whileTrue(ScoringCommands.prepForScoring(2, wrist, elevator));
 
-    controller.rightTrigger().whileTrue(IntakingCommands.intakeCommand(wrist, elevator));
+    //intakes then vibrates controlller when in position and has coral
+    controller.rightTrigger().whileTrue(IntakingCommands.intakeCommand(wrist, elevator)
+    //vibrates the controller for half a second after intake
+    .andThen(Commands.deadline(
+        new WaitCommand(0.5), 
+        new ControllerVibrateCommand(0.7, controller))));
 
+    //old elevator default command
     // elevator.setDefaultCommand(
     // new SetElevatorPresetCommand(elevator, wrist, 0).unless(() -> wrist.isCanCloserThan(0.1)));
 
+    //if there is no note move the elevator down to zero. If there is a note move elevator to first level if it is currently below first level
     elevator.setDefaultCommand(
         new ConditionalCommand(
             // set the elevator to move up to stage 1 if it's below and has the coral(that way cycle
@@ -253,6 +267,7 @@ public class RobotContainer {
             // conditional that controls the elevator
             () -> wrist.isCanCloserThan(0.1)));
 
+    //if there is a note move the wrist to scoring position. If there is not a note move the wrist back to intake position when the elevator is on the floor
     wrist.setDefaultCommand(
         new ConditionalCommand(
             // if there is a note move the wrist angle back
@@ -263,35 +278,6 @@ public class RobotContainer {
                 .unless(() -> !elevator.isOnFloor()),
             // controller of the conditional
             () -> wrist.isCanCloserThan(0.01)));
-
-    // controller.b().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> 0.05));
-    // // controller.x().whileTrue(new SetWristTargetAngleCommand(wrist, 0));
-    // controller
-    //     .a()
-    //     .whileTrue(
-    //         new IntakeWristCommand(wrist, -0.2)
-    //             .andThen(new ControllerVibrateCommand(0.7, controller)));
-
-    // controller.y().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.5));
-    // controller
-    //     .leftBumper()
-    //     .whileTrue(new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle()));
-
-    // controller.leftTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> -0.2));
-    // controller.rightTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> 0.2));
-    // controller
-    //     .leftTrigger()
-    //     .whileTrue(
-    //         new InstantCommand(() -> elevator.setTargetHeight(PElevator.FirstLevel.getValue())));
-    // controller
-    //     .rightTrigger()
-    //     .whileTrue(
-    //         new InstantCommand(() ->
-    // elevator.setTargetHeight(PElevator.SecondLevel.getValue())));
-    // controller
-    //     .x()
-    //     .whileTrue(
-    //         new InstantCommand(() -> elevator.setTargetHeight(PElevator.MinHeight.getValue())));
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
