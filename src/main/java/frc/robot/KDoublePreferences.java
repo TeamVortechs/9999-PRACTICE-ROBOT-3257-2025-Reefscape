@@ -7,14 +7,22 @@ import frc.robot.util.KDoublePref;
 public class KDoublePreferences {
   public static class PElevator {
     // should switch this all to a set value when we finish tuning
-    public static KDoublePref proportional = new KDoublePref("elevator proportional", 1.6);
-    public static KDoublePref integral = new KDoublePref("elevator integral", 0.0002);
+    public static KDoublePref proportional = new KDoublePref("elevator proportional", 2);
+    public static KDoublePref integral = new KDoublePref("elevator integral", 0.0000);
     public static KDoublePref derivative =
         new KDoublePref("elevator derivative", 0.0); // should be tweaked
 
-    public static KDoublePref speedlimit = new KDoublePref("elevator speed limit", 0.01);
-    public static KDoublePref accelerationLimit =
-        new KDoublePref("elevator acceleration limit", 0.01);
+    public static KDoublePref speedlimit = new KDoublePref("elevator speed limit", 2);
+    public static KDoublePref accelerationLimit = new KDoublePref("elevator acceleration limit", 1);
+    public static KDoublePref MaxHeight =
+        new KDoublePref("Elevator Max height", 29.754); // formerly 1.6637
+    public static KDoublePref MinHeight = new KDoublePref("Elevator Min height", 0);
+
+    public static KDoublePref tolerance = new KDoublePref("Elevator Target Tolerance", 0.1);
+    // currently test variables
+    public static KDoublePref FirstLevel = new KDoublePref("Elevator First Level", 6.803);
+    public static KDoublePref SecondLevel = new KDoublePref("Elevator Second Level", 17.343);
+    // public static KDoublePref ThirdLevel = new KDoublePref("Elevator Third Level", 15);
   }
 
   public static class PDrivetrain {
@@ -42,12 +50,12 @@ public class KDoublePreferences {
   public static class PWrist {
     // should switch this all to a set value when we finish tuning
 
-    public static KDoublePref proportional = new KDoublePref("wrist proportional", 1.6);
-    public static KDoublePref integral = new KDoublePref("wrist integral", 0.0002);
+    public static KDoublePref proportional = new KDoublePref("wrist proportional", 0.7);
+    public static KDoublePref integral = new KDoublePref("wrist integral", 0.0000);
     public static KDoublePref derivative =
         new KDoublePref("wrist derivative", 0.0); // should be tweaked
 
-    public static KDoublePref speedLimit = new KDoublePref("wrist speed limit", 0.01);
-    public static KDoublePref accelerationLimit = new KDoublePref("wrist acceleration limit", 0.01);
+    public static KDoublePref speedLimit = new KDoublePref("wrist speed limit", 0.6);
+    public static KDoublePref accelerationLimit = new KDoublePref("wrist acceleration limit", 0.13);
   }
 }

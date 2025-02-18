@@ -14,34 +14,47 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.KDoublePreferences.PElevator;
+import frc.robot.commands.ControllerVibrateCommand;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.PathfindToClosestDepotCommand;
+import frc.robot.commands.TellCommand;
+import frc.robot.commands.wrist.IntakeWristCommand;
+// import frc.robot.commands.SetWristRollerSpeed;
+import frc.robot.commands.wrist.ManualSetWristSpeedCommand;
+import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
+import frc.robot.commands.wrist.SetWristTargetAngleCommand;
 import frc.robot.generated.TunerConstants;
+// import frc.robot.subsystems.Intake.Intake;
+// import frc.robot.subsystems.Intake.IntakeIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevator.Elevator;
+// import frc.robot.subsystems.elevator.Elevator2;
+import frc.robot.subsystems.elevator.ElevatorModuleTalonFXIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.Wrist.WristAngle;
+// import frc.robot.subsystems.wrist.WristIOTalonFX;
 import frc.robot.subsystems.wrist.WristIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -59,10 +72,34 @@ public class RobotContainer {
   private final Vision vision;
 
   // physical subsystems
-  private final Wrist wrist = new Wrist(new WristIOTalonFX());
+  private final Wrist wrist =
+      new Wrist(
+          new WristIOTalonFX(
+              Constants.ARM_MOTOR_ID,
+              Constants.ROLLER_MOTOR_ID,
+              Constants.ELEVATOR_CANBUS,
+              Constants.CANRANGE_ID));
+
+  // DigitalInput limitSwitch =
+  // new DigitalInput(20); // !!!!! FAKE CHANNEL! CHANGE WHEN PROPERLY IMPLEMENTED !!!!!!
+  // private final Intake intake = new Intake(new IntakeIOTalonFX(), limitSwitch);
+  private final Elevator elevator =
+      new Elevator(
+          new ElevatorModuleTalonFXIO(
+              Constants.ELEVATOR_MOTOR_LEFT_ID,
+              Constants.ELEVATOR_MOTOR_RIGHT_ID,
+              Constants.ELEVATOR_CANBUS),
+          wrist);
+  //   private final Elevator2 elevator2 =
+  //       new Elevator2(
+  //           new ElevatorModuleTalonFXIO(
+  //               Constants.ELEVATOR_MOTOR_LEFT_ID,
+  //               Constants.ELEVATOR_MOTOR_RIGHT_ID,
+  //               Constants.ELEVATOR_CANBUS));
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController controller2 = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -85,9 +122,9 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight));
         vision =
             new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVision(
-                    VisionConstants.camera0Name, VisionConstants.robotToCamera0)
+                drive::addVisionMeasurement, new VisionIO() {}
+                // new VisionIOPhotonVision(
+                //     VisionConstants.camera0Name, VisionConstants.robotToCamera0)
                 // new VisionIOPhotonVision(camera1Name, robotToCamera1)
                 );
         break;
@@ -144,6 +181,9 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    // configure the autonomous named commands
+    registerNamedCommandsAuto();
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -156,17 +196,84 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    controller.leftTrigger().whileTrue(new PathfindToClosestDepotCommand(drive));
+    // controller.leftTrigger().whileTrue(new PathfindToClosestDepotCommand(drive));
     // Default command, normal field-relative drive
-    // new PathPlannerPath(
-    //     waypoints,
-    //     pathConstraints,
-    //     null,
-    //     new GoalEndState(0.0, Rotation2d.fromDegrees(0)),
-    //     false);
 
-    // makes a path from the robot to the closest path and runs it
+    // controller.start().whileTrue(new WristSetPosCommand(wrist, 0.25));
+    //  controller.back().whileTrue(new WristSetPosCommand(wrist, -0.25));
+    // controller2.leftBumper().whileTrue(new IntakeSpeedCommand(intake, 0.75, limitSwitch));
+    // controller.b().whileTrue(elevator2.runCurrentZeroing());
+    // controller.rightBumper().whileTrue(new SetElevatorPower(elevator2, 0.1));
+    // controller.leftBumper().whileTrue(new SetElevatorPower(elevator2, -0.1));
+    // controller
+    //     .rightBumper()
+    //     .whileTrue(new SetElevatorCommand(ElevatorLevel.FIRST_LEVEL, elevator2));
+    // controller
+    //     .rightTrigger()
+    //     .whileTrue(new SetElevatorCommand(ElevatorLevel.SECOND_LEVEL, elevator2));
+    // controller
+    //     .leftTrigger()
+    //     .whileTrue(new SetElevatorCommand(ElevatorLevel.THIRD_LEVEL, elevator2));
 
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         new TellCommand()
+    //             .andThen(
+    //                 new SetWristRollerSpeed(wrist, -0.01)
+    //                     .unless(() -> wrist.isCanCloserThan(0.1))));
+
+    // by default, have the wrist turn to a set point
+    wrist.setDefaultCommand(
+        new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle())
+            .unless(() -> !wrist.isCanCloserThan(0.1)));
+
+    // right bumper resets all encoders
+    controller
+        .rightBumper()
+        .onTrue(
+            new InstantCommand(() -> elevator.resetEncoders())
+                .ignoringDisable(true)
+                .alongWith(new InstantCommand(() -> wrist.resetWristEncoder()))
+                .ignoringDisable(true));
+
+    // b manually moves the wrist forwards
+    controller.b().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> 0.05));
+    // controller.x().whileTrue(new SetWristTargetAngleCommand(wrist, 0));
+
+    // a intakes until the canrange detects the coral
+    controller
+        .a()
+        .whileTrue(
+            new IntakeWristCommand(wrist, -0.2)
+                .andThen(new ControllerVibrateCommand(0.7, controller)));
+
+    // y shoots coral out
+    controller.y().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.5));
+
+    // left bumper sets the wrist outwards manually
+    controller
+        .leftBumper()
+        .whileTrue(new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle()));
+
+    // controller.leftTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> -0.2));
+    // controller.rightTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> 0.2));
+
+    // left trigger sets height to Stage 2
+    controller
+        .leftTrigger()
+        .whileTrue(
+            new InstantCommand(() -> elevator.setTargetHeight(PElevator.FirstLevel.getValue())));
+    // right trigger sets height to Stage 3
+    controller
+        .rightTrigger()
+        .whileTrue(
+            new InstantCommand(() -> elevator.setTargetHeight(PElevator.SecondLevel.getValue())));
+    // x sets elevator height back down to 0
+    controller
+        .x()
+        .whileTrue(
+            new InstantCommand(() -> elevator.setTargetHeight(PElevator.MinHeight.getValue())));
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
@@ -175,17 +282,17 @@ public class RobotContainer {
             () -> -controller.getRightX()));
 
     // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -controller.getLeftY(),
+    //             () -> -controller.getLeftX(),
+    //             () -> new Rotation2d( )));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // controller
     //     .leftTrigger()
@@ -195,7 +302,7 @@ public class RobotContainer {
 
     // // Reset gyro to 0° when B button is pressed
     controller
-        .b()
+        .povDown()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -204,14 +311,25 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // add a free disturbance when pressing the y button to test vision
-    var disturbance =
-        new Transform2d(new Translation2d(1.0, 1.0), new Rotation2d(0.17 * 2 * Math.PI));
     controller
-        .y()
+        .povUp()
         .onTrue(
-            Commands.runOnce(() -> drive.setPose(drive.getPose().plus(disturbance)))
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(
+                                drive.getPose().getTranslation(), Rotation2d.fromDegrees(180))),
+                    drive)
                 .ignoringDisable(true));
+
+    // add a free disturbance when pressing the y button to test vision
+    // var disturbance =
+    //     new Transform2d(new Translation2d(1.0, 1.0), new Rotation2d(0.17 * 2 * Math.PI));
+    // controller
+    //     .y()
+    //     .onTrue(
+    //         Commands.runOnce(() -> drive.setPose(drive.getPose().plus(disturbance)))
+    //             .ignoringDisable(true));
   } // end configure bindings
 
   /**
@@ -221,6 +339,11 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  // registers pathplanner's named commands
+  private void registerNamedCommandsAuto() {
+    NamedCommands.registerCommand("testing", new TellCommand("testing autoCOmmand"));
   }
 
   //   public void sendVisionMeasurement() {
