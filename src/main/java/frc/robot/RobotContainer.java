@@ -225,7 +225,7 @@ public class RobotContainer {
     //         new SetWristTargetAngleCommand(wrist, 0),
     //         () - !wrist.isCanCloserThan(0.1)));
     /* */
-    //resets encoders. THIS WILL BREAK THE ROBOT
+    // resets encoders. THIS WILL BREAK THE ROBOT
     controller
         .start()
         .onTrue(
@@ -234,28 +234,31 @@ public class RobotContainer {
                 .alongWith(new InstantCommand(() -> wrist.resetWristEncoder()))
                 .ignoringDisable(true));
 
-
-    //eject note as long as button as help
+    // eject note as long as button as help
     controller.rightBumper().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.3));
 
-    //moves elevator and wrist to the scoring positions level 2 after the right button is tapped
+    // moves elevator and wrist to the scoring positions level 2 after the right button is tapped
     controller.leftTrigger().whileTrue(ScoringCommands.prepForScoring(1, wrist, elevator));
 
-    //moves elevator and wrist to the scoring positions level 2 after the right button is tapped
+    // moves elevator and wrist to the scoring positions level 2 after the right button is tapped
     controller.leftBumper().whileTrue(ScoringCommands.prepForScoring(2, wrist, elevator));
 
-    //intakes then vibrates controlller when in position and has coral
-    controller.rightTrigger().whileTrue(IntakingCommands.intakeCommand(wrist, elevator)
-    //vibrates the controller for half a second after intake
-    .andThen(Commands.deadline(
-        new WaitCommand(0.5), 
-        new ControllerVibrateCommand(0.7, controller))));
+    // intakes then vibrates controlller when in position and has coral
+    controller
+        .rightTrigger()
+        .whileTrue(
+            IntakingCommands.intakeCommand(wrist, elevator)
+                // vibrates the controller for half a second after intake
+                .andThen(
+                    Commands.deadline(
+                        new WaitCommand(0.5), new ControllerVibrateCommand(0.7, controller))));
 
-    //old elevator default command
+    // old elevator default command
     // elevator.setDefaultCommand(
     // new SetElevatorPresetCommand(elevator, wrist, 0).unless(() -> wrist.isCanCloserThan(0.1)));
 
-    //if there is no note move the elevator down to zero. If there is a note move elevator to first level if it is currently below first level
+    // if there is no note move the elevator down to zero. If there is a note move elevator to first
+    // level if it is currently below first level
     elevator.setDefaultCommand(
         new ConditionalCommand(
             // set the elevator to move up to stage 1 if it's below and has the coral(that way cycle
@@ -267,7 +270,8 @@ public class RobotContainer {
             // conditional that controls the elevator
             () -> wrist.isCanCloserThan(0.1)));
 
-    //if there is a note move the wrist to scoring position. If there is not a note move the wrist back to intake position when the elevator is on the floor
+    // if there is a note move the wrist to scoring position. If there is not a note move the wrist
+    // back to intake position when the elevator is on the floor
     wrist.setDefaultCommand(
         new ConditionalCommand(
             // if there is a note move the wrist angle back
@@ -342,12 +346,25 @@ public class RobotContainer {
 
   // registers pathplanner's named commands
   private void registerNamedCommandsAuto() {
-    NamedCommands.registerCommand("test", new TellCommand("test"));
-    NamedCommands.registerCommand("intake", IntakingCommands.intakeCommand(wrist, elevator));
-    NamedCommands.registerCommand("prepStage1", ScoringCommands.prepForScoring(1, wrist, elevator));
-    NamedCommands.registerCommand("prepStage2", ScoringCommands.prepForScoring(2, wrist, elevator));
-    NamedCommands.registerCommand(
-        "Scoring", new WaitCommand(0.5).deadlineFor(new SetWristRollerSpeedCommand(wrist, -0.4)));
+
+    // if ur simulating it's better to just print everything
+    if (Constants.simulatingAuto) {
+      NamedCommands.registerCommand("test", new TellCommand("test"));
+      NamedCommands.registerCommand("intake", new TellCommand("intake auto command"));
+      NamedCommands.registerCommand("prepStage1", new TellCommand("prep stage 1 auto command"));
+      NamedCommands.registerCommand("prepStage2", new TellCommand("prep stage 2 auto command"));
+      NamedCommands.registerCommand("Scoring", new TellCommand("Scoring auto command"));
+      // if ur not simulating register commands as normal
+    } else {
+      NamedCommands.registerCommand("test", new TellCommand("test"));
+      NamedCommands.registerCommand("intake", IntakingCommands.intakeCommand(wrist, elevator));
+      NamedCommands.registerCommand(
+          "prepStage1", ScoringCommands.prepForScoring(1, wrist, elevator));
+      NamedCommands.registerCommand(
+          "prepStage2", ScoringCommands.prepForScoring(2, wrist, elevator));
+      NamedCommands.registerCommand(
+          "Scoring", new WaitCommand(0.5).deadlineFor(new SetWristRollerSpeedCommand(wrist, -0.4)));
+    }
   }
 
   //   public void sendVisionMeasurement() {
