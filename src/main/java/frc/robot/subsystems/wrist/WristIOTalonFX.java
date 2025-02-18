@@ -40,6 +40,8 @@ public class WristIOTalonFX implements WristIO {
     motionMagicConfigs.MotionMagicJerk = 10; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
     arm.getConfigurator().apply(talonFXConfigs);
+
+    arm.setNeutralMode(NeutralModeValue.Brake);
   }
 
   // sets the PID target angle
@@ -49,6 +51,7 @@ public class WristIOTalonFX implements WristIO {
 
     // set target position to 100 rotations
     arm.setControl(m_request.withPosition(targetAngle));
+    System.out.println("Voltage being sent in PID Voltage");
   }
 
   // sets the speed of the arm

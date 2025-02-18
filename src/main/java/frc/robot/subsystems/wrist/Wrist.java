@@ -25,7 +25,7 @@ public class Wrist extends SubsystemBase {
 
   @AutoLogOutput private double pidOutput;
 
-  private final double targetBuffer = 0.1;
+  private final double targetBuffer = 0.05;
 
   @AutoLogOutput private boolean manualOverride = false;
 
@@ -61,13 +61,9 @@ public class Wrist extends SubsystemBase {
       System.out.println("MANUAL OVERRIDE WRIST ENGAGED");
       return;
     }
-
-    double diffHeight = targetAngle - CurrentAngle;
-
-    if (diffHeight < targetBuffer) return;
-
     // set target position to 100 rotations
     wristIO.PIDVoltage(targetAngle);
+    System.out.println("setting voltage in periodic");
 
     // Math.abs(pidOutput) > PWrist.speedLimit.getValue()
     //     ? Math.copySign(PWrist.speedLimit.getValue(), pidOutput) // change later
@@ -114,6 +110,7 @@ public class Wrist extends SubsystemBase {
   public void setTargetAngle(double angle) {
     manualOverride = false;
     this.targetAngle = angle;
+    // System.out.println("setting target angle");
   }
 
   // gets the angle that the PID is pathing to

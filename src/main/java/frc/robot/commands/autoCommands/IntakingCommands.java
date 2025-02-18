@@ -13,8 +13,8 @@ public class IntakingCommands {
   // moves wrist and elevator into position then rolls the wrist until object is detected
   public static Command intakeCommand(Wrist wrist, Elevator elevator) {
     return new SetElevatorPresetCommand(elevator, wrist, PElevator.MinHeight.getValue())
-        .alongWith(new SetWristTargetAngleCommand(wrist, WristAngle.INTAKE_ANGLE.getAngle()))
-        .andThen(new IntakeWristCommand(wrist, -0.2));
+        .andThen(new SetWristTargetAngleCommand(wrist, WristAngle.INTAKE_ANGLE.getAngle()))
+        .alongWith(new IntakeWristCommand(wrist, -0.2));
   }
 
   // does the intake command but automatically aligns at the same time

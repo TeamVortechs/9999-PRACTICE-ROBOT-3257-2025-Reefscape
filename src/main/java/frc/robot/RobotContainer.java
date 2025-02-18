@@ -25,13 +25,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.autoCommands.DriveCommands;
 import frc.robot.commands.autoCommands.IntakingCommands;
+import frc.robot.commands.autoCommands.ScoringCommands;
 import frc.robot.commands.communication.TellCommand;
+import frc.robot.commands.elevator.SetElevatorPresetCommand;
+import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
 // import frc.robot.commands.SetWristRollerSpeed;
-import frc.robot.commands.wrist.SetWristTargetAngleCommand;
 import frc.robot.generated.TunerConstants;
 // import frc.robot.subsystems.Intake.Intake;
 // import frc.robot.subsystems.Intake.IntakeIOTalonFX;
@@ -49,7 +52,6 @@ import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.wrist.Wrist;
-import frc.robot.subsystems.wrist.Wrist.WristAngle;
 // import frc.robot.subsystems.wrist.WristIOTalonFX;
 import frc.robot.subsystems.wrist.WristIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -157,6 +159,8 @@ public class RobotContainer {
         break;
     }
 
+    registerNamedCommandsAuto();
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -177,7 +181,6 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // configure the autonomous named commands
-    registerNamedCommandsAuto();
 
     // Configure the button bindings
     configureButtonBindings();
@@ -216,17 +219,29 @@ public class RobotContainer {
     //                 new SetWristRollerSpeed(wrist, -0.01)
     //                     .unless(() -> wrist.isCanCloserThan(0.1))));
 
-    wrist.setDefaultCommand(
-        new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle())
-            .unless(() -> !wrist.isCanCloserThan(0.1)));
-
+    // wrist.setDefaultCommand(
+    //     new ConditionalCommand(
+    //         new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle()),
+    //         new SetWristTargetAngleCommand(wrist, 0),
+    //         () - !wrist.isCanCloserThan(0.1)));
+    /* */
     controller
-        .rightBumper()
+        .start()
         .onTrue(
             new InstantCommand(() -> elevator.resetEncoders())
                 .ignoringDisable(true)
                 .alongWith(new InstantCommand(() -> wrist.resetWristEncoder()))
                 .ignoringDisable(true));
+
+    controller.rightBumper().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.3));
+
+    controller.leftTrigger().whileTrue(ScoringCommands.prepForScoring(1, wrist, elevator));
+    controller.leftBumper().whileTrue(ScoringCommands.prepForScoring(2, wrist, elevator));
+
+    controller.rightTrigger().whileTrue(IntakingCommands.intakeCommand(wrist, elevator));
+
+    elevator.setDefaultCommand(
+        new SetElevatorPresetCommand(elevator, wrist, 0).unless(() -> wrist.isCanCloserThan(0.1)));
 
     // controller.b().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> 0.05));
     // // controller.x().whileTrue(new SetWristTargetAngleCommand(wrist, 0));
@@ -256,6 +271,7 @@ public class RobotContainer {
     //     .x()
     //     .whileTrue(
     //         new InstantCommand(() -> elevator.setTargetHeight(PElevator.MinHeight.getValue())));
+
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
@@ -319,7 +335,12 @@ public class RobotContainer {
 
   // registers pathplanner's named commands
   private void registerNamedCommandsAuto() {
-    NamedCommands.registerCommand("testing", new TellCommand("testing autoCOmmand"));
+    NamedCommands.registerCommand("test", new TellCommand("test"));
+    NamedCommands.registerCommand("intake", IntakingCommands.intakeCommand(wrist, elevator));
+    NamedCommands.registerCommand("prepStage1", ScoringCommands.prepForScoring(1, wrist, elevator));
+    NamedCommands.registerCommand("prepStage2", ScoringCommands.prepForScoring(2, wrist, elevator));
+    NamedCommands.registerCommand(
+        "Scoring", new WaitCommand(0.5).deadlineFor(new SetWristRollerSpeedCommand(wrist, -0.4)));
   }
 
   //   public void sendVisionMeasurement() {

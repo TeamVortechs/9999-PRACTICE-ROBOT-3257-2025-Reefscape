@@ -43,6 +43,6 @@ public class SetWristTargetAngleCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return wrist.isOnTarget() && Math.abs(targetAngle - wrist.getTargetAngle()) < 0.001;
   }
 }

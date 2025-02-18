@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.KDoublePreferences.PElevator;
 import frc.robot.commands.elevator.SetElevatorPresetCommand;
 import frc.robot.commands.pathfindingCommands.PathfindToClosestDepotCommand;
-import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
 import frc.robot.commands.wrist.SetWristTargetAngleCommand;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
@@ -27,10 +26,9 @@ public class ScoringCommands {
     }
   }
 
-  public static Command score(int level, Wrist wrist, Elevator elevator) {
-    return prepForScoring(level, wrist, elevator)
-        .andThen(new SetWristRollerSpeedCommand(wrist, -0.5));
-  }
+  // public static Command postScore(int level, Wrist wrist, Elevator elevator) {
+  // return prepForScoring(level, wrist, elevator);
+  // }
 
   public static Command prepForScoreAutoPath(
       int level, Wrist wrist, Elevator elevator, Drive drive) {
