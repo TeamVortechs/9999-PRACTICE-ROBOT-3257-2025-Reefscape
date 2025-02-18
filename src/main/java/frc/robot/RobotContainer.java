@@ -24,20 +24,20 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.KDoublePreferences.PElevator;
 import frc.robot.commands.autoCommands.DriveCommands;
 import frc.robot.commands.autoCommands.IntakingCommands;
 import frc.robot.commands.autoCommands.ScoringCommands;
 import frc.robot.commands.communication.TellCommand;
 import frc.robot.commands.elevator.SetElevatorPresetCommand;
 import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
-// import frc.robot.commands.SetWristRollerSpeed;
+import frc.robot.commands.wrist.SetWristTargetAngleCommand;
 import frc.robot.generated.TunerConstants;
-// import frc.robot.subsystems.Intake.Intake;
-// import frc.robot.subsystems.Intake.IntakeIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -45,14 +45,13 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
-// import frc.robot.subsystems.elevator.Elevator2;
 import frc.robot.subsystems.elevator.ElevatorModuleTalonFXIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.wrist.Wrist;
-// import frc.robot.subsystems.wrist.WristIOTalonFX;
+import frc.robot.subsystems.wrist.Wrist.WristAngle;
 import frc.robot.subsystems.wrist.WristIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -240,8 +239,30 @@ public class RobotContainer {
 
     controller.rightTrigger().whileTrue(IntakingCommands.intakeCommand(wrist, elevator));
 
+    // elevator.setDefaultCommand(
+    // new SetElevatorPresetCommand(elevator, wrist, 0).unless(() -> wrist.isCanCloserThan(0.1)));
+
     elevator.setDefaultCommand(
-        new SetElevatorPresetCommand(elevator, wrist, 0).unless(() -> wrist.isCanCloserThan(0.1)));
+        new ConditionalCommand(
+            // set the elevator to move up to stage 1 if it's below and has the coral(that way cycle
+            // time is increased if they forgot to do it)
+            new SetElevatorPresetCommand(elevator, wrist, PElevator.FirstLevel.getValue())
+                .unless(() -> elevator.getCurrentHeight() > PElevator.FirstLevel.getValue()),
+            // sets the the elevator to go zero if it doesn't have a coral
+            new SetElevatorPresetCommand(elevator, wrist, 0),
+            // conditional that controls the elevator
+            () -> wrist.isCanCloserThan(0.1)));
+
+    wrist.setDefaultCommand(
+        new ConditionalCommand(
+            // if there is a note move the wrist angle back
+            new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle()),
+            // if there is not a note move the wrist to the target angle 0
+            new SetWristTargetAngleCommand(wrist, 0)
+                // unless the elevator is not on the floor
+                .unless(() -> !elevator.isOnFloor()),
+            // controller of the conditional
+            () -> wrist.isCanCloserThan(0.01)));
 
     // controller.b().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> 0.05));
     // // controller.x().whileTrue(new SetWristTargetAngleCommand(wrist, 0));

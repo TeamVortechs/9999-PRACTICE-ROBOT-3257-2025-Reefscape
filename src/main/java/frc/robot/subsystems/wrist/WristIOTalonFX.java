@@ -1,5 +1,7 @@
 package frc.robot.subsystems.wrist;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANrange;
@@ -8,7 +10,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.littletonrobotics.junction.AutoLogOutput;
 
 public class WristIOTalonFX implements WristIO {
   private TalonFX arm;
@@ -51,7 +52,7 @@ public class WristIOTalonFX implements WristIO {
 
     // set target position to 100 rotations
     arm.setControl(m_request.withPosition(targetAngle));
-    System.out.println("Voltage being sent in PID Voltage");
+    // System.out.println("Voltage being sent in PID Voltage");
   }
 
   // sets the speed of the arm

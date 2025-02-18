@@ -58,12 +58,12 @@ public class Wrist extends SubsystemBase {
     }
 
     if (manualOverride) {
-      System.out.println("MANUAL OVERRIDE WRIST ENGAGED");
+      System.out.println("Wrist MANUAL OVERRIDE WRIST ENGAGED");
       return;
     }
     // set target position to 100 rotations
     wristIO.PIDVoltage(targetAngle);
-    System.out.println("setting voltage in periodic");
+    // System.out.println("setting voltage in periodic");
 
     // Math.abs(pidOutput) > PWrist.speedLimit.getValue()
     //     ? Math.copySign(PWrist.speedLimit.getValue(), pidOutput) // change later
