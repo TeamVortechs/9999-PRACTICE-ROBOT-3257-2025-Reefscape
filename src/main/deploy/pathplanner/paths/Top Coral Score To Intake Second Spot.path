@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.7838165980708034,
-        "y": 5.36740051492126
+        "x": 3.3899609477382056,
+        "y": 5.8357495366916385
       },
       "isLocked": false,
       "linkedName": "ScoreTopIntakeSecondSpot"
     },
     {
       "anchor": {
-        "x": 1.2165340909090911,
-        "y": 7.051377840909091
+        "x": 1.6848076923076918,
+        "y": 7.399807692307693
       },
       "prevControl": {
-        "x": 1.5781649734741026,
-        "y": 6.816970844283444
+        "x": 1.8539089005527318,
+        "y": 7.215675181951516
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 1.5,
-    "maxAcceleration": 1.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

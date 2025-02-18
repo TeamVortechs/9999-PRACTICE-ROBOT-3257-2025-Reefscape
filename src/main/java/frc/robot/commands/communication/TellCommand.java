@@ -26,14 +26,14 @@ public class TellCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // messaged = false;
+    messaged = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     System.out.println(message);
-    // messaged = true;
+    messaged = true;
   }
 
   // Called once the command ends or is interrupted.
@@ -43,6 +43,6 @@ public class TellCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return messaged;
   }
 }

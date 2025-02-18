@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.autoCommands.DriveCommands;
@@ -335,12 +334,22 @@ public class RobotContainer {
 
   // registers pathplanner's named commands
   private void registerNamedCommandsAuto() {
+    // NamedCommands.registerCommand("test", new TellCommand("test"));
+    // NamedCommands.registerCommand("intake", IntakingCommands.intakeCommand(wrist, elevator));
+    // NamedCommands.registerCommand("prepStage1", ScoringCommands.prepForScoring(1, wrist,
+    // elevator));
+    // NamedCommands.registerCommand("prepStage2", ScoringCommands.prepForScoring(2, wrist,
+    // elevator));
+    // NamedCommands.registerCommand(
+    //     "Scoring", new WaitCommand(0.5).deadlineFor(new SetWristRollerSpeedCommand(wrist,
+    // -0.4)));
+
+    // code for if we're simulating autonomous or don't have access to the mechanism
     NamedCommands.registerCommand("test", new TellCommand("test"));
-    NamedCommands.registerCommand("intake", IntakingCommands.intakeCommand(wrist, elevator));
-    NamedCommands.registerCommand("prepStage1", ScoringCommands.prepForScoring(1, wrist, elevator));
-    NamedCommands.registerCommand("prepStage2", ScoringCommands.prepForScoring(2, wrist, elevator));
-    NamedCommands.registerCommand(
-        "Scoring", new WaitCommand(0.5).deadlineFor(new SetWristRollerSpeedCommand(wrist, -0.4)));
+    NamedCommands.registerCommand("intake", new TellCommand("Intake Auto Command"));
+    NamedCommands.registerCommand("prepStage1", new TellCommand("Prep Stage 1 Auto Command"));
+    NamedCommands.registerCommand("prepStage2", new TellCommand("Prep Stage 2 Auto Command"));
+    NamedCommands.registerCommand("Scoring", new TellCommand("Scoring Auto Command"));
   }
 
   //   public void sendVisionMeasurement() {

@@ -51,7 +51,7 @@ public class WristIOTalonFX implements WristIO {
 
     // set target position to 100 rotations
     arm.setControl(m_request.withPosition(targetAngle));
-    System.out.println("Voltage being sent in PID Voltage");
+    // System.out.println("Voltage being sent in PID Voltage");
   }
 
   // sets the speed of the arm
