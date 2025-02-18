@@ -220,10 +220,12 @@ public class RobotContainer {
     //                 new SetWristRollerSpeed(wrist, -0.01)
     //                     .unless(() -> wrist.isCanCloserThan(0.1))));
 
+    // by default, have the wrist turn to a set point
     wrist.setDefaultCommand(
         new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle())
             .unless(() -> !wrist.isCanCloserThan(0.1)));
 
+    // right bumper resets all encoders
     controller
         .rightBumper()
         .onTrue(
@@ -232,29 +234,39 @@ public class RobotContainer {
                 .alongWith(new InstantCommand(() -> wrist.resetWristEncoder()))
                 .ignoringDisable(true));
 
+    // b manually moves the wrist forwards
     controller.b().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> 0.05));
     // controller.x().whileTrue(new SetWristTargetAngleCommand(wrist, 0));
+
+    // a intakes until the canrange detects the coral
     controller
         .a()
         .whileTrue(
             new IntakeWristCommand(wrist, -0.2)
                 .andThen(new ControllerVibrateCommand(0.7, controller)));
 
+    // y shoots coral out
     controller.y().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.5));
+
+    // left bumper sets the wrist outwards manually
     controller
         .leftBumper()
         .whileTrue(new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle()));
 
     // controller.leftTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> -0.2));
     // controller.rightTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> 0.2));
+
+    // left trigger sets height to Stage 2
     controller
         .leftTrigger()
         .whileTrue(
             new InstantCommand(() -> elevator.setTargetHeight(PElevator.FirstLevel.getValue())));
+    // right trigger sets height to Stage 3
     controller
         .rightTrigger()
         .whileTrue(
             new InstantCommand(() -> elevator.setTargetHeight(PElevator.SecondLevel.getValue())));
+    // x sets elevator height back down to 0
     controller
         .x()
         .whileTrue(

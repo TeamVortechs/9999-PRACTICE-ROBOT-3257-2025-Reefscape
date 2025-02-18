@@ -40,6 +40,9 @@ public class WristIOTalonFX implements WristIO {
     motionMagicConfigs.MotionMagicJerk = 10; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
     arm.getConfigurator().apply(talonFXConfigs);
+
+    // Set motor to Brake mode by default.
+    arm.setNeutralMode(NeutralModeValue.Brake);
   }
 
   // sets the PID target angle
