@@ -7,8 +7,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
 
 public class PathfindingCommands {
@@ -37,7 +35,7 @@ public class PathfindingCommands {
       coralPathsLeft[3] = PathPlannerPath.fromPathFile("CoralFeed4 Left");
       coralPathsLeft[4] = PathPlannerPath.fromPathFile("CoralFeed5 Left");
       coralPathsLeft[5] = PathPlannerPath.fromPathFile("CoralFeed6 Left");
-      
+
       coralPathsRight[0] = PathPlannerPath.fromPathFile("CoralFeed1 Right");
       coralPathsRight[1] = PathPlannerPath.fromPathFile("CoralFeed2 Right");
       coralPathsRight[2] = PathPlannerPath.fromPathFile("CoralFeed3 Right");
@@ -72,7 +70,7 @@ public class PathfindingCommands {
     // for (int i = 0; i < coralPaths.length; i++) {
     //   System.out.println(i + " " + coralPaths[i].getPathPoses().get(0));
     // }
-    if(left) {
+    if (left) {
       return AutoBuilder.pathfindThenFollowPath(coralPathsLeft[depotID], pathConstraints);
     } else {
       return AutoBuilder.pathfindThenFollowPath(coralPathsRight[depotID], pathConstraints);
@@ -88,7 +86,7 @@ public class PathfindingCommands {
     int lowestDistID = 0;
 
     // System.out.println("pose " + curLocation);
-    if(left) {
+    if (left) {
       for (int i = 0; i < coralPathsLeft.length; i++) {
         Pose2d testPose = coralPathsLeft[i].getPathPoses().get(0);
 

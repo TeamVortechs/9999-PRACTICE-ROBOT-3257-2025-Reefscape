@@ -280,7 +280,6 @@ public class RobotContainer {
     controller.x().onTrue(new PathfindToClosestDepotCommand(drive, true));
     controller.y().onTrue(new PathfindToClosestDepotCommand(drive, false));
 
-
     // Reset gyro to 0° when B button is pressed
     controller
         .povDown()
@@ -324,11 +323,12 @@ public class RobotContainer {
 
   // registers pathplanner's named commands
   private void registerNamedCommandsAuto() {
-    //controls wether or not the robot actually does the commands or just prints out that it's doing the commands
+    // controls wether or not the robot actually does the commands or just prints out that it's
+    // doing the commands
     boolean isReal = false;
 
     addNamedCommand("intake prep", IntakingCommands.prepForIntakeCommand(wrist, elevator), isReal);
-    addNamedCommand("test", new TellCommand("test"), isReal);
+    // addNamedCommand("test", new TellCommand("test"), isReal);
     addNamedCommand("intake", IntakingCommands.intakeCommand(wrist, elevator), isReal);
     addNamedCommand("prepStage1", ScoringCommands.prepForScoring(1, wrist, elevator), isReal);
     addNamedCommand("prepStage2", ScoringCommands.prepForScoring(2, wrist, elevator), isReal);
