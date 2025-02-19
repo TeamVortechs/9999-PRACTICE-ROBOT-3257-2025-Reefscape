@@ -28,11 +28,11 @@ public class ScoringCommands {
 
   // public static Command postScore(int level, Wrist wrist, Elevator elevator) {
   // return prepForScoring(level, wrist, elevator);
-  // }
+  // // }
 
-  public static Command prepForScoreAutoPath(
-      int level, Wrist wrist, Elevator elevator, Drive drive) {
-    return prepForScoring(level, wrist, elevator)
-        .alongWith(new PathfindToClosestDepotCommand(drive));
-  }
+  // public static Command prepForScoreAutoPath(
+  //     int level, Wrist wrist, Elevator elevator, Drive drive) {
+  //   return prepForScoring(level, wrist, elevator)
+  //       .alongWith(new PathfindToClosestDepotCommand(drive));
+  // }
 }
