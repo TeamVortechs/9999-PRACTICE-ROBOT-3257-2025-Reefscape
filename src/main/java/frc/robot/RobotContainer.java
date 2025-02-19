@@ -212,8 +212,8 @@ public class RobotContainer {
     controller.rightTrigger().whileTrue(IntakingCommands.intakeCommand(wrist, elevator));
     /* */
 
-    controller.x().whileTrue(new PathfindToClosestDepotCommand(drive, true));
-    controller.y().whileTrue(new PathfindToClosestDepotCommand(drive, false));
+    // controller.x().whileTrue(new PathfindToClosestDepotCommand(drive, true));
+    // controller.y().whileTrue(new PathfindToClosestDepotCommand(drive, false));
 
     // elevator.setDefaultCommand(
     // new SetElevatorPresetCommand(elevator, wrist, 0).unless(() -> wrist.isCanCloserThan(0.1)));

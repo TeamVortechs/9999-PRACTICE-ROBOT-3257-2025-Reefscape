@@ -3,78 +3,70 @@ package frc.robot.commands.pathfindingCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 
-/*
-Names
-brief description
+/**
+ * PathfindToClosestDepotCommand is a dynamic command that continuously monitors the robot's pose
+ * and selects an appropriate pathfinding command to navigate to the closest depot.
+ *
+ * Improvements Made:
+ * - Removed pre-created command array and replaced it with dynamic command creation.
+ * - Removed the 'lockedIn' flag; instead, the target is managed via targetPoseID.
+ * - Properly cancels the active command when a new target is selected or when the command ends.
  */
-// THIS CLASS WILL BREAK THE ROBOT
 public class PathfindToClosestDepotCommand extends Command {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 
-  /**
-   * Creates a new ExampleCommand.
-   *
-   * @param subsystem The subsystem used by this command.
-   */
-  private Drive drive;
+    private final Drive drive;
+    private final boolean left;
+    private Command activeCommand; // Dynamically created command instance
+    private int targetPoseID = -1; // -1 indicates no target selected yet
 
-  private int targetPoseID = 0;
-
-  private boolean lockedIn = false;
-
-  private Command[] depotPathCommands;
-
-  private boolean left;
-
-  public PathfindToClosestDepotCommand(Drive drive, boolean left) {
-    // addRequirements(null);
-    this.drive = drive;
-    depotPathCommands = new Command[6];
-
-    this.left = left;
-  }
-
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    for (int i = 0; i < depotPathCommands.length; i++) {
-      depotPathCommands[i] = PathfindingCommands.pathfindToDepotCommand(i, left);
-    }
-  }
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    int curPoseID = PathfindingCommands.getClosestDepotPath(drive.getPose(), left);
-
-    if (!lockedIn) {
-      targetPoseID = curPoseID;
-      depotPathCommands[targetPoseID].schedule();
+    /**
+     * Constructs a new PathfindToClosestDepotCommand.
+     *
+     * @param drive the drive subsystem.
+     * @param left  whether to use left-side depot paths.
+     */
+    public PathfindToClosestDepotCommand(Drive drive, boolean left) {
+        this.drive = drive;
+        this.left = left;
+        // Declare dependency on the drive subsystem.
+        addRequirements(drive);
     }
 
-    if (targetPoseID != curPoseID) {
-      // depotPathCommands[targetPoseID].cancel();
-      targetPoseID = curPoseID;
-      depotPathCommands[targetPoseID].schedule();
-      ;
+    @Override
+    public void initialize() {
+        // Reset state on initialization.
+        targetPoseID = -1;
+        activeCommand = null;
     }
-  }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    depotPathCommands[targetPoseID].cancel();
+    @Override
+    public void execute() {
+        // Determine the closest depot path index based on the current robot pose.
+        int curPoseID = PathfindingCommands.getClosestDepotPath(drive.getPose(), left);
 
-    // for(int i = 0; i < depotPathCommands.length; i++) {
-    //   depotPathCommands[i].cancel();
-    // }
+        // If the depot target has changed, cancel the previous command and schedule a new one.
+        if (curPoseID != targetPoseID) {
+            if (activeCommand != null && activeCommand.isScheduled()) {
+                activeCommand.cancel();
+            }
+            targetPoseID = curPoseID;
+            // Create a new command instance using the factory method.
+            activeCommand = PathfindingCommands.pathfindToDepotCommand(targetPoseID, left);
+            activeCommand.schedule();
+        }
+    }
 
-    lockedIn = false;
-  }
+    @Override
+    public void end(boolean interrupted) {
+        // Cancel the active command if it is still scheduled.
+        if (activeCommand != null && activeCommand.isScheduled()) {
+            activeCommand.cancel();
+        }
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return depotPathCommands[targetPoseID].isFinished();
-  }
+    @Override
+    public boolean isFinished() {
+        // Consider this command finished when the active command has completed.
+        return activeCommand != null && activeCommand.isFinished();
+    }
 }
