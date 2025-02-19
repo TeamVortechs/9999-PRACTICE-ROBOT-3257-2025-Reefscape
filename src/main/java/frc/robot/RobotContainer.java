@@ -34,6 +34,7 @@ import frc.robot.commands.autoCommands.IntakingCommands;
 import frc.robot.commands.autoCommands.ScoringCommands;
 import frc.robot.commands.communication.TellCommand;
 import frc.robot.commands.elevator.SetElevatorPresetCommand;
+import frc.robot.commands.pathfindingCommands.PathfindToClosestDepotCommand;
 import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
 // import frc.robot.commands.SetWristRollerSpeed;
 import frc.robot.generated.TunerConstants;
@@ -224,6 +225,8 @@ public class RobotContainer {
 
     controller.rightTrigger().whileTrue(IntakingCommands.intakeCommand(wrist, elevator));
 
+    controller.x().whileTrue(new PathfindToClosestDepotCommand(drive));
+
     elevator.setDefaultCommand(
         new SetElevatorPresetCommand(elevator, wrist, 0).unless(() -> wrist.isCanCloserThan(0.1)));
 
@@ -319,7 +322,8 @@ public class RobotContainer {
 
   // registers pathplanner's named commands
   private void registerNamedCommandsAuto() {
-    //controls wether or not the robot actually does the commands or just prints out that it's doing the commands
+    // controls wether or not the robot actually does the commands or just prints out that it's
+    // doing the commands
     boolean isReal = false;
 
     addNamedCommand("intake prep", IntakingCommands.prepForIntakeCommand(wrist, elevator), isReal);
