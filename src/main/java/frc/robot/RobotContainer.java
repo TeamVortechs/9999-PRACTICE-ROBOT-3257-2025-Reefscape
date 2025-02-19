@@ -319,6 +319,7 @@ public class RobotContainer {
 
   // registers pathplanner's named commands
   private void registerNamedCommandsAuto() {
+    //controls wether or not the robot actually does the commands or just prints out that it's doing the commands
     boolean isReal = false;
 
     addNamedCommand("intake prep", IntakingCommands.prepForIntakeCommand(wrist, elevator), isReal);
@@ -341,7 +342,7 @@ public class RobotContainer {
       // registers the named commands to print something out instead of actually running anything
       NamedCommands.registerCommand(commandName, new TellCommand(commandName + " auto command"));
       new EventTrigger(commandName)
-          .onFalse(new TellCommand(commandName + " auto event trigger command"));
+          .onTrue(new TellCommand(commandName + " auto event trigger command"));
     }
   }
 

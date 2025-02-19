@@ -19,7 +19,7 @@ public class IntakingCommands {
 
   public static Command prepForIntakeCommand(Wrist wrist, Elevator elevator) {
     return new SetElevatorPresetCommand(elevator, wrist, PElevator.MinHeight.getValue())
-    .andThen(new SetWristTargetAngleCommand(wrist, WristAngle.INTAKE_ANGLE.getAngle()));
+        .andThen(new SetWristTargetAngleCommand(wrist, WristAngle.INTAKE_ANGLE.getAngle()));
   }
 
   // does the intake command but automatically aligns at the same time
