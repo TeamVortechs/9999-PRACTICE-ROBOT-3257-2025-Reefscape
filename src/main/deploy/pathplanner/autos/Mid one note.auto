@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Clear"
+            "pathName": "Coral Score Mid"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "intake"
+            "name": "Scoring"
           }
         }
       ]

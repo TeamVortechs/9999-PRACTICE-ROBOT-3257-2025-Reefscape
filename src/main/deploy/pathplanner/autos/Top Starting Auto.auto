@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Coral Score Top Stage 2"
+            "pathName": "Coral Score Top Stage 1"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Intake From Coral Score Top"
+            "pathName": "Intake From Coral Score Top Starting"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Intake to Coral Score Stage 1"
+            "pathName": "Intake to Coral Score Stage 1 Top"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Top Coral Score To Intake"
+            "pathName": "Top Coral Score To Intake Closest"
           }
         },
         {
@@ -55,7 +55,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Intake to Coral Score Stage 2"
+            "pathName": "Top Intake to Coral Score Stage 2 Closest"
           }
         },
         {
@@ -67,7 +67,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Top Coral Score To Intake"
+            "pathName": "Top Coral Score To Intake Closest"
           }
         },
         {
@@ -79,7 +79,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Intake to Coral Score Stage 1 Second Spot"
+            "pathName": "Top Intake to Coral Score Stage 1 Second Spot Closest"
           }
         },
         {
@@ -91,7 +91,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Top Coral Score To Intake Second Spot"
+            "pathName": "Top Coral Score To Intake Second Spot Closest"
           }
         },
         {
@@ -103,7 +103,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Intake to Coral Score Stage 2 Second Spot"
+            "pathName": "Intake to Coral Score Stage 2 Second Spot Closest"
           }
         },
         {
@@ -115,7 +115,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Top Coral Score To Intake Second Spot"
+            "pathName": "Top Coral Score To Intake Second Spot Closest"
           }
         },
         {
