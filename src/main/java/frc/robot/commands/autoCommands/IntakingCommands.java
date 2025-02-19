@@ -17,6 +17,11 @@ public class IntakingCommands {
         .alongWith(new IntakeWristCommand(wrist, -0.2));
   }
 
+  public static Command prepForIntakeCommand(Wrist wrist, Elevator elevator) {
+    return new SetElevatorPresetCommand(elevator, wrist, PElevator.MinHeight.getValue())
+    .andThen(new SetWristTargetAngleCommand(wrist, WristAngle.INTAKE_ANGLE.getAngle()));
+  }
+
   // does the intake command but automatically aligns at the same time
   // public static Command autoAligningIntakedCommand(
   //     Wrist wrist, Elevator elevator, Drive drive, CommandXboxController controller) {

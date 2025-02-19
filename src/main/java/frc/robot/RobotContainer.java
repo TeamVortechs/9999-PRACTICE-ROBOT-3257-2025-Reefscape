@@ -15,6 +15,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.autoCommands.DriveCommands;
@@ -160,25 +162,8 @@ public class RobotContainer {
 
     registerNamedCommandsAuto();
 
-    // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
+    registerAutoChooser();
     // configure the autonomous named commands
 
     // Configure the button bindings
@@ -334,22 +319,50 @@ public class RobotContainer {
 
   // registers pathplanner's named commands
   private void registerNamedCommandsAuto() {
-    // NamedCommands.registerCommand("test", new TellCommand("test"));
-    // NamedCommands.registerCommand("intake", IntakingCommands.intakeCommand(wrist, elevator));
-    // NamedCommands.registerCommand("prepStage1", ScoringCommands.prepForScoring(1, wrist,
-    // elevator));
-    // NamedCommands.registerCommand("prepStage2", ScoringCommands.prepForScoring(2, wrist,
-    // elevator));
-    // NamedCommands.registerCommand(
-    //     "Scoring", new WaitCommand(0.5).deadlineFor(new SetWristRollerSpeedCommand(wrist,
-    // -0.4)));
+    boolean isReal = false;
 
-    // code for if we're simulating autonomous or don't have access to the mechanism
-    NamedCommands.registerCommand("test", new TellCommand("test"));
-    NamedCommands.registerCommand("intake", new TellCommand("Intake Auto Command"));
-    NamedCommands.registerCommand("prepStage1", new TellCommand("Prep Stage 1 Auto Command"));
-    NamedCommands.registerCommand("prepStage2", new TellCommand("Prep Stage 2 Auto Command"));
-    NamedCommands.registerCommand("Scoring", new TellCommand("Scoring Auto Command"));
+    addNamedCommand("intake prep", IntakingCommands.prepForIntakeCommand(wrist, elevator), isReal);
+    addNamedCommand("test", new TellCommand("test"), isReal);
+    addNamedCommand("intake", IntakingCommands.intakeCommand(wrist, elevator), isReal);
+    addNamedCommand("prepStage1", ScoringCommands.prepForScoring(1, wrist, elevator), isReal);
+    addNamedCommand("prepStage2", ScoringCommands.prepForScoring(2, wrist, elevator), isReal);
+    addNamedCommand(
+        "Scoring",
+        new WaitCommand(0.2).deadlineFor(new SetWristRollerSpeedCommand(wrist, -0.4)),
+        isReal);
+  }
+
+  public void addNamedCommand(String commandName, Command command, boolean isReal) {
+
+    if (isReal) {
+      NamedCommands.registerCommand(commandName, command);
+      new EventTrigger(commandName).onTrue(command);
+    } else {
+      // registers the named commands to print something out instead of actually running anything
+      NamedCommands.registerCommand(commandName, new TellCommand(commandName + " auto command"));
+      new EventTrigger(commandName)
+          .onFalse(new TellCommand(commandName + " auto event trigger command"));
+    }
+  }
+
+  public void registerAutoChooser() {
+    // Set up auto routines
+
+    // Set up SysId routines
+    autoChooser.addOption(
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption(
+        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Forward)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Reverse)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 
   //   public void sendVisionMeasurement() {
