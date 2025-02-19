@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -33,7 +32,6 @@ import frc.robot.commands.autoCommands.DriveCommands;
 import frc.robot.commands.autoCommands.IntakingCommands;
 import frc.robot.commands.autoCommands.ScoringCommands;
 import frc.robot.commands.communication.TellCommand;
-import frc.robot.commands.elevator.SetElevatorPresetCommand;
 import frc.robot.commands.pathfindingCommands.PathfindToClosestDepotCommand;
 import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
 // import frc.robot.commands.SetWristRollerSpeed;
@@ -47,15 +45,15 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorModuleIOSimulation;
 // import frc.robot.subsystems.elevator.Elevator2;
-import frc.robot.subsystems.elevator.ElevatorModuleTalonFXIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristIOSimulation;
 // import frc.robot.subsystems.wrist.WristIOTalonFX;
-import frc.robot.subsystems.wrist.WristIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -72,24 +70,12 @@ public class RobotContainer {
   private final Vision vision;
 
   // physical subsystems
-  private final Wrist wrist =
-      new Wrist(
-          new WristIOTalonFX(
-              Constants.ARM_MOTOR_ID,
-              Constants.ROLLER_MOTOR_ID,
-              Constants.ELEVATOR_CANBUS,
-              Constants.CANRANGE_ID));
+  private final Wrist wrist = new Wrist(new WristIOSimulation());
 
   // DigitalInput limitSwitch =
   // new DigitalInput(20); // !!!!! FAKE CHANNEL! CHANGE WHEN PROPERLY IMPLEMENTED !!!!!!
   // private final Intake intake = new Intake(new IntakeIOTalonFX(), limitSwitch);
-  private final Elevator elevator =
-      new Elevator(
-          new ElevatorModuleTalonFXIO(
-              Constants.ELEVATOR_MOTOR_LEFT_ID,
-              Constants.ELEVATOR_MOTOR_RIGHT_ID,
-              Constants.ELEVATOR_CANBUS),
-          wrist);
+  private final Elevator elevator = new Elevator(new ElevatorModuleIOSimulation(), wrist);
   //   private final Elevator2 elevator2 =
   //       new Elevator2(
   //           new ElevatorModuleTalonFXIO(
@@ -210,7 +196,7 @@ public class RobotContainer {
     //         new SetWristTargetAngleCommand(wrist, 0),
     //         () - !wrist.isCanCloserThan(0.1)));
     /* */
-    controller
+    /*    controller
         .start()
         .onTrue(
             new InstantCommand(() -> elevator.resetEncoders())
@@ -224,11 +210,13 @@ public class RobotContainer {
     controller.leftBumper().whileTrue(ScoringCommands.prepForScoring(2, wrist, elevator));
 
     controller.rightTrigger().whileTrue(IntakingCommands.intakeCommand(wrist, elevator));
+    /* */
 
-    controller.x().whileTrue(new PathfindToClosestDepotCommand(drive));
+    controller.x().whileTrue(new PathfindToClosestDepotCommand(drive, true));
+    controller.y().whileTrue(new PathfindToClosestDepotCommand(drive, false));
 
-    elevator.setDefaultCommand(
-        new SetElevatorPresetCommand(elevator, wrist, 0).unless(() -> wrist.isCanCloserThan(0.1)));
+    // elevator.setDefaultCommand(
+    // new SetElevatorPresetCommand(elevator, wrist, 0).unless(() -> wrist.isCanCloserThan(0.1)));
 
     // controller.b().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> 0.05));
     // // controller.x().whileTrue(new SetWristTargetAngleCommand(wrist, 0));
@@ -281,7 +269,6 @@ public class RobotContainer {
 
     controller.x().onTrue(new PathfindToClosestDepotCommand(drive, true));
     controller.y().onTrue(new PathfindToClosestDepotCommand(drive, false));
-
 
     // Reset gyro to 0° when B button is pressed
     controller
