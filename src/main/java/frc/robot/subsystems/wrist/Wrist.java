@@ -52,7 +52,7 @@ public class Wrist extends SubsystemBase {
 
     CurrentAngle = wristIO.getAngleRotations();
 
-    if (getAngleRotations() > Constants.WRIST_HIGHEST_ANGLE || getAngleRotations() < -0.2) {
+    if (getAngleRotations() > Constants.ARM.WRIST_HIGHEST_ANGLE || getAngleRotations() < -0.2) {
       setManualSpeed(0);
       System.out.println("WRIST OUT OF BOUNDS");
     }
@@ -154,7 +154,7 @@ public class Wrist extends SubsystemBase {
 
   // enum for each level that the wrist could be
   public enum WristAngle {
-    STAGE1_ANGLE(Constants.WRIST_ANGLE_DROP);
+    STAGE1_ANGLE(Constants.ARM.WRIST_STAGE_2_ANGLE);
     // STAGE2_ANGLE(Stage2angle),
     // INTAKE_ANGLE(Constant);
 

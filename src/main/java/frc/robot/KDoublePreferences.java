@@ -6,23 +6,28 @@ import frc.robot.util.KDoublePref;
 // faster PID loop tuning
 public class KDoublePreferences {
   public static class PElevator {
-    // should switch this all to a set value when we finish tuning
-    public static KDoublePref proportional = new KDoublePref("elevator proportional", 2);
-    public static KDoublePref integral = new KDoublePref("elevator integral", 0.0000);
-    public static KDoublePref derivative =
-        new KDoublePref("elevator derivative", 0.0); // should be tweaked
+    public static KDoublePref kG =
+        new KDoublePref("kG", 0.2); // Add kG V output to overcome gravity
+    public static KDoublePref kS =
+        new KDoublePref("kS", 0.25); // Add kS V output to overcome static friction
+    public static KDoublePref kV =
+        new KDoublePref("kV", 0.12); // A velocity target of 1 rps results in kV V output
+    public static KDoublePref kA =
+        new KDoublePref("kA", 0.01); // An acceleration of 1 rps/s requires kA V output
+    public static KDoublePref kP =
+        new KDoublePref("kP", 7.5); // A position error of 1 rotation results in kP V output
+    public static KDoublePref kI = new KDoublePref("kI", 0); // no output for error over time
+    public static KDoublePref kD =
+        new KDoublePref("kD", 0.01); // A velocity error of 1 rps results in 0.1 V output
 
-    public static KDoublePref speedlimit = new KDoublePref("elevator speed limit", 2);
-    public static KDoublePref accelerationLimit = new KDoublePref("elevator acceleration limit", 1);
-    public static KDoublePref MaxHeight =
-        new KDoublePref("Elevator Max height", 29.754); // formerly 1.6637
-    public static KDoublePref MinHeight = new KDoublePref("Elevator Min height", 0);
-
+    public static KDoublePref speedLimit = new KDoublePref("elevator speed limit", 15);
+    public static KDoublePref accelerationLimit =
+        new KDoublePref("elevator acceleration limit", 13);
+    public static KDoublePref jerkLimit = new KDoublePref("jerk limit", 30);
     public static KDoublePref tolerance = new KDoublePref("Elevator Target Tolerance", 0.1);
-    // currently test variables
-    public static KDoublePref FirstLevel = new KDoublePref("Elevator First Level", 6.803);
-    public static KDoublePref SecondLevel = new KDoublePref("Elevator Second Level", 17.343);
-    // public static KDoublePref ThirdLevel = new KDoublePref("Elevator Third Level", 15);
+
+    public static KDoublePref manualSpeedLimit =
+        new KDoublePref("elevator MANUAL speed limit", 0.3);
   }
 
   public static class PDrivetrain {

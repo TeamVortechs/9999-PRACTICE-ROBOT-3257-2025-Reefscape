@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.KDoublePreferences.PElevator;
 import frc.robot.commands.ControllerVibrateCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.TellCommand;
@@ -75,10 +74,10 @@ public class RobotContainer {
   private final Wrist wrist =
       new Wrist(
           new WristIOTalonFX(
-              Constants.ARM_MOTOR_ID,
-              Constants.ROLLER_MOTOR_ID,
-              Constants.ELEVATOR_CANBUS,
-              Constants.CANRANGE_ID));
+              Constants.ARM.ARM_MOTOR_ID,
+              Constants.ARM.ROLLER_MOTOR_ID,
+              Constants.ELEVATOR.CANBUS,
+              Constants.ELEVATOR.CANRANGE_ID));
 
   // DigitalInput limitSwitch =
   // new DigitalInput(20); // !!!!! FAKE CHANNEL! CHANGE WHEN PROPERLY IMPLEMENTED !!!!!!
@@ -86,9 +85,9 @@ public class RobotContainer {
   private final Elevator elevator =
       new Elevator(
           new ElevatorModuleTalonFXIO(
-              Constants.ELEVATOR_MOTOR_LEFT_ID,
-              Constants.ELEVATOR_MOTOR_RIGHT_ID,
-              Constants.ELEVATOR_CANBUS),
+              Constants.ELEVATOR.MOTOR_LEFT_ID,
+              Constants.ELEVATOR.MOTOR_RIGHT_ID,
+              Constants.ELEVATOR.CANBUS),
           wrist);
   //   private final Elevator2 elevator2 =
   //       new Elevator2(
@@ -263,17 +262,17 @@ public class RobotContainer {
     controller
         .leftTrigger()
         .whileTrue(
-            new InstantCommand(() -> elevator.setTargetHeight(PElevator.FirstLevel.getValue())));
+            new InstantCommand(() -> elevator.setTargetHeight(Constants.ELEVATOR.STAGE_2_LEVEL)));
     // right trigger sets height to Stage 3
     controller
         .rightTrigger()
         .whileTrue(
-            new InstantCommand(() -> elevator.setTargetHeight(PElevator.SecondLevel.getValue())));
+            new InstantCommand(() -> elevator.setTargetHeight(Constants.ELEVATOR.STAGE_3_LEVEL)));
     // x sets elevator height back down to 0
     controller
         .x()
         .whileTrue(
-            new InstantCommand(() -> elevator.setTargetHeight(PElevator.MinHeight.getValue())));
+            new InstantCommand(() -> elevator.setTargetHeight(Constants.ELEVATOR.INTAKE_HEIGHT)));
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,

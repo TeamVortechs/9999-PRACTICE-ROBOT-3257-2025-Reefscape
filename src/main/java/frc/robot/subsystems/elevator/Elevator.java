@@ -2,6 +2,7 @@ package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.KDoublePreferences.PElevator;
 import frc.robot.subsystems.wrist.Wrist;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -43,19 +44,10 @@ public class Elevator extends SubsystemBase {
           // , DigitalInput homeSwitch
           ,
       Wrist wrist) {
-    // setPreferences();
     this.moduleIO = moduleIO;
     // this.homeSwitch = homeSwitch;
 
     this.wrist = wrist;
-
-    // pid =
-    //     new ProfiledPIDController(
-    //         PElevator.proportional.getValue(),
-    //         PElevator.integral.getValue(),
-    //         PElevator.derivative.getValue(),
-    //         new TrapezoidProfile.Constraints(
-    //             PElevator.speedlimit.getValue(), PElevator.accelerationLimit.getValue()));
 
     currentHeight = moduleIO.getHeightMeters();
     targetHeight = moduleIO.getHeightMeters();
@@ -107,8 +99,8 @@ public class Elevator extends SubsystemBase {
 
     if (manualOverride) {
 
-      if (getCurrentHeight() < PElevator.MinHeight.getValue() - PElevator.tolerance.getValue()
-          || getCurrentHeight() > PElevator.MaxHeight.getValue()) {
+      if (getCurrentHeight() < Constants.ELEVATOR.MIN_HEIGHT - PElevator.tolerance.getValue()
+          || getCurrentHeight() > Constants.ELEVATOR.MAX_HEIGHT) {
         System.out.println("ELEVATOR OUT OF BOUDNS");
         setManualSpeed(0);
       }
@@ -122,79 +114,16 @@ public class Elevator extends SubsystemBase {
     } else {
       isOnTarget = false;
       // Clamp target height to prevent exceeding limits
-      maxHeight = PElevator.MaxHeight.getValue();
-      targetHeight = Math.max(0.0, Math.min(targetHeight, maxHeight));
-      // pid.setGoal(targetHeight);
-
-      // // Compute PID output and prevent downward motion at home
-      // pidOutput = pid.calculate(currentHeight, targetHeight);
-      // // if (pidOutput < 0 && !homeSwitch.get()) {
-      // //   pidOutput = 0;
-      // // }
-      // System.out.println("Target height: " + targetHeight);
-      // System.out.println("Height diff: " + Math.abs(currentHeight - targetHeight));
-      // System.out.println("this is the pid output: " + pidOutput);
-      // if (Math.abs(pidOutput) > 1)
-      //   pidOutput = Math.copySign(PElevator.speedlimit.getValue(), pidOutput);
-      // moduleIO.setSpeed(pidOutput);
+      targetHeight = Math.max(0.0, Math.min(targetHeight, Constants.ELEVATOR.MAX_HEIGHT));
 
       moduleIO.PIDVoltage(targetHeight);
     }
   }
 
-  /**
-   * this is the default command of the elevator so that the PID does not attempt to keep increasing
-   * during disabled time
-   */
-  // public void moveToTargetHeight() {
-
-  //   if (!wrist.isOnTarget()) {
-  //     System.out.println("ELEVATOR IS NOT MOVING! THE WRIST ANGLE IS NOT VALID");
-  //     moduleIO.setSpeed(0);
-  //     return;
-  //   }
-
-  //   if (manualOverride) {
-
-  //     if (getCurrentHeight() < PElevator.MinHeight.getValue()
-  //         || getCurrentHeight() > PElevator.MaxHeight.getValue()) {
-  //       System.out.println("ELEVATOR OUT OF BOUDNS");
-  //       setManualSpeed(0);
-  //     }
-  //     return;
-  //   }
-
-  //   if (Math.abs(currentHeight - targetHeight) < PElevator.tolerance.getValue()) {
-  //     isOnTarget = true;
-  //     System.out.println("On target is true! I am stopping the motors now");
-  //     moduleIO.stop();
-  //   } else {
-  //     isOnTarget = false;
-  //     // Clamp target height to prevent exceeding limits
-  //     maxHeight = PElevator.MaxHeight.getValue();
-  //     targetHeight = Math.max(0.0, Math.min(targetHeight, maxHeight));
-  //     // pid.setGoal(targetHeight);
-
-  //     // // Compute PID output and prevent downward motion at home
-  //     // pidOutput = pid.calculate(currentHeight, targetHeight);
-  //     // // if (pidOutput < 0 && !homeSwitch.get()) {
-  //     // //   pidOutput = 0;
-  //     // // }
-  //     // System.out.println("Target height: " + targetHeight);
-  //     // System.out.println("Height diff: " + Math.abs(currentHeight - targetHeight));
-  //     // System.out.println("this is the pid output: " + pidOutput);
-  //     // if (Math.abs(pidOutput) > 1)
-  //     //   pidOutput = Math.copySign(PElevator.speedlimit.getValue(), pidOutput);
-  //     // moduleIO.setSpeed(pidOutput);
-
-  //     moduleIO.PIDVoltage(targetHeight);
-  //   }
-  // }
-
   /** Sets a new target height for the elevator using PID control. */
   public void setTargetHeight(double height) {
     manualOverride = false;
-    targetHeight = Math.max(0.0, Math.min(height, PElevator.MaxHeight.getValue()));
+    targetHeight = Math.max(0.0, Math.min(height, Constants.ELEVATOR.MAX_HEIGHT));
     // pid.setGoal(targetHeight);
   }
 
@@ -204,8 +133,8 @@ public class Elevator extends SubsystemBase {
     // if (speed < 0 && !homeSwitch.get()) {
     //   speed = 0;
     // }
-    if (Math.abs(speed) > PElevator.speedlimit.getValue())
-      speed = Math.copySign(PElevator.speedlimit.getValue(), speed);
+    if (Math.abs(speed) > PElevator.manualSpeedLimit.getValue())
+      speed = Math.copySign(PElevator.manualSpeedLimit.getValue(), speed);
     System.out.println("Above speed limit; rate limiting speed.");
     moduleIO.setSpeed(speed);
   }
@@ -248,22 +177,4 @@ public class Elevator extends SubsystemBase {
     moduleIO.resetEncoders();
     // pid.reset(currentHeight);
   }
-
-  // private void setPreferences() {
-  //   // to help lock in values in simulation as well as ensuring they are properly set on the
-  // field
-  //   PElevator.proportional.setValue(0.4);
-  //   PElevator.integral.setValue(0);
-  //   PElevator.derivative.setValue(0);
-
-  //   PElevator.speedlimit.setValue(0.2);
-  //   PElevator.accelerationLimit.setValue(0.1);
-  //   PElevator.MaxHeight.setValue(10);
-  //   PElevator.MinHeight.setValue(0);
-
-  //   PElevator.tolerance.setValue(0.1);
-  //   PElevator.FirstLevel.setValue(2);
-  //   PElevator.SecondLevel.setValue(5);
-  //   PElevator.ThirdLevel.setValue(9);
-  // }
 }

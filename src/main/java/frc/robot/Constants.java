@@ -39,20 +39,32 @@ public final class Constants {
   }
 
   // constants used for the elevator
-  public static final int ELEVATOR_MOTOR_LEFT_ID = 21;
-  public static final int ELEVATOR_MOTOR_RIGHT_ID = 22;
-  public static final String ELEVATOR_CANBUS = "rio";
-  public static final int CANRANGE_ID = 60;
+  public static final class ELEVATOR {
 
-  public static final double ELEVATOR_MAX_HEIGHT = 29.754;
-  public static final double ELEVATOR_MIN_HEIGHT = 0;
+    public static final int MOTOR_LEFT_ID = 21;
+    public static final int MOTOR_RIGHT_ID = 22;
+    public static final String CANBUS = "rio";
+    public static final int CANRANGE_ID = 60;
+
+    public static final double MAX_HEIGHT = 29.754;
+    public static final double MIN_HEIGHT = 0;
+    public static final double INTAKE_HEIGHT = 0;
+    // public static final double STAGE_1_LEVEL = 0; // currently unimplemented
+    public static final double STAGE_2_LEVEL = 6.803;
+    public static final double STAGE_3_LEVEL = 17.343;
+    // public static final double STAGE_4_LEVEL = 0; // currently impossible to achieve
+
+  }
 
   // constants used for the arm
-  public static final int ROLLER_MOTOR_ID = 23;
-  public static final int ARM_MOTOR_ID = 24;
+  public static final class ARM {
+    public static final int ROLLER_MOTOR_ID = 23;
+    public static final int ARM_MOTOR_ID = 24;
 
-  public static final double WRIST_ANGLE_DROP = 2.4;
-  public static final double WRIST_HIGHEST_ANGLE = 2.56;
+    public static final double WRIST_STAGE_2_ANGLE = 2.4;
+    // public static final double WRIST_STAGE_4_ANGLE = 0; // currently impossible to achieve
+    public static final double WRIST_HIGHEST_ANGLE = 2.56;
+  }
 
   // public static final double ELEVATOR_HEIGHT_1 = 6.803;
   // public static final double ELEVATOR_HEIGHT_2 = 17.343;
