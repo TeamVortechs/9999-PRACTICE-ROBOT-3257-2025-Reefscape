@@ -3,7 +3,8 @@
   "robotLength": 0.8763,
   "holonomicMode": true,
   "pathFolders": [
-    "CoralFeed",
+    "CoralFeed Left",
+    "CoralFeed Right",
     "Simple paths"
   ],
   "autoFolders": [],
