@@ -34,6 +34,7 @@ import frc.robot.commands.autoCommands.IntakingCommands;
 import frc.robot.commands.autoCommands.ScoringCommands;
 import frc.robot.commands.communication.TellCommand;
 import frc.robot.commands.elevator.SetElevatorPresetCommand;
+import frc.robot.commands.pathfindingCommands.PathfindToClosestDepotCommand;
 import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
 // import frc.robot.commands.SetWristRollerSpeed;
 import frc.robot.generated.TunerConstants;
@@ -275,6 +276,10 @@ public class RobotContainer {
 
     // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+    controller.x().onTrue(new PathfindToClosestDepotCommand(drive, true));
+    controller.y().onTrue(new PathfindToClosestDepotCommand(drive, false));
+
 
     // Reset gyro to 0° when B button is pressed
     controller

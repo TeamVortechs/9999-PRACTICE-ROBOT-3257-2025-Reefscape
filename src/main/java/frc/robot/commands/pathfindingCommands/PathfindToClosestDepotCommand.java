@@ -24,24 +24,28 @@ public class PathfindToClosestDepotCommand extends Command {
 
   private Command[] depotPathCommands;
 
-  public PathfindToClosestDepotCommand(Drive drive) {
+  private boolean left;
+
+  public PathfindToClosestDepotCommand(Drive drive, boolean left) {
     // addRequirements(null);
     this.drive = drive;
     depotPathCommands = new Command[6];
+
+    this.left = left;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     for (int i = 0; i < depotPathCommands.length; i++) {
-      depotPathCommands[i] = PathfindingCommands.pathfindToDepotCommand(i);
+      depotPathCommands[i] = PathfindingCommands.pathfindToDepotCommand(i, left);
     }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    int curPoseID = PathfindingCommands.getClosestDepotPath(drive.getPose());
+    int curPoseID = PathfindingCommands.getClosestDepotPath(drive.getPose(), left);
 
     if (!lockedIn) {
       targetPoseID = curPoseID;
