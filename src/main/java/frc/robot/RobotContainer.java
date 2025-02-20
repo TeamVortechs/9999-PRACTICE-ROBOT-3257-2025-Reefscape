@@ -33,6 +33,7 @@ import frc.robot.commands.autoCommands.IntakingCommands;
 import frc.robot.commands.autoCommands.ScoringCommands;
 import frc.robot.commands.communication.TellCommand;
 import frc.robot.commands.pathfindingCommands.PathfindToClosestDepotCommand;
+import frc.robot.commands.pathfindingCommands.PathfindingCommandCancel;
 import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
 // import frc.robot.commands.SetWristRollerSpeed;
 import frc.robot.generated.TunerConstants;
@@ -267,8 +268,11 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    controller.x().whileTrue(new PathfindToClosestDepotCommand(drive, true));
-    controller.y().whileTrue(new PathfindToClosestDepotCommand(drive, false));
+    controller.x().whileTrue(new PathfindToClosestDepotCommand(drive, false));
+    controller.x().onFalse(new PathfindingCommandCancel(drive));
+
+    controller.y().whileTrue(new PathfindToClosestDepotCommand(drive, true));
+    controller.y().onFalse(new PathfindingCommandCancel(drive));
 
     // Reset gyro to 0° when B button is pressed
     controller
