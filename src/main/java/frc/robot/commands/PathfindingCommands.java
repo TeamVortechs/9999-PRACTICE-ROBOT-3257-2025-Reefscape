@@ -15,7 +15,7 @@ public class PathfindingCommands {
   private static boolean initialized = false;
 
   private static final PathConstraints pathConstraints =
-      new PathConstraints(0.75, 0.5, Units.degreesToRadians(540), Units.degreesToRadians(720));
+      new PathConstraints(0.75, 0.25, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
   // creates the array of paths from hardcode path files
   private static void init() {
