@@ -23,6 +23,8 @@ public class PathfindingCommands {
   private static PathPlannerPath[] coralPathsRight;
   private static boolean initialized = false;
 
+  private static boolean isLeft;
+
   // Define path constraints used by the AutoBuilder for following paths.
   private static final PathConstraints pathConstraints =
       new PathConstraints(0.75, 0.5, Units.degreesToRadians(540), Units.degreesToRadians(720));
@@ -33,7 +35,7 @@ public class PathfindingCommands {
     initialized = true;
     coralPathsLeft = new PathPlannerPath[6];
     coralPathsRight = new PathPlannerPath[6];
-
+    
     try {
       coralPathsLeft[0] = PathPlannerPath.fromPathFile("CoralFeed1 Left");
       coralPathsLeft[1] = PathPlannerPath.fromPathFile("CoralFeed2 Left");
@@ -64,6 +66,7 @@ public class PathfindingCommands {
    */
   public static Command pathfindToDepotCommand(int depotID, boolean left) {
     init(); // Ensure that the paths are initialized.
+    isLeft = left;
     if (left) {
       return AutoBuilder.pathfindThenFollowPath(coralPathsLeft[depotID], pathConstraints);
     } else {
@@ -78,12 +81,12 @@ public class PathfindingCommands {
    * @param left whether to use left-side paths.
    * @return the index of the closest depot path.
    */
-  public static int getClosestDepotPath(Pose2d curLocation, boolean left) {
+  public static int getClosestDepotPath(Pose2d curLocation) {
     init();
     double lowestDist = Double.MAX_VALUE;
     int lowestDistID = 0;
 
-    if (left) {
+    if (isLeft) {
       for (int i = 0; i < coralPathsLeft.length; i++) {
         Pose2d testPose = coralPathsLeft[i].getPathPoses().get(0);
         double dist = testPose.getTranslation().getDistance(curLocation.getTranslation());
@@ -92,8 +95,7 @@ public class PathfindingCommands {
           lowestDistID = i;
         }
       }
-    } 
-    else {
+    } else {
       for (int i = 0; i < coralPathsRight.length; i++) {
         Pose2d testPose = coralPathsRight[i].getPathPoses().get(0);
         double dist = testPose.getTranslation().getDistance(curLocation.getTranslation());

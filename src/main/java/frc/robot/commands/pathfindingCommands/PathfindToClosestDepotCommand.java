@@ -30,6 +30,7 @@ public class PathfindToClosestDepotCommand extends Command {
     // addRequirements(null);
     this.drive = drive;
     depotPathCommands = new Command[6];
+    this.left = left;
   }
 
   // Called when the command is initially scheduled.
@@ -43,7 +44,7 @@ public class PathfindToClosestDepotCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    int curPoseID = PathfindingCommands.getClosestDepotPath(drive.getPose(), left);
+    int curPoseID = PathfindingCommands.getClosestDepotPath(drive.getPose());
 
     if (!lockedIn) {
       targetPoseID = curPoseID;
