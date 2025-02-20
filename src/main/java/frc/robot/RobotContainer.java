@@ -16,26 +16,19 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.KDoublePreferences.PElevator;
-import frc.robot.commands.ControllerVibrateCommand;
+import frc.robot.commands.CANdleConfigCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.TellCommand;
-import frc.robot.commands.wrist.IntakeWristCommand;
 // import frc.robot.commands.SetWristRollerSpeed;
-import frc.robot.commands.wrist.ManualSetWristSpeedCommand;
-import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
-import frc.robot.commands.wrist.SetWristTargetAngleCommand;
 import frc.robot.generated.TunerConstants;
 // import frc.robot.subsystems.Intake.Intake;
 // import frc.robot.subsystems.Intake.IntakeIOTalonFX;
@@ -45,17 +38,13 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.elevator.Elevator;
 // import frc.robot.subsystems.elevator.Elevator2;
-import frc.robot.subsystems.elevator.ElevatorModuleTalonFXIO;
+import frc.robot.subsystems.led.CANdleSystem;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import frc.robot.subsystems.wrist.Wrist;
-import frc.robot.subsystems.wrist.Wrist.WristAngle;
 // import frc.robot.subsystems.wrist.WristIOTalonFX;
-import frc.robot.subsystems.wrist.WristIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -72,34 +61,31 @@ public class RobotContainer {
   private final Vision vision;
 
   // physical subsystems
-  private final Wrist wrist =
-      new Wrist(
-          new WristIOTalonFX(
-              Constants.ARM_MOTOR_ID,
-              Constants.ROLLER_MOTOR_ID,
-              Constants.ELEVATOR_CANBUS,
-              Constants.CANRANGE_ID));
+  // private final Wrist wrist =
+  //     new Wrist(
+  //         new WristIOTalonFX(
+  //             Constants.ARM_MOTOR_ID,
+  //             Constants.ROLLER_MOTOR_ID,
+  //             Constants.ELEVATOR_CANBUS,
+  //             Constants.CANRANGE_ID));
 
   // DigitalInput limitSwitch =
   // new DigitalInput(20); // !!!!! FAKE CHANNEL! CHANGE WHEN PROPERLY IMPLEMENTED !!!!!!
   // private final Intake intake = new Intake(new IntakeIOTalonFX(), limitSwitch);
-  private final Elevator elevator =
-      new Elevator(
-          new ElevatorModuleTalonFXIO(
-              Constants.ELEVATOR_MOTOR_LEFT_ID,
-              Constants.ELEVATOR_MOTOR_RIGHT_ID,
-              Constants.ELEVATOR_CANBUS),
-          wrist);
-  //   private final Elevator2 elevator2 =
-  //       new Elevator2(
-  //           new ElevatorModuleTalonFXIO(
-  //               Constants.ELEVATOR_MOTOR_LEFT_ID,
-  //               Constants.ELEVATOR_MOTOR_RIGHT_ID,
-  //               Constants.ELEVATOR_CANBUS));
+  // private final Elevator elevator =
+  //     new Elevator(
+  //         new ElevatorModuleTalonFXIO(
+  //             Constants.ELEVATOR_MOTOR_LEFT_ID,
+  //             Constants.ELEVATOR_MOTOR_RIGHT_ID,
+  //             Constants.ELEVATOR_CANBUS),
+  //         wrist);
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
   private final CommandXboxController controller2 = new CommandXboxController(1);
+
+  // CANdle
+  private final CANdleSystem m_candleSubsystem = new CANdleSystem(controller);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -196,6 +182,50 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
+    controller.start().onTrue(new InstantCommand(m_candleSubsystem::setColors, m_candleSubsystem));
+    controller
+        .rightBumper()
+        .onTrue(new InstantCommand(m_candleSubsystem::incrementAnimation, m_candleSubsystem));
+    controller
+        .leftBumper()
+        .onTrue(new InstantCommand(m_candleSubsystem::decrementAnimation, m_candleSubsystem));
+
+    controller.povRight().onTrue(new CANdleConfigCommands.ConfigBrightness(m_candleSubsystem, 1.0));
+    controller.povDown().onTrue(new CANdleConfigCommands.ConfigBrightness(m_candleSubsystem, 0.3));
+    controller.povLeft().onTrue(new CANdleConfigCommands.ConfigBrightness(m_candleSubsystem, 0));
+    controller
+        .povUp()
+        .onTrue(new InstantCommand(() -> m_candleSubsystem.toggleAnimDirection(), m_candleSubsystem));
+
+    //     new JoystickButton(joy, Constants.BlockButton).onTrue(new
+    // RunCommand(m_candleSubsystem::setColors, m_candleSubsystem));
+    // new JoystickButton(joy, Constants.IncrementAnimButton).onTrue(new
+    // RunCommand(m_candleSubsystem::incrementAnimation, m_candleSubsystem));
+    // new JoystickButton(joy, Constants.DecrementAnimButton).onTrue(new
+    // RunCommand(m_candleSubsystem::decrementAnimation, m_candleSubsystem));
+
+    // new POVButton(joy, Constants.MaxBrightnessAngle).onTrue(new
+    // CANdleConfigCommands.ConfigBrightness(m_candleSubsystem, 1.0));
+    // new POVButton(joy, Constants.MidBrightnessAngle).onTrue(new
+    // CANdleConfigCommands.ConfigBrightness(m_candleSubsystem, 0.3));
+    // new POVButton(joy, Constants.ZeroBrightnessAngle).onTrue(new
+    // CANdleConfigCommands.ConfigBrightness(m_candleSubsystem, 0));
+    // new POVButton(joy, Constants.ChangeDirectionAngle).onTrue(new
+    // RunCommand(()->m_candleSubsystem.toggleAnimDirection(), m_candleSubsystem));
+
+    // new JoystickButton(joy, 9).onTrue(new RunCommand(()->m_candleSubsystem.clearAllAnims(),
+    // m_candleSubsystem));
+    // new JoystickButton(joy, 10).onTrue(new RunCommand(()->m_candleSubsystem.toggle5VOverride(),
+    // m_candleSubsystem));
+
+    // new JoystickButton(joy, Constants.VbatButton).onTrue(new
+    // CANdlePrintCommands.PrintVBat(m_candleSubsystem));
+    // new JoystickButton(joy, Constants.V5Button).onTrue(new
+    // CANdlePrintCommands.Print5V(m_candleSubsystem));
+    // new JoystickButton(joy, Constants.CurrentButton).onTrue(new
+    // CANdlePrintCommands.PrintCurrent(m_candleSubsystem));
+    // new JoystickButton(joy, Constants.TemperatureButton).onTrue(new
+    // CANdlePrintCommands.PrintTemperature(m_candleSubsystem));
     // controller.leftTrigger().whileTrue(new PathfindToClosestDepotCommand(drive));
     // Default command, normal field-relative drive
 
@@ -223,63 +253,64 @@ public class RobotContainer {
     //                 new SetWristRollerSpeed(wrist, -0.01)
     //                     .unless(() -> wrist.isCanCloserThan(0.1))));
 
-    // by default, have the wrist turn to a set point
-    wrist.setDefaultCommand(
-        new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle())
-            .unless(() -> !wrist.isCanCloserThan(0.1)));
+    // // by default, have the wrist turn to a set point
+    // wrist.setDefaultCommand(
+    //     new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle())
+    //         .unless(() -> !wrist.isCanCloserThan(0.1)));
 
-    // right bumper resets all encoders
-    controller
-        .rightBumper()
-        .onTrue(
-            new InstantCommand(() -> elevator.resetEncoders())
-                .ignoringDisable(true)
-                .alongWith(new InstantCommand(() -> wrist.resetWristEncoder()))
-                .ignoringDisable(true));
+    // // right bumper resets all encoders
+    // controller
+    //     .rightBumper()
+    //     .onTrue(
+    //         new InstantCommand(() -> elevator.resetEncoders())
+    //             .ignoringDisable(true)
+    //             .alongWith(new InstantCommand(() -> wrist.resetWristEncoder()))
+    //             .ignoringDisable(true));
 
-    // b manually moves the wrist forwards
-    controller.b().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> 0.05));
-    // controller.x().whileTrue(new SetWristTargetAngleCommand(wrist, 0));
+    // // b manually moves the wrist forwards
+    // controller.b().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> 0.05));
+    // // controller.x().whileTrue(new SetWristTargetAngleCommand(wrist, 0));
 
-    // a intakes until the canrange detects the coral
-    controller
-        .a()
-        .whileTrue(
-            new IntakeWristCommand(wrist, -0.2)
-                .andThen(new ControllerVibrateCommand(0.7, controller)));
+    // // a intakes until the canrange detects the coral
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         new IntakeWristCommand(wrist, -0.2)
+    //             .andThen(new ControllerVibrateCommand(0.7, controller)));
 
-    // y shoots coral out
-    controller.y().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.5));
+    // // y shoots coral out
+    // controller.y().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.5));
 
-    // left bumper sets the wrist outwards manually
-    controller
-        .leftBumper()
-        .whileTrue(new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle()));
+    // // left bumper sets the wrist outwards manually
+    // controller
+    //     .leftBumper()
+    //     .whileTrue(new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle()));
 
-    // controller.leftTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> -0.2));
-    // controller.rightTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> 0.2));
+    // // controller.leftTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> -0.2));
+    // // controller.rightTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> 0.2));
 
-    // left trigger sets height to Stage 2
-    controller
-        .leftTrigger()
-        .whileTrue(
-            new InstantCommand(() -> elevator.setTargetHeight(PElevator.FirstLevel.getValue())));
-    // right trigger sets height to Stage 3
-    controller
-        .rightTrigger()
-        .whileTrue(
-            new InstantCommand(() -> elevator.setTargetHeight(PElevator.SecondLevel.getValue())));
-    // x sets elevator height back down to 0
-    controller
-        .x()
-        .whileTrue(
-            new InstantCommand(() -> elevator.setTargetHeight(PElevator.MinHeight.getValue())));
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+    // // left trigger sets height to Stage 2
+    // controller
+    //     .leftTrigger()
+    //     .whileTrue(
+    //         new InstantCommand(() -> elevator.setTargetHeight(PElevator.FirstLevel.getValue())));
+    // // right trigger sets height to Stage 3
+    // controller
+    //     .rightTrigger()
+    //     .whileTrue(
+    //         new InstantCommand(() ->
+    // elevator.setTargetHeight(PElevator.SecondLevel.getValue())));
+    // // x sets elevator height back down to 0
+    // controller
+    //     .x()
+    //     .whileTrue(
+    //         new InstantCommand(() -> elevator.setTargetHeight(PElevator.MinHeight.getValue())));
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDrive(
+    //         drive,
+    //         () -> -controller.getLeftY(),
+    //         () -> -controller.getLeftX(),
+    //         () -> -controller.getRightX()));
 
     // Lock to 0° when A button is held
     // controller
@@ -301,26 +332,26 @@ public class RobotContainer {
     //             PathfindingCommands.getClosestDepotPath(drive.getPose())));
 
     // // Reset gyro to 0° when B button is pressed
-    controller
-        .povDown()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    // controller
+    //     .povDown()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
 
-    controller
-        .povUp()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(
-                                drive.getPose().getTranslation(), Rotation2d.fromDegrees(180))),
-                    drive)
-                .ignoringDisable(true));
+    // controller
+    //     .povUp()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(
+    //                             drive.getPose().getTranslation(), Rotation2d.fromDegrees(180))),
+    //                 drive)
+    //             .ignoringDisable(true));
 
     // add a free disturbance when pressing the y button to test vision
     // var disturbance =
