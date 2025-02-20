@@ -3,6 +3,7 @@ package frc.robot.commands.pathfindingCommands;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -34,13 +35,6 @@ public class PathfindingCommands {
   /** Initializes the path arrays if they haven't been already. */
   private static void init() {
 
-    if (coralPathsLeft != null) {
-      for (int i = 0; i < coralPathsLeft.length; i++) {
-        coralPathsLeft[i] = resetOdometrey(coralPathsLeft[i]);
-        coralPathsRight[i] = resetOdometrey(coralPathsRight[i]);
-      }
-    }
-
     if (initialized) return;
     initialized = true;
     coralPathsLeft = new PathPlannerPath[6];
@@ -61,11 +55,6 @@ public class PathfindingCommands {
       coralPathsRight[4] = PathPlannerPath.fromPathFile("CoralFeed5 Right");
       coralPathsRight[5] = PathPlannerPath.fromPathFile("CoralFeed6 Right");
 
-      for (int i = 0; i < coralPathsLeft.length; i++) {
-        coralPathsLeft[i] = resetOdometrey(coralPathsLeft[i]);
-        coralPathsRight[i] = resetOdometrey(coralPathsRight[i]);
-      }
-
     } catch (IOException e) {
       System.out.println("Could not load the pathplanner coral paths from file (IO exception).");
     } catch (ParseException e) {
@@ -80,12 +69,14 @@ public class PathfindingCommands {
    * @param left whether to use left-side paths.
    * @return a new Command instance for pathfinding.
    */
-  public static PathPlannerPath resetOdometrey(PathPlannerPath path) {
-    if (DriverStation.getAlliance().get() == Alliance.Red) {
-      return path.mirrorPath();
-    }
-    return path;
-  }
+  // public static PathPlannerPath resetOdometry(PathPlannerPath path) {
+
+  //   //if the
+  //   if (DriverStation.getAlliance().get() == Alliance.Red) {
+  //     return path.flipPath();
+  //   }
+  //   return path;
+  // }
 
   public static Command pathfindToDepotCommand(int depotID, boolean left) {
     init(); // Ensure that the paths are initialized.
@@ -100,7 +91,7 @@ public class PathfindingCommands {
   /**
    * Determines the closest depot path based on the robot's current position.
    *
-   * @param curLocation the current pose of the robot.
+   * @param updatedLocation the current pose of the robot.
    * @param left whether to use left-side paths.
    * @return the index of the closest depot path.
    */
@@ -108,11 +99,25 @@ public class PathfindingCommands {
     init();
     double lowestDist = Double.MAX_VALUE;
     int lowestDistID = 0;
+    Pose2d updatedlocation;
+
+    // flip the given pose if the alliance is red
+    if (DriverStation.getAlliance().get() == Alliance.Red) {
+      updatedlocation =
+          new Pose2d(
+              FlippingUtil.flipFieldPosition(curLocation.getTranslation()),
+              curLocation.getRotation());
+    } else {
+      updatedlocation = curLocation;
+    }
 
     if (isLeft) {
+
+      // flip the pose if it's a
+
       for (int i = 0; i < coralPathsLeft.length; i++) {
         Pose2d testPose = coralPathsLeft[i].getPathPoses().get(0);
-        double dist = testPose.getTranslation().getDistance(curLocation.getTranslation());
+        double dist = testPose.getTranslation().getDistance(updatedlocation.getTranslation());
         if (dist < lowestDist) {
           lowestDist = dist;
           lowestDistID = i;
@@ -121,7 +126,7 @@ public class PathfindingCommands {
     } else {
       for (int i = 0; i < coralPathsRight.length; i++) {
         Pose2d testPose = coralPathsRight[i].getPathPoses().get(0);
-        double dist = testPose.getTranslation().getDistance(curLocation.getTranslation());
+        double dist = testPose.getTranslation().getDistance(updatedlocation.getTranslation());
         if (dist < lowestDist) {
           lowestDist = dist;
           lowestDistID = i;
