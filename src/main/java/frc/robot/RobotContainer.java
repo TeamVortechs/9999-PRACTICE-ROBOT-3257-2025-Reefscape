@@ -74,10 +74,10 @@ public class RobotContainer {
   private final Wrist wrist =
       new Wrist(
           new WristIOTalonFX(
-              Constants.ARM.ARM_MOTOR_ID,
-              Constants.ARM.ROLLER_MOTOR_ID,
-              Constants.ELEVATOR.CANBUS,
-              Constants.ELEVATOR.CANRANGE_ID));
+              Constants.Arm.ARM_MOTOR_ID,
+              Constants.Arm.ROLLER_MOTOR_ID,
+              Constants.Arm.CANBUS,
+              Constants.Arm.CANRANGE_ID));
 
   // DigitalInput limitSwitch =
   // new DigitalInput(20); // !!!!! FAKE CHANNEL! CHANGE WHEN PROPERLY IMPLEMENTED !!!!!!
@@ -85,9 +85,9 @@ public class RobotContainer {
   private final Elevator elevator =
       new Elevator(
           new ElevatorModuleTalonFXIO(
-              Constants.ELEVATOR.MOTOR_LEFT_ID,
-              Constants.ELEVATOR.MOTOR_RIGHT_ID,
-              Constants.ELEVATOR.CANBUS),
+              Constants.Elevator.MOTOR_LEFT_ID,
+              Constants.Elevator.MOTOR_RIGHT_ID,
+              Constants.Elevator.CANBUS),
           wrist);
   //   private final Elevator2 elevator2 =
   //       new Elevator2(
@@ -262,17 +262,17 @@ public class RobotContainer {
     controller
         .leftTrigger()
         .whileTrue(
-            new InstantCommand(() -> elevator.setTargetHeight(Constants.ELEVATOR.STAGE_2_LEVEL)));
+            new InstantCommand(() -> elevator.setTargetHeight(Constants.Elevator.STAGE_2_LEVEL)));
     // right trigger sets height to Stage 3
     controller
         .rightTrigger()
         .whileTrue(
-            new InstantCommand(() -> elevator.setTargetHeight(Constants.ELEVATOR.STAGE_3_LEVEL)));
+            new InstantCommand(() -> elevator.setTargetHeight(Constants.Elevator.STAGE_3_LEVEL)));
     // x sets elevator height back down to 0
     controller
         .x()
         .whileTrue(
-            new InstantCommand(() -> elevator.setTargetHeight(Constants.ELEVATOR.INTAKE_HEIGHT)));
+            new InstantCommand(() -> elevator.setTargetHeight(Constants.Elevator.INTAKE_HEIGHT)));
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,

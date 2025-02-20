@@ -99,8 +99,8 @@ public class Elevator extends SubsystemBase {
 
     if (manualOverride) {
 
-      if (getCurrentHeight() < Constants.ELEVATOR.MIN_HEIGHT - PElevator.tolerance.getValue()
-          || getCurrentHeight() > Constants.ELEVATOR.MAX_HEIGHT) {
+      if (getCurrentHeight() < Constants.Elevator.MIN_HEIGHT - PElevator.tolerance.getValue()
+          || getCurrentHeight() > Constants.Elevator.MAX_HEIGHT) {
         System.out.println("ELEVATOR OUT OF BOUDNS");
         setManualSpeed(0);
       }
@@ -114,7 +114,7 @@ public class Elevator extends SubsystemBase {
     } else {
       isOnTarget = false;
       // Clamp target height to prevent exceeding limits
-      targetHeight = Math.max(0.0, Math.min(targetHeight, Constants.ELEVATOR.MAX_HEIGHT));
+      targetHeight = Math.max(0.0, Math.min(targetHeight, Constants.Elevator.MAX_HEIGHT));
 
       moduleIO.PIDVoltage(targetHeight);
     }
@@ -123,7 +123,7 @@ public class Elevator extends SubsystemBase {
   /** Sets a new target height for the elevator using PID control. */
   public void setTargetHeight(double height) {
     manualOverride = false;
-    targetHeight = Math.max(0.0, Math.min(height, Constants.ELEVATOR.MAX_HEIGHT));
+    targetHeight = Math.max(0.0, Math.min(height, Constants.Elevator.MAX_HEIGHT));
     // pid.setGoal(targetHeight);
   }
 
