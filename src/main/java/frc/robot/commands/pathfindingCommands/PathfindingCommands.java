@@ -5,6 +5,8 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import java.io.IOException;
 import org.json.simple.parser.ParseException;
@@ -31,11 +33,19 @@ public class PathfindingCommands {
 
   /** Initializes the path arrays if they haven't been already. */
   private static void init() {
+
+    if (coralPathsLeft != null) {
+      for (int i = 0; i < coralPathsLeft.length; i++) {
+        coralPathsLeft[i] = resetOdometrey(coralPathsLeft[i]);
+        coralPathsRight[i] = resetOdometrey(coralPathsRight[i]);
+      }
+    }
+
     if (initialized) return;
     initialized = true;
     coralPathsLeft = new PathPlannerPath[6];
     coralPathsRight = new PathPlannerPath[6];
-    
+
     try {
       coralPathsLeft[0] = PathPlannerPath.fromPathFile("CoralFeed1 Left");
       coralPathsLeft[1] = PathPlannerPath.fromPathFile("CoralFeed2 Left");
@@ -50,6 +60,12 @@ public class PathfindingCommands {
       coralPathsRight[3] = PathPlannerPath.fromPathFile("CoralFeed4 Right");
       coralPathsRight[4] = PathPlannerPath.fromPathFile("CoralFeed5 Right");
       coralPathsRight[5] = PathPlannerPath.fromPathFile("CoralFeed6 Right");
+
+      for (int i = 0; i < coralPathsLeft.length; i++) {
+        coralPathsLeft[i] = resetOdometrey(coralPathsLeft[i]);
+        coralPathsRight[i] = resetOdometrey(coralPathsRight[i]);
+      }
+
     } catch (IOException e) {
       System.out.println("Could not load the pathplanner coral paths from file (IO exception).");
     } catch (ParseException e) {
@@ -64,6 +80,13 @@ public class PathfindingCommands {
    * @param left whether to use left-side paths.
    * @return a new Command instance for pathfinding.
    */
+  public static PathPlannerPath resetOdometrey(PathPlannerPath path) {
+    if (DriverStation.getAlliance().get() == Alliance.Red) {
+      return path.mirrorPath();
+    }
+    return path;
+  }
+
   public static Command pathfindToDepotCommand(int depotID, boolean left) {
     init(); // Ensure that the paths are initialized.
     isLeft = left;
