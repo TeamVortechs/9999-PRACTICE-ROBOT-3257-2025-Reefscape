@@ -74,9 +74,14 @@ public class PathfindToClosestDepotCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     // Cancel the active command if it is still scheduled.
-    // if (activeCommand != null && activeCommand.isScheduled()) {
-    activeCommand.cancel();
-    // }
+    System.out.println(
+        "in the end function of the pathfind to the closest depot command\n\n\n\n\n\n");
+
+    if (activeCommand != null && activeCommand.isScheduled()) {
+      activeCommand.cancel();
+
+      System.out.println("ending the pathfind to closest depot command\n\n\n\n\n\n\n\n");
+    }
   }
 
   @Override
