@@ -267,8 +267,8 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    controller.x().whileTrue(new PathfindToClosestDepotCommand(drive, true));
-    controller.y().whileTrue(new PathfindToClosestDepotCommand(drive, false));
+    // controller.x().whileTrue(new PathfindToClosestDepotCommand(drive, true));
+    // controller.y().whileTrue(new PathfindToClosestDepotCommand(drive, false));
 
     // Reset gyro to 0° when B button is pressed
     controller
