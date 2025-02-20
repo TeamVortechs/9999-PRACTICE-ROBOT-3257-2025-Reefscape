@@ -16,7 +16,9 @@ public class PathfindToClosestDepotCommand extends Command {
   private final Drive drive;
   private final boolean left;
   private Command activeCommand; // Dynamically created command instance
-  private int targetPoseID = -1; // -1 indicates no target selected yet
+  // private int targetPoseID = -1; // -1 indicates no target selected yet
+
+  private boolean scheduledPath = false;
 
   /**
    * Constructs a new PathfindToClosestDepotCommand.
@@ -34,24 +36,38 @@ public class PathfindToClosestDepotCommand extends Command {
   @Override
   public void initialize() {
     // Reset state on initialization.
-    targetPoseID = -1;
+    // targetPoseID = -1;
     activeCommand = null;
+    scheduledPath = false;
   }
 
   @Override
   public void execute() {
     // Determine the closest depot path index based on the current robot pose.
-    int curPoseID = PathfindingCommands.getClosestDepotPath(drive.getPose(), left);
+    // int curPoseID = PathfindingCommands.getClosestDepotPath(drive.getPose(), left);
 
     // If the depot target has changed, cancel the previous command and schedule a new one.
-    if (curPoseID != targetPoseID) {
+    // if (curPoseID != targetPoseID) {
+    //   if (activeCommand != null && activeCommand.isScheduled()) {
+    //     activeCommand.cancel();
+    //   }
+    //   targetPoseID = curPoseID;
+    //   // Create a new command instance using the factory method.
+    //   activeCommand = PathfindingCommands.pathfindToDepotCommand(targetPoseID, left);
+    //   activeCommand.schedule();
+    // }
+
+    if (scheduledPath == false) {
+      int curPoseID = PathfindingCommands.getClosestDepotPath(drive.getPose(), left);
+
       if (activeCommand != null && activeCommand.isScheduled()) {
         activeCommand.cancel();
       }
-      targetPoseID = curPoseID;
-      // Create a new command instance using the factory method.
-      activeCommand = PathfindingCommands.pathfindToDepotCommand(targetPoseID, left);
+
+      activeCommand = PathfindingCommands.pathfindToDepotCommand(curPoseID, left);
       activeCommand.schedule();
+
+      scheduledPath = true;
     }
   }
 
@@ -59,7 +75,7 @@ public class PathfindToClosestDepotCommand extends Command {
   public void end(boolean interrupted) {
     // Cancel the active command if it is still scheduled.
     // if (activeCommand != null && activeCommand.isScheduled()) {
-    //  activeCommand.cancel();
+    activeCommand.cancel();
     // }
   }
 
