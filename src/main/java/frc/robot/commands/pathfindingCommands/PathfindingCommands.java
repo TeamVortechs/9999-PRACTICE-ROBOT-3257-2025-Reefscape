@@ -92,7 +92,8 @@ public class PathfindingCommands {
           lowestDistID = i;
         }
       }
-    } else {
+    } 
+    else {
       for (int i = 0; i < coralPathsRight.length; i++) {
         Pose2d testPose = coralPathsRight[i].getPathPoses().get(0);
         double dist = testPose.getTranslation().getDistance(curLocation.getTranslation());
