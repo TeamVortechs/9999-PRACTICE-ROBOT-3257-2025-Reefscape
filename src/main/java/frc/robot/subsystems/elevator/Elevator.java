@@ -135,7 +135,7 @@ public class Elevator extends SubsystemBase {
     // }
     if (Math.abs(speed) > PElevator.manualSpeedLimit.getValue())
       speed = Math.copySign(PElevator.manualSpeedLimit.getValue(), speed);
-    System.out.println("Above speed limit; rate limiting speed.");
+    System.out.println("Above speed limit; rate limiting ELEVATOR speed.");
     moduleIO.setSpeed(speed);
   }
 
