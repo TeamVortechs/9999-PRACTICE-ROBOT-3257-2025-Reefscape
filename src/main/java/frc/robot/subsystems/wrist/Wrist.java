@@ -1,7 +1,5 @@
 package frc.robot.subsystems.wrist;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -15,27 +13,15 @@ public class Wrist extends SubsystemBase {
   private WristIO wristIO;
   private WristIOInputsAutoLogged inputsAutoLogged = new WristIOInputsAutoLogged();
 
-  // private static double stageAngle = Math.toRadians(114.738651129);
-  // public static double intakeAngle = Math.toRadians(140);
-  // private static double Stage2angle = Math.toRadians(90);
-
   @AutoLogOutput private double CurrentAngle = 0;
 
   @AutoLogOutput private double targetAngle = 0;
 
   @AutoLogOutput private double pidOutput;
 
-  private final double targetBuffer = 0.05;
+  private final double targetBuffer = PWrist.tolerance.getValue();
 
   @AutoLogOutput private boolean manualOverride = false;
-
-  private ProfiledPIDController PID =
-      new ProfiledPIDController(
-          PWrist.proportional.getValue(),
-          PWrist.integral.getValue(),
-          PWrist.derivative.getValue(),
-          new TrapezoidProfile.Constraints(
-              PWrist.speedLimit.getValue(), PWrist.accelerationLimit.getValue()));
 
   public Wrist(WristIO wristIO) {
     this.wristIO = wristIO;
@@ -52,7 +38,8 @@ public class Wrist extends SubsystemBase {
 
     CurrentAngle = wristIO.getAngleRotations();
 
-    if (getAngleRotations() > Constants.WRIST_HIGHEST_ANGLE || getAngleRotations() < -0.2) {
+    if (getAngleRotations() > Constants.Arm.WRIST_HIGHEST_ANGLE
+        || getAngleRotations() < -targetBuffer) {
       setManualSpeed(0);
       System.out.println("WRIST OUT OF BOUNDS");
     }
@@ -63,16 +50,6 @@ public class Wrist extends SubsystemBase {
     }
     // set target position to 100 rotations
     wristIO.PIDVoltage(targetAngle);
-    // System.out.println("setting voltage in periodic");
-
-    // Math.abs(pidOutput) > PWrist.speedLimit.getValue()
-    //     ? Math.copySign(PWrist.speedLimit.getValue(), pidOutput) // change later
-    //     : pidOutput;
-
-    // double wristSpeed = PID.calculate(CurrentAngle, targetAngle);
-    // individually move each elevator to that position
-
-    // sets the speed of the wrist
   }
 
   // returns wether or not the wrist is on target
@@ -103,6 +80,10 @@ public class Wrist extends SubsystemBase {
   // turns manual override and sets the manual speeed
   public void setManualSpeed(double speed) {
     manualOverride = true;
+
+    if (Math.abs(speed) > PWrist.manualSpeedLimit.getValue())
+      speed = Math.copySign(PWrist.manualSpeedLimit.getValue(), speed);
+    System.out.println("Above speed limit; rate limiting WRIST speed.");
     wristIO.setArmSpeed(speed);
   }
 
@@ -144,15 +125,14 @@ public class Wrist extends SubsystemBase {
 
   // enum for each level that the wrist could be
   public enum WristAngle {
-    STAGE1_ANGLE(Constants.WRIST_ANGLE_DROP),
+    STAGE2_ANGLE(Constants.Arm.WRIST_STAGE_2_ANGLE),
     INTAKE_ANGLE(0);
     // STAGE2_ANGLE(Stage2angle),
-    // INTAKE_ANGLE(Constant);
 
     private double angle;
 
-    private WristAngle(double angleRad) {
-      this.angle = angleRad;
+    private WristAngle(double angleRot) {
+      this.angle = angleRot;
     }
 
     public double getAngle() {

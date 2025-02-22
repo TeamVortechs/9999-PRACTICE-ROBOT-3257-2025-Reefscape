@@ -2,6 +2,7 @@ package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.KDoublePreferences.PElevator;
 import frc.robot.subsystems.wrist.Wrist;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -43,7 +44,6 @@ public class Elevator extends SubsystemBase {
           // , DigitalInput homeSwitch
           ,
       Wrist wrist) {
-    // setPreferences();
     this.moduleIO = moduleIO;
     // this.homeSwitch = homeSwitch;
 
@@ -92,8 +92,8 @@ public class Elevator extends SubsystemBase {
 
     if (manualOverride) {
 
-      if (getCurrentHeight() < PElevator.MinHeight.getValue() - PElevator.tolerance.getValue()
-          || getCurrentHeight() > PElevator.MaxHeight.getValue()) {
+      if (getCurrentHeight() < Constants.Elevator.MIN_HEIGHT - PElevator.tolerance.getValue()
+          || getCurrentHeight() > Constants.Elevator.MAX_HEIGHT) {
         System.out.println("ELEVATOR OUT OF BOUDNS");
         setManualSpeed(0);
       }
@@ -105,8 +105,7 @@ public class Elevator extends SubsystemBase {
     } else {
       isOnTarget = false;
       // Clamp target height to prevent exceeding limits
-      maxHeight = PElevator.MaxHeight.getValue();
-      targetHeight = Math.max(0.0, Math.min(targetHeight, maxHeight));
+      targetHeight = Math.max(0.0, Math.min(targetHeight, Constants.Elevator.MAX_HEIGHT));
 
       moduleIO.PIDVoltage(targetHeight);
     }
@@ -115,16 +114,19 @@ public class Elevator extends SubsystemBase {
   /** Sets a new target height for the elevator using PID control. */
   public void setTargetHeight(double height) {
     manualOverride = false;
-    targetHeight = Math.max(0.0, Math.min(height, PElevator.MaxHeight.getValue()));
+    targetHeight = Math.max(0.0, Math.min(height, Constants.Elevator.MAX_HEIGHT));
+    // pid.setGoal(targetHeight);
   }
 
   /** Allows manual control of the elevator, bypassing PID. */
   public void setManualSpeed(double speed) {
     manualOverride = true;
-
-    if (Math.abs(speed) > PElevator.speedlimit.getValue())
-      speed = Math.copySign(PElevator.speedlimit.getValue(), speed);
-    System.out.println("Above speed limit; rate limiting speed.");
+    // if (speed < 0 && !homeSwitch.get()) {
+    //   speed = 0;
+    // }
+    if (Math.abs(speed) > PElevator.manualSpeedLimit.getValue())
+      speed = Math.copySign(PElevator.manualSpeedLimit.getValue(), speed);
+    System.out.println("Above speed limit; rate limiting ELEVATOR speed.");
     moduleIO.setSpeed(speed);
   }
 
