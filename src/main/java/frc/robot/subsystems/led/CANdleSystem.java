@@ -49,6 +49,7 @@ import frc.robot.Constants;
 
 public class CANdleSystem extends SubsystemBase {
   private final int LEDS_PER_ANIMATION = 30;
+  private final int LED_OFFSET = 0;
   private final CANdle m_candle = new CANdle(Constants.CANdleID, Constants.CANdleCANbus);
   private CommandXboxController joystick;
   private int m_candleChannel = 0;
@@ -81,7 +82,7 @@ public class CANdleSystem extends SubsystemBase {
     CANdleConfiguration configAll = new CANdleConfiguration();
     configAll.statusLedOffWhenActive = true;
     configAll.disableWhenLOS = false;
-    configAll.stripType = LEDStripType.RGBW;
+    configAll.stripType = LEDStripType.GRBW;
     configAll.brightnessScalar = 0.1;
     configAll.vBatOutputMode = VBatOutputMode.Modulated;
     m_candle.configAllSettings(configAll, 100);
@@ -340,48 +341,51 @@ public class CANdleSystem extends SubsystemBase {
       case ColorFlow:
         m_candleChannel = 0;
         m_toAnimate =
-            new ColorFlowAnimation(128, 20, 70, 0, 0.7, LEDS_PER_ANIMATION, Direction.Forward, 0);
+            new ColorFlowAnimation(
+                128, 20, 70, 0, 0.7, LEDS_PER_ANIMATION, Direction.Forward, LED_OFFSET);
         break;
       case Fire:
         m_candleChannel = 0;
-        m_toAnimate = new FireAnimation(0.5, 0.7, LEDS_PER_ANIMATION, 0.8, 0.5, m_animDirection, 0);
+        m_toAnimate =
+            new FireAnimation(0.5, 0.7, LEDS_PER_ANIMATION, 0.8, 0.5, m_animDirection, LED_OFFSET);
         break;
       case Larson:
         m_candleChannel = 0;
         m_toAnimate =
-            new LarsonAnimation(0, 255, 46, 0, 0.1, LEDS_PER_ANIMATION, BounceMode.Front, 3, 0);
+            new LarsonAnimation(
+                0, 255, 46, 0, 0.1, LEDS_PER_ANIMATION, BounceMode.Front, 3, LED_OFFSET);
         break;
       case Rainbow:
         m_candleChannel = 0;
-        m_toAnimate = new RainbowAnimation(1, 0.7, LEDS_PER_ANIMATION, m_animDirection, 0);
+        m_toAnimate = new RainbowAnimation(1, 0.7, LEDS_PER_ANIMATION, m_animDirection, LED_OFFSET);
         break;
       case RgbFade:
         m_candleChannel = 0;
-        m_toAnimate = new RgbFadeAnimation(0.7, 0.4, LEDS_PER_ANIMATION, 0);
+        m_toAnimate = new RgbFadeAnimation(0.7, 0.4, LEDS_PER_ANIMATION, LED_OFFSET);
         break;
       case SingleFade:
         m_candleChannel = 0;
-        m_toAnimate = new SingleFadeAnimation(50, 2, 200, 0, 0.5, LEDS_PER_ANIMATION, 0);
+        m_toAnimate = new SingleFadeAnimation(50, 2, 200, 0, 0.5, LEDS_PER_ANIMATION, LED_OFFSET);
         break;
       case Strobe:
         m_candleChannel = 0;
-        m_toAnimate = new StrobeAnimation(240, 10, 180, 0, 0.01, LEDS_PER_ANIMATION, 0);
+        m_toAnimate = new StrobeAnimation(240, 10, 180, 0, 0.01, LEDS_PER_ANIMATION, LED_OFFSET);
         break;
       case Twinkle:
         m_candleChannel = 0;
         m_toAnimate =
             new TwinkleAnimation(
-                30, 70, 60, 0, 0.4, LEDS_PER_ANIMATION, TwinklePercent.Percent42, 0);
+                30, 70, 60, 0, 0.4, LEDS_PER_ANIMATION, TwinklePercent.Percent42, LED_OFFSET);
         break;
       case TwinkleOff:
         m_candleChannel = 0;
         m_toAnimate =
             new TwinkleOffAnimation(
-                70, 90, 175, 0, 0.2, LEDS_PER_ANIMATION, TwinkleOffPercent.Percent76, 0);
+                70, 90, 175, 0, 0.2, LEDS_PER_ANIMATION, TwinkleOffPercent.Percent76, LED_OFFSET);
         break;
       case Empty:
         m_candleChannel = 0;
-        m_toAnimate = new RainbowAnimation(1, 0.7, LEDS_PER_ANIMATION, m_animDirection, 0);
+        m_toAnimate = new RainbowAnimation(1, 0.7, LEDS_PER_ANIMATION, m_animDirection, LED_OFFSET);
         break;
 
       case SetAll:
