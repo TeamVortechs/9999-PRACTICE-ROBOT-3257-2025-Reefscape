@@ -7,7 +7,7 @@ import frc.robot.subsystems.wrist.Wrist;
 Names
 brief description
  */
-public class SetWristTargetAngleCommand extends Command {
+public class SetWristNeutralMode extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 
   /**
@@ -15,26 +15,24 @@ public class SetWristTargetAngleCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  private final Wrist wrist;
+  private boolean mode;
 
-  private final double targetAngle;
+  private Wrist wrist;
 
-  public SetWristTargetAngleCommand(Wrist wrist, double targetAngle) {
-    addRequirements(wrist);
-
+  public SetWristNeutralMode(boolean mode, Wrist wrist) {
+    this.mode = mode;
     this.wrist = wrist;
-    this.targetAngle = targetAngle;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    wrist.setBraked(mode);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    wrist.setTargetAngle(targetAngle);
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -43,6 +41,6 @@ public class SetWristTargetAngleCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return wrist.isOnTarget() && Math.abs(targetAngle - wrist.getTargetAngle()) < 0.001;
+    return true;
   }
 }

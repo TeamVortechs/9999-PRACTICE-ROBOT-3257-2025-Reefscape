@@ -1,12 +1,13 @@
-package frc.robot.commands;
+package frc.robot.commands.pathfindingCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.drive.Drive;
 
 /*
 Names
 brief description
  */
-public class TellCommand extends Command {
+public class PathfindingCommandCancel extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 
   /**
@@ -14,27 +15,17 @@ public class TellCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  private String message;
-
-  private boolean messaged = false;
-
-  public TellCommand(String message) {
-    // addRequirements(null);
-    this.message = message;
+  public PathfindingCommandCancel(Drive drive) {
+    addRequirements(drive);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    // messaged = false;
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    System.out.println(message);
-    // messaged = true;
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -43,6 +34,6 @@ public class TellCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

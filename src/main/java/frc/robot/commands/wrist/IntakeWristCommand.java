@@ -23,7 +23,7 @@ public class IntakeWristCommand extends Command {
     // addRequirements(null);
     this.wrist = wrist;
     this.speed = speed;
-    addRequirements(wrist);
+    // addRequirements(wrist);
   }
 
   // Called when the command is initially scheduled.

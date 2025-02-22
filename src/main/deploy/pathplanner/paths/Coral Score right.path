@@ -3,6 +3,7 @@
   "waypoints": [
     {
       "anchor": {
+<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/Coral Score right.path
         "x": 7.6245,
         "y": 5.7410000000000005
       },
@@ -10,18 +11,36 @@
       "nextControl": {
         "x": 6.927375,
         "y": 5.63375
+========
+        "x": 2.8097435897435887,
+        "y": 4.057787024456521
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.0597435897435887,
+        "y": 4.057787024456521
+>>>>>>>> ben/pathsTest:src/main/deploy/pathplanner/paths/CoralFeed Right.path
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
+<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/Coral Score right.path
         "x": 5.29425,
         "y": 5.268125
       },
       "prevControl": {
         "x": 6.5325,
         "y": 5.624
+========
+        "x": 3.171399456521739,
+        "y": 4.057787024456521
+      },
+      "prevControl": {
+        "x": 2.921399456521739,
+        "y": 4.057787024456521
+>>>>>>>> ben/pathsTest:src/main/deploy/pathplanner/paths/CoralFeed Right.path
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +52,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 0.5,
+    "maxAcceleration": 0.25,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -45,10 +64,14 @@
     "rotation": -28.940012692839453
   },
   "reversed": false,
-  "folder": null,
+  "folder": "CoralFeed Right",
   "idealStartingState": {
     "velocity": 0,
+<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/Coral Score right.path
     "rotation": 176.98721249581666
+========
+    "rotation": 0.0
+>>>>>>>> ben/pathsTest:src/main/deploy/pathplanner/paths/CoralFeed Right.path
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

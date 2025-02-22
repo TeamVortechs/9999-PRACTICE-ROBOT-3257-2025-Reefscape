@@ -42,10 +42,6 @@ public interface WristIO {
   public default void PIDVoltage(double targetAngle) {}
 
   // gets the current of the wrist in radians
-  // public default double getAngleRad() {
-  //   return 0.0;
-  // }
-
   public default double getAngleRotations() {
     return 0;
   }

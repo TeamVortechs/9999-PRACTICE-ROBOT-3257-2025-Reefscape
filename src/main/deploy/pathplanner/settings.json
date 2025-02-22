@@ -3,12 +3,13 @@
   "robotLength": 0.8763,
   "holonomicMode": true,
   "pathFolders": [
-    "CoralFeed",
-    "algae paths"
+    "CoralFeed Left",
+    "CoralFeed Right",
+    "Simple paths"
   ],
   "autoFolders": [],
-  "defaultMaxVel": 1.25,
-  "defaultMaxAccel": 0.75,
+  "defaultMaxVel": 0.5,
+  "defaultMaxAccel": 0.4,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,

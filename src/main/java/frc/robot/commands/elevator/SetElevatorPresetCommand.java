@@ -30,7 +30,8 @@ public class SetElevatorPresetCommand extends Command {
   public boolean isFinished() {
     // Finish when the elevator is within tolerance of the target.
     // return elevator.isOnTarget();
-    return false;
+
+    return elevator.isOnTarget();
   }
 
   @Override
