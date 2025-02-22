@@ -51,6 +51,7 @@ import frc.robot.subsystems.elevator.ElevatorModuleTalonFXIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.Wrist.WristAngle;
@@ -68,7 +69,6 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
 
-  @SuppressWarnings("unused")
   private final Vision vision;
 
   // physical subsystems
@@ -122,11 +122,11 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight));
         vision =
             new Vision(
-                drive::addVisionMeasurement, new VisionIO() {}
+                drive::addVisionMeasurement,
                 // new VisionIOPhotonVision(
-                //     VisionConstants.camera0Name, VisionConstants.robotToCamera0)
-                // new VisionIOPhotonVision(camera1Name, robotToCamera1)
-                );
+                //     VisionConstants.ARDUCAM_LEFT_NAME, VisionConstants.ROBOT_TO_ARDUCAM_LEFT),
+                new VisionIOPhotonVision(
+                    VisionConstants.ARDUCAM_RIGHT_NAME, VisionConstants.ROBOT_TO_ARDUCAM_RIGHT));
         break;
 
       case SIM:
@@ -142,7 +142,13 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(
-                    VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose));
+                    VisionConstants.ARDUCAM_LEFT_NAME,
+                    VisionConstants.ROBOT_TO_ARDUCAM_LEFT,
+                    drive::getPose),
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.ARDUCAM_RIGHT_NAME,
+                    VisionConstants.ROBOT_TO_ARDUCAM_RIGHT,
+                    drive::getPose));
         break;
 
       default:
@@ -154,11 +160,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        vision =
-            new Vision(
-                drive::addVisionMeasurement, new VisionIO() {}
-                // new VisionIO() {}
-                );
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
 
