@@ -48,7 +48,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 
 public class CANdleSystem extends SubsystemBase {
-  private final int LEDS_PER_ANIMATION = 8;
+  private final int LEDS_PER_ANIMATION = 30;
   private final CANdle m_candle = new CANdle(Constants.CANdleID, Constants.CANdleCANbus);
   private CommandXboxController joystick;
   private int m_candleChannel = 0;
@@ -81,7 +81,7 @@ public class CANdleSystem extends SubsystemBase {
     CANdleConfiguration configAll = new CANdleConfiguration();
     configAll.statusLedOffWhenActive = true;
     configAll.disableWhenLOS = false;
-    configAll.stripType = LEDStripType.GRB;
+    configAll.stripType = LEDStripType.RGBW;
     configAll.brightnessScalar = 0.1;
     configAll.vBatOutputMode = VBatOutputMode.Modulated;
     m_candle.configAllSettings(configAll, 100);
@@ -217,122 +217,178 @@ public class CANdleSystem extends SubsystemBase {
   public void changeAnimation(AnimationTypes toChange) {
     m_currentAnimation = toChange;
 
+    // switch (toChange) {
+    //   default:
+    //   case ColorFlow:
+    //     m_candleChannel = 0;
+    //     m_toAnimate =
+    //         new ColorFlowAnimation(
+    //             128,
+    //             20,
+    //             70,
+    //             0,
+    //             0.7,
+    //             LEDS_PER_ANIMATION,
+    //             Direction.Forward,
+    //             m_candleChannel * LEDS_PER_ANIMATION + 8);
+    //     break;
+    //   case Fire:
+    //     m_candleChannel = 1;
+    //     m_toAnimate =
+    //         new FireAnimation(
+    //             0.5,
+    //             0.7,
+    //             LEDS_PER_ANIMATION,
+    //             0.8,
+    //             0.5,
+    //             m_animDirection,
+    //             m_candleChannel * LEDS_PER_ANIMATION + 8);
+    //     break;
+    //   case Larson:
+    //     m_candleChannel = 2;
+    //     m_toAnimate =
+    //         new LarsonAnimation(
+    //             0,
+    //             255,
+    //             46,
+    //             0,
+    //             0.1,
+    //             LEDS_PER_ANIMATION,
+    //             BounceMode.Front,
+    //             3,
+    //             m_candleChannel * LEDS_PER_ANIMATION + 8);
+    //     break;
+    //   case Rainbow:
+    //     m_candleChannel = 3;
+    //     m_toAnimate =
+    //         new RainbowAnimation(
+    //             1,
+    //             0.7,
+    //             LEDS_PER_ANIMATION,
+    //             m_animDirection,
+    //             m_candleChannel * LEDS_PER_ANIMATION + 8);
+    //     break;
+    //   case RgbFade:
+    //     m_candleChannel = 4;
+    //     m_toAnimate =
+    //         new RgbFadeAnimation(
+    //             0.7, 0.4, LEDS_PER_ANIMATION, m_candleChannel * LEDS_PER_ANIMATION + 8);
+    //     break;
+    //   case SingleFade:
+    //     m_candleChannel = 5;
+    //     m_toAnimate =
+    //         new SingleFadeAnimation(
+    //             50, 2, 200, 0, 0.5, LEDS_PER_ANIMATION, m_candleChannel * LEDS_PER_ANIMATION +
+    // 8);
+    //     break;
+    //   case Strobe:
+    //     m_candleChannel = 6;
+    //     m_toAnimate =
+    //         new StrobeAnimation(
+    //             240,
+    //             10,
+    //             180,
+    //             0,
+    //             0.01,
+    //             LEDS_PER_ANIMATION,
+    //             m_candleChannel * LEDS_PER_ANIMATION + 8);
+    //     break;
+    //   case Twinkle:
+    //     m_candleChannel = 7;
+    //     m_toAnimate =
+    //         new TwinkleAnimation(
+    //             30,
+    //             70,
+    //             60,
+    //             0,
+    //             0.4,
+    //             LEDS_PER_ANIMATION,
+    //             TwinklePercent.Percent42,
+    //             m_candleChannel * LEDS_PER_ANIMATION + 8);
+    //     break;
+    //   case TwinkleOff:
+    //     m_candleChannel = 8;
+    //     m_toAnimate =
+    //         new TwinkleOffAnimation(
+    //             70,
+    //             90,
+    //             175,
+    //             0,
+    //             0.2,
+    //             LEDS_PER_ANIMATION,
+    //             TwinkleOffPercent.Percent76,
+    //             m_candleChannel * LEDS_PER_ANIMATION + 8);
+    //     break;
+    //   case Empty:
+    //     m_candleChannel = 9;
+    //     m_toAnimate =
+    //         new RainbowAnimation(
+    //             1,
+    //             0.7,
+    //             LEDS_PER_ANIMATION,
+    //             m_animDirection,
+    //             m_candleChannel * LEDS_PER_ANIMATION + 8);
+    //     break;
+
+    //   case SetAll:
+    //     m_toAnimate = null;
+    //     break;
+    // }
+
     switch (toChange) {
       default:
       case ColorFlow:
         m_candleChannel = 0;
         m_toAnimate =
-            new ColorFlowAnimation(
-                128,
-                20,
-                70,
-                0,
-                0.7,
-                LEDS_PER_ANIMATION,
-                Direction.Forward,
-                m_candleChannel * LEDS_PER_ANIMATION + 8);
+            new ColorFlowAnimation(128, 20, 70, 0, 0.7, LEDS_PER_ANIMATION, Direction.Forward, 0);
         break;
       case Fire:
-        m_candleChannel = 1;
-        m_toAnimate =
-            new FireAnimation(
-                0.5,
-                0.7,
-                LEDS_PER_ANIMATION,
-                0.8,
-                0.5,
-                m_animDirection,
-                m_candleChannel * LEDS_PER_ANIMATION + 8);
+        m_candleChannel = 0;
+        m_toAnimate = new FireAnimation(0.5, 0.7, LEDS_PER_ANIMATION, 0.8, 0.5, m_animDirection, 0);
         break;
       case Larson:
-        m_candleChannel = 2;
+        m_candleChannel = 0;
         m_toAnimate =
-            new LarsonAnimation(
-                0,
-                255,
-                46,
-                0,
-                0.1,
-                LEDS_PER_ANIMATION,
-                BounceMode.Front,
-                3,
-                m_candleChannel * LEDS_PER_ANIMATION + 8);
+            new LarsonAnimation(0, 255, 46, 0, 0.1, LEDS_PER_ANIMATION, BounceMode.Front, 3, 0);
         break;
       case Rainbow:
-        m_candleChannel = 3;
-        m_toAnimate =
-            new RainbowAnimation(
-                1,
-                0.7,
-                LEDS_PER_ANIMATION,
-                m_animDirection,
-                m_candleChannel * LEDS_PER_ANIMATION + 8);
+        m_candleChannel = 0;
+        m_toAnimate = new RainbowAnimation(1, 0.7, LEDS_PER_ANIMATION, m_animDirection, 0);
         break;
       case RgbFade:
-        m_candleChannel = 4;
-        m_toAnimate =
-            new RgbFadeAnimation(
-                0.7, 0.4, LEDS_PER_ANIMATION, m_candleChannel * LEDS_PER_ANIMATION + 8);
+        m_candleChannel = 0;
+        m_toAnimate = new RgbFadeAnimation(0.7, 0.4, LEDS_PER_ANIMATION, 0);
         break;
       case SingleFade:
-        m_candleChannel = 5;
-        m_toAnimate =
-            new SingleFadeAnimation(
-                50, 2, 200, 0, 0.5, LEDS_PER_ANIMATION, m_candleChannel * LEDS_PER_ANIMATION + 8);
+        m_candleChannel = 0;
+        m_toAnimate = new SingleFadeAnimation(50, 2, 200, 0, 0.5, LEDS_PER_ANIMATION, 0);
         break;
       case Strobe:
-        m_candleChannel = 6;
-        m_toAnimate =
-            new StrobeAnimation(
-                240,
-                10,
-                180,
-                0,
-                0.01,
-                LEDS_PER_ANIMATION,
-                m_candleChannel * LEDS_PER_ANIMATION + 8);
+        m_candleChannel = 0;
+        m_toAnimate = new StrobeAnimation(240, 10, 180, 0, 0.01, LEDS_PER_ANIMATION, 0);
         break;
       case Twinkle:
-        m_candleChannel = 7;
+        m_candleChannel = 0;
         m_toAnimate =
             new TwinkleAnimation(
-                30,
-                70,
-                60,
-                0,
-                0.4,
-                LEDS_PER_ANIMATION,
-                TwinklePercent.Percent42,
-                m_candleChannel * LEDS_PER_ANIMATION + 8);
+                30, 70, 60, 0, 0.4, LEDS_PER_ANIMATION, TwinklePercent.Percent42, 0);
         break;
       case TwinkleOff:
-        m_candleChannel = 8;
+        m_candleChannel = 0;
         m_toAnimate =
             new TwinkleOffAnimation(
-                70,
-                90,
-                175,
-                0,
-                0.2,
-                LEDS_PER_ANIMATION,
-                TwinkleOffPercent.Percent76,
-                m_candleChannel * LEDS_PER_ANIMATION + 8);
+                70, 90, 175, 0, 0.2, LEDS_PER_ANIMATION, TwinkleOffPercent.Percent76, 0);
         break;
       case Empty:
-        m_candleChannel = 9;
-        m_toAnimate =
-            new RainbowAnimation(
-                1,
-                0.7,
-                LEDS_PER_ANIMATION,
-                m_animDirection,
-                m_candleChannel * LEDS_PER_ANIMATION + 8);
+        m_candleChannel = 0;
+        m_toAnimate = new RainbowAnimation(1, 0.7, LEDS_PER_ANIMATION, m_animDirection, 0);
         break;
 
       case SetAll:
         m_toAnimate = null;
         break;
     }
+
     System.out.println("Changed to " + m_currentAnimation.toString());
   }
 

@@ -22,10 +22,10 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.CANdleConfigCommands;
+import frc.robot.commands.CANdlePrintCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.TellCommand;
 // import frc.robot.commands.SetWristRollerSpeed;
@@ -182,20 +182,52 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    controller.start().onTrue(new InstantCommand(m_candleSubsystem::setColors, m_candleSubsystem));
+    controller
+        .start()
+        .onTrue(
+            new InstantCommand(m_candleSubsystem::setColors, m_candleSubsystem)
+                .ignoringDisable(true));
     controller
         .rightBumper()
-        .onTrue(new InstantCommand(m_candleSubsystem::incrementAnimation, m_candleSubsystem));
+        .onTrue(
+            new InstantCommand(m_candleSubsystem::incrementAnimation, m_candleSubsystem)
+                .ignoringDisable(true));
     controller
         .leftBumper()
-        .onTrue(new InstantCommand(m_candleSubsystem::decrementAnimation, m_candleSubsystem));
+        .onTrue(
+            new InstantCommand(m_candleSubsystem::decrementAnimation, m_candleSubsystem)
+                .ignoringDisable(true));
 
-    controller.povRight().onTrue(new CANdleConfigCommands.ConfigBrightness(m_candleSubsystem, 1.0));
-    controller.povDown().onTrue(new CANdleConfigCommands.ConfigBrightness(m_candleSubsystem, 0.3));
-    controller.povLeft().onTrue(new CANdleConfigCommands.ConfigBrightness(m_candleSubsystem, 0));
+    controller
+        .povRight()
+        .onTrue(
+            new CANdleConfigCommands.ConfigBrightness(m_candleSubsystem, 1.0)
+                .ignoringDisable(true));
+    controller
+        .povDown()
+        .onTrue(
+            new CANdleConfigCommands.ConfigBrightness(m_candleSubsystem, 0.15)
+                .ignoringDisable(true));
+    controller
+        .povLeft()
+        .onTrue(
+            new CANdleConfigCommands.ConfigBrightness(m_candleSubsystem, 0).ignoringDisable(true));
     controller
         .povUp()
-        .onTrue(new InstantCommand(() -> m_candleSubsystem.toggleAnimDirection(), m_candleSubsystem));
+        .onTrue(
+            new InstantCommand(() -> m_candleSubsystem.toggleAnimDirection(), m_candleSubsystem)
+                .ignoringDisable(true));
+
+    controller.a().onTrue(new CANdlePrintCommands.PrintVBat(m_candleSubsystem));
+    controller.b().onTrue(new CANdlePrintCommands.Print5V(m_candleSubsystem));
+    controller.x().onTrue(new CANdlePrintCommands.PrintCurrent(m_candleSubsystem));
+    controller.y().onTrue(new CANdlePrintCommands.PrintTemperature(m_candleSubsystem));
+
+    controller
+        .leftStick()
+        .onTrue(
+            new InstantCommand(m_candleSubsystem::clearAllAnims, m_candleSubsystem)
+                .ignoringDisable(true));
 
     //     new JoystickButton(joy, Constants.BlockButton).onTrue(new
     // RunCommand(m_candleSubsystem::setColors, m_candleSubsystem));
