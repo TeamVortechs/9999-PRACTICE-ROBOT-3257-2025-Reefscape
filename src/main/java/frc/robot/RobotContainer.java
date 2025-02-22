@@ -16,11 +16,14 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -221,9 +224,18 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     controller.a().onTrue(new CANdlePrintCommands.PrintVBat(m_candleSubsystem));
-    controller.b().onTrue(new CANdlePrintCommands.Print5V(m_candleSubsystem));
+    // controller.b().onTrue(new CANdlePrintCommands.Print5V(m_candleSubsystem));
     controller.x().onTrue(new CANdlePrintCommands.PrintCurrent(m_candleSubsystem));
     controller.y().onTrue(new CANdlePrintCommands.PrintTemperature(m_candleSubsystem));
+    controller
+        .b()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
 
     controller
         .leftStick()
@@ -384,9 +396,9 @@ public class RobotContainer {
     //         PathfindingCommands.pathfindToDepotCommand(
     //             PathfindingCommands.getClosestDepotPath(drive.getPose())));
 
-    // // Reset gyro to 0° when B button is pressed
+    // Reset gyro to 0° when B button is pressed
     // controller
-    //     .povDown()
+    //     .b()
     //     .onTrue(
     //         Commands.runOnce(
     //                 () ->

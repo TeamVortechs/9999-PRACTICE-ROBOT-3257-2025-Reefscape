@@ -48,7 +48,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 
 public class CANdleSystem extends SubsystemBase {
-  private final int LEDS_PER_ANIMATION = 30;
+  private final int LEDS_PER_ANIMATION = 10 + 8;
   private final int LED_OFFSET = 0;
   private final CANdle m_candle = new CANdle(Constants.CANdleID, Constants.CANdleCANbus);
   private CommandXboxController joystick;
