@@ -15,6 +15,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,17 +26,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.KDoublePreferences.PElevator;
-import frc.robot.commands.ControllerVibrateCommand;
-import frc.robot.commands.DriveCommands;
-import frc.robot.commands.TellCommand;
+import frc.robot.commands.autoCommands.DriveCommands;
+import frc.robot.commands.autoCommands.IntakingCommands;
+import frc.robot.commands.autoCommands.ScoringCommands;
+import frc.robot.commands.communication.ControllerVibrateCommand;
+import frc.robot.commands.communication.TellCommand;
+import frc.robot.commands.pathfindingCommands.PathfindToClosestDepotCommand;
+import frc.robot.commands.pathfindingCommands.PathfindingCommandCancel;
 import frc.robot.commands.wrist.IntakeWristCommand;
-// import frc.robot.commands.SetWristRollerSpeed;
 import frc.robot.commands.wrist.ManualSetWristSpeedCommand;
 import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
 import frc.robot.commands.wrist.SetWristTargetAngleCommand;
+// import frc.robot.commands.SetWristRollerSpeed;
 import frc.robot.generated.TunerConstants;
 // import frc.robot.subsystems.Intake.Intake;
 // import frc.robot.subsystems.Intake.IntakeIOTalonFX;
@@ -46,16 +52,16 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorModuleIOSimulation;
 // import frc.robot.subsystems.elevator.Elevator2;
-import frc.robot.subsystems.elevator.ElevatorModuleTalonFXIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.Wrist.WristAngle;
+import frc.robot.subsystems.wrist.WristIOSimulation;
 // import frc.robot.subsystems.wrist.WristIOTalonFX;
-import frc.robot.subsystems.wrist.WristIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -72,24 +78,12 @@ public class RobotContainer {
   private final Vision vision;
 
   // physical subsystems
-  private final Wrist wrist =
-      new Wrist(
-          new WristIOTalonFX(
-              Constants.ARM_MOTOR_ID,
-              Constants.ROLLER_MOTOR_ID,
-              Constants.ELEVATOR_CANBUS,
-              Constants.CANRANGE_ID));
+  private final Wrist wrist = new Wrist(new WristIOSimulation());
 
   // DigitalInput limitSwitch =
   // new DigitalInput(20); // !!!!! FAKE CHANNEL! CHANGE WHEN PROPERLY IMPLEMENTED !!!!!!
   // private final Intake intake = new Intake(new IntakeIOTalonFX(), limitSwitch);
-  private final Elevator elevator =
-      new Elevator(
-          new ElevatorModuleTalonFXIO(
-              Constants.ELEVATOR_MOTOR_LEFT_ID,
-              Constants.ELEVATOR_MOTOR_RIGHT_ID,
-              Constants.ELEVATOR_CANBUS),
-          wrist);
+  private final Elevator elevator = new Elevator(new ElevatorModuleIOSimulation(), wrist);
   //   private final Elevator2 elevator2 =
   //       new Elevator2(
   //           new ElevatorModuleTalonFXIO(
@@ -162,27 +156,11 @@ public class RobotContainer {
         break;
     }
 
-    // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-    // configure the autonomous named commands
     registerNamedCommandsAuto();
+
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    registerAutoChooser();
+    // configure the autonomous named commands
 
     // Configure the button bindings
     configureButtonBindings();
@@ -294,6 +272,18 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
+    controller.x().whileTrue(new PathfindToClosestDepotCommand(drive, false));
+    controller.x().onFalse(new PathfindingCommandCancel(drive));
+
+    controller.y().whileTrue(new PathfindToClosestDepotCommand(drive, true));
+    controller.y().onFalse(new PathfindingCommandCancel(drive));
+
+    controller.x().whileTrue(new PathfindToClosestDepotCommand(drive, false));
+    controller.x().onFalse(new PathfindingCommandCancel(drive));
+
+    controller.y().whileTrue(new PathfindToClosestDepotCommand(drive, true));
+    controller.y().onFalse(new PathfindingCommandCancel(drive));
+
     // controller
     //     .leftTrigger()
     //     .whileTrue(
@@ -343,7 +333,52 @@ public class RobotContainer {
 
   // registers pathplanner's named commands
   private void registerNamedCommandsAuto() {
-    NamedCommands.registerCommand("testing", new TellCommand("testing autoCOmmand"));
+    // controls wether or not the robot actually does the commands or just prints out that it's
+    // doing the commands
+    boolean isReal = false;
+
+    addNamedCommand("intake prep", IntakingCommands.prepForIntakeCommand(wrist, elevator), isReal);
+    // addNamedCommand("test", new TellCommand("test"), isReal);
+    addNamedCommand("intake", IntakingCommands.intakeCommand(wrist, elevator), isReal);
+    addNamedCommand("prepStage1", ScoringCommands.prepForScoring(1, wrist, elevator), isReal);
+    addNamedCommand("prepStage2", ScoringCommands.prepForScoring(2, wrist, elevator), isReal);
+    addNamedCommand(
+        "Scoring",
+        new WaitCommand(0.2).deadlineFor(new SetWristRollerSpeedCommand(wrist, -0.4)),
+        isReal);
+  }
+
+  public void addNamedCommand(String commandName, Command command, boolean isReal) {
+
+    if (isReal) {
+      NamedCommands.registerCommand(commandName, command);
+      new EventTrigger(commandName).onTrue(command);
+    } else {
+      // registers the named commands to print something out instead of actually running anything
+      NamedCommands.registerCommand(commandName, new TellCommand(commandName + " auto command"));
+      new EventTrigger(commandName)
+          .onTrue(new TellCommand(commandName + " auto event trigger command"));
+    }
+  }
+
+  public void registerAutoChooser() {
+    // Set up auto routines
+
+    // Set up SysId routines
+    autoChooser.addOption(
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption(
+        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Forward)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Reverse)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 
   //   public void sendVisionMeasurement() {
