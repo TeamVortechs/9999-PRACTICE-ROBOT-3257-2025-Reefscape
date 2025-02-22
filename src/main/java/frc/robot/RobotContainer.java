@@ -25,16 +25,20 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.KDoublePreferences.PElevator;
+import frc.robot.KDoublePreferences.PElevator;
 import frc.robot.commands.autoCommands.DriveCommands;
 import frc.robot.commands.autoCommands.IntakingCommands;
 import frc.robot.commands.autoCommands.ScoringCommands;
 import frc.robot.commands.communication.ControllerVibrateCommand;
+import frc.robot.commands.communication.ControllerVibrateCommand;
 import frc.robot.commands.communication.TellCommand;
+import frc.robot.commands.elevator.SetElevatorPresetCommand;
 import frc.robot.commands.pathfindingCommands.PathfindToClosestDepotCommand;
 import frc.robot.commands.pathfindingCommands.PathfindingCommandCancel;
 import frc.robot.commands.wrist.IntakeWristCommand;
@@ -42,9 +46,8 @@ import frc.robot.commands.wrist.ManualSetWristSpeedCommand;
 import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
 import frc.robot.commands.wrist.SetWristTargetAngleCommand;
 // import frc.robot.commands.SetWristRollerSpeed;
+import frc.robot.commands.wrist.SetWristTargetAngleCommand;
 import frc.robot.generated.TunerConstants;
-// import frc.robot.subsystems.Intake.Intake;
-// import frc.robot.subsystems.Intake.IntakeIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -53,7 +56,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorModuleIOSimulation;
-// import frc.robot.subsystems.elevator.Elevator2;
+import frc.robot.subsystems.elevator.ElevatorModuleTalonFXIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -62,7 +65,7 @@ import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.Wrist.WristAngle;
 import frc.robot.subsystems.wrist.WristIOSimulation;
-// import frc.robot.subsystems.wrist.WristIOTalonFX;
+import frc.robot.subsystems.wrist.WristIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -203,12 +206,13 @@ public class RobotContainer {
     //                 new SetWristRollerSpeed(wrist, -0.01)
     //                     .unless(() -> wrist.isCanCloserThan(0.1))));
 
-    // by default, have the wrist turn to a set point
-    wrist.setDefaultCommand(
-        new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle())
-            .unless(() -> !wrist.isCanCloserThan(0.1)));
-
-    // right bumper resets all encoders
+    // wrist.setDefaultCommand(
+    //     new ConditionalCommand(
+    //         new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle()),
+    //         new SetWristTargetAngleCommand(wrist, 0),
+    //         () - !wrist.isCanCloserThan(0.1)));
+    /* */
+    // resets encoders. THIS WILL BREAK THE ROBOT
     controller
         .rightBumper()
         .onTrue(
@@ -217,43 +221,55 @@ public class RobotContainer {
                 .alongWith(new InstantCommand(() -> wrist.resetWristEncoder()))
                 .ignoringDisable(true));
 
-    // b manually moves the wrist forwards
-    controller.b().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> 0.05));
-    // controller.x().whileTrue(new SetWristTargetAngleCommand(wrist, 0));
+    // eject note as long as button as help
+    controller.rightBumper().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.3));
 
-    // a intakes until the canrange detects the coral
-    controller
-        .a()
-        .whileTrue(
-            new IntakeWristCommand(wrist, -0.2)
-                .andThen(new ControllerVibrateCommand(0.7, controller)));
+    // moves elevator and wrist to the scoring positions level 2 after the right button is tapped
+    controller.leftTrigger().whileTrue(ScoringCommands.prepForScoring(1, wrist, elevator));
 
-    // y shoots coral out
-    controller.y().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.5));
+    // moves elevator and wrist to the scoring positions level 2 after the right button is tapped
+    controller.leftBumper().whileTrue(ScoringCommands.prepForScoring(2, wrist, elevator));
 
-    // left bumper sets the wrist outwards manually
-    controller
-        .leftBumper()
-        .whileTrue(new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle()));
-
-    // controller.leftTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> -0.2));
-    // controller.rightTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> 0.2));
-
-    // left trigger sets height to Stage 2
-    controller
-        .leftTrigger()
-        .whileTrue(
-            new InstantCommand(() -> elevator.setTargetHeight(PElevator.FirstLevel.getValue())));
-    // right trigger sets height to Stage 3
+    // intakes then vibrates controlller when in position and has coral
     controller
         .rightTrigger()
         .whileTrue(
-            new InstantCommand(() -> elevator.setTargetHeight(PElevator.SecondLevel.getValue())));
-    // x sets elevator height back down to 0
-    controller
-        .x()
-        .whileTrue(
-            new InstantCommand(() -> elevator.setTargetHeight(PElevator.MinHeight.getValue())));
+            IntakingCommands.intakeCommand(wrist, elevator)
+                // vibrates the controller for half a second after intake
+                .andThen(
+                    Commands.deadline(
+                        new WaitCommand(0.5), new ControllerVibrateCommand(0.7, controller))));
+
+    // old elevator default command
+    // elevator.setDefaultCommand(
+    // new SetElevatorPresetCommand(elevator, wrist, 0).unless(() -> wrist.isCanCloserThan(0.1)));
+
+    // if there is no note move the elevator down to zero. If there is a note move elevator to first
+    // level if it is currently below first level
+    elevator.setDefaultCommand(
+        new ConditionalCommand(
+            // set the elevator to move up to stage 1 if it's below and has the coral(that way cycle
+            // time is increased if they forgot to do it)
+            new SetElevatorPresetCommand(elevator, wrist, PElevator.FirstLevel.getValue())
+                .unless(() -> elevator.getCurrentHeight() > PElevator.FirstLevel.getValue()),
+            // sets the the elevator to go zero if it doesn't have a coral
+            new SetElevatorPresetCommand(elevator, wrist, 0),
+            // conditional that controls the elevator
+            () -> wrist.isCanCloserThan(0.1)));
+
+    // if there is a note move the wrist to scoring position. If there is not a note move the wrist
+    // back to intake position when the elevator is on the floor
+    wrist.setDefaultCommand(
+        new ConditionalCommand(
+            // if there is a note move the wrist angle back
+            new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle()),
+            // if there is not a note move the wrist to the target angle 0
+            new SetWristTargetAngleCommand(wrist, 0)
+                // unless the elevator is not on the floor
+                .unless(() -> !elevator.isOnFloor()),
+            // controller of the conditional
+            () -> wrist.isCanCloserThan(0.01)));
+
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
@@ -334,53 +350,26 @@ public class RobotContainer {
   }
 
   // registers pathplanner's named commands
-  private void registerNamedCommandsAuto() {
-    // controls wether or not the robot actually does the commands or just prints out that it's
-    // doing the commands
-    boolean isReal = false;
+  public void registerNamedCommandsAuto() {
 
-    addNamedCommand("intake prep", IntakingCommands.prepForIntakeCommand(wrist, elevator), isReal);
-    // addNamedCommand("test", new TellCommand("test"), isReal);
-    addNamedCommand("intake", IntakingCommands.intakeCommand(wrist, elevator), isReal);
-    addNamedCommand("prepStage1", ScoringCommands.prepForScoring(1, wrist, elevator), isReal);
-    addNamedCommand("prepStage2", ScoringCommands.prepForScoring(2, wrist, elevator), isReal);
-    addNamedCommand(
-        "Scoring",
-        new WaitCommand(0.2).deadlineFor(new SetWristRollerSpeedCommand(wrist, -0.4)),
-        isReal);
-  }
-
-  public void addNamedCommand(String commandName, Command command, boolean isReal) {
-
-    if (isReal) {
-      NamedCommands.registerCommand(commandName, command);
-      new EventTrigger(commandName).onTrue(command);
+    // if ur simulating it's better to just print everything
+    if (Constants.simulatingAuto) {
+      NamedCommands.registerCommand("test", new TellCommand("test"));
+      NamedCommands.registerCommand("intake", new TellCommand("intake auto command"));
+      NamedCommands.registerCommand("prepStage1", new TellCommand("prep stage 1 auto command"));
+      NamedCommands.registerCommand("prepStage2", new TellCommand("prep stage 2 auto command"));
+      NamedCommands.registerCommand("Scoring", new TellCommand("Scoring auto command"));
+      // if ur not simulating register commands as normal
     } else {
-      // registers the named commands to print something out instead of actually running anything
-      NamedCommands.registerCommand(commandName, new TellCommand(commandName + " auto command"));
-      new EventTrigger(commandName)
-          .onTrue(new TellCommand(commandName + " auto event trigger command"));
+      NamedCommands.registerCommand("test", new TellCommand("test"));
+      NamedCommands.registerCommand("intake", IntakingCommands.intakeCommand(wrist, elevator));
+      NamedCommands.registerCommand(
+          "prepStage1", ScoringCommands.prepForScoring(1, wrist, elevator));
+      NamedCommands.registerCommand(
+          "prepStage2", ScoringCommands.prepForScoring(2, wrist, elevator));
+      NamedCommands.registerCommand(
+          "Scoring", new WaitCommand(0.2).deadlineFor(new SetWristRollerSpeedCommand(wrist, -0.4)));
     }
-  }
-
-  public void registerAutoChooser() {
-    // Set up auto routines
-
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 
   //   public void sendVisionMeasurement() {

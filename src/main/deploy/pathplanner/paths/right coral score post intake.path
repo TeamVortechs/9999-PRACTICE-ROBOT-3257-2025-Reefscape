@@ -3,6 +3,7 @@
   "waypoints": [
     {
       "anchor": {
+<<<<<<< HEAD:src/main/deploy/pathplanner/paths/right coral score post intake.path
         "x": 0.9120754076086958,
         "y": 5.837
       },
@@ -22,6 +23,27 @@
       "prevControl": {
         "x": 2.817125,
         "y": 5.180374999999999
+=======
+        "x": 3.1814123376623376,
+        "y": 4.062987012987013
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.9314123376623376,
+        "y": 4.062987012987013
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.3599431818181817,
+        "y": 4.062987012987013
+      },
+      "prevControl": {
+        "x": 2.672910233448617,
+        "y": 4.045103181465274
+>>>>>>> AtHomeWork2:src/main/deploy/pathplanner/paths/Clear.path
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +55,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.25,
-    "maxAcceleration": 0.75,
+    "maxVelocity": 1.5,
+    "maxAcceleration": 1.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

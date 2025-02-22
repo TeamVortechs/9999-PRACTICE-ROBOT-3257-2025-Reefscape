@@ -3,43 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.317459239130435,
-        "y": 2.9826282051282056
+        "x": 1.2165340909090911,
+        "y": 7.051377840909091
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.192459239130435,
-        "y": 3.1991345560743154
+        "x": 1.4514353679701915,
+        "y": 6.965812719305343
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "intaketop"
     },
     {
       "anchor": {
-        "x": 5.317459239130435,
-        "y": 2.9826282051282056
+        "x": 3.6894886363636363,
+        "y": 5.069642857142856
       },
       "prevControl": {
-        "x": 5.424233738691464,
-        "y": 2.756576869711907
+        "x": 1.8648169314002145,
+        "y": 5.010128440773211
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "ScoreTopIntake"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "prepStage2",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-<<<<<<< HEAD:src/main/deploy/pathplanner/paths/CoralFeed5 Right.path
-    "maxVelocity": 0.5,
-    "maxAcceleration": 0.25,
-=======
     "maxVelocity": 1.5,
     "maxAcceleration": 1.5,
->>>>>>> AtHomeWork2:src/main/deploy/pathplanner/paths/CoralFeed5.path
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -47,13 +49,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": -59.22246961446547
   },
   "reversed": false,
-  "folder": "CoralFeed Right",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": -54.492810375018536
   },
   "useDefaultConstraints": true
 }

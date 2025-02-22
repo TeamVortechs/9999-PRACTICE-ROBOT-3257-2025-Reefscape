@@ -150,6 +150,11 @@ public class Elevator extends SubsystemBase {
     manualOverride = true;
   }
 
+  // returns wether or not the elevator is close to the floor
+  public boolean isOnFloor() {
+    return getCurrentHeight() < 0.1;
+  }
+
   // gest the current height of the elevator motor
   public double getCurrentHeight() {
     return currentHeight;

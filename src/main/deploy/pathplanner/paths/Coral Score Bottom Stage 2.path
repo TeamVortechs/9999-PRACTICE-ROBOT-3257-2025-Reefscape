@@ -8,8 +8,13 @@
       },
       "prevControl": null,
       "nextControl": {
+<<<<<<< HEAD:src/main/deploy/pathplanner/paths/Coral Score Bottom Stage 2.path
         "x": 7.8719871652703475,
         "y": 2.143861553348967
+=======
+        "x": 7.800048632931258,
+        "y": 2.043677926982519
+>>>>>>> AtHomeWork2:src/main/deploy/pathplanner/paths/Coral Score Bottom.path
       },
       "isLocked": false,
       "linkedName": "BottomStartingSpot"
@@ -20,8 +25,13 @@
         "y": 2.9233766233766234
       },
       "prevControl": {
+<<<<<<< HEAD:src/main/deploy/pathplanner/paths/Coral Score Bottom Stage 2.path
         "x": 5.567372197964771,
         "y": 2.516936557166029
+=======
+        "x": 5.544282349080197,
+        "y": 2.2653305941611404
+>>>>>>> AtHomeWork2:src/main/deploy/pathplanner/paths/Coral Score Bottom.path
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,14 +44,23 @@
   "eventMarkers": [
     {
       "name": "prepStage2",
+<<<<<<< HEAD:src/main/deploy/pathplanner/paths/Coral Score Bottom Stage 2.path
       "waypointRelativePos": 0.15,
+=======
+      "waypointRelativePos": 0.13888888888888704,
+>>>>>>> AtHomeWork2:src/main/deploy/pathplanner/paths/Coral Score Bottom.path
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
+<<<<<<< HEAD:src/main/deploy/pathplanner/paths/Coral Score Bottom Stage 2.path
     "maxVelocity": 0.5,
     "maxAcceleration": 0.25,
+=======
+    "maxVelocity": 1.5,
+    "maxAcceleration": 1.5,
+>>>>>>> AtHomeWork2:src/main/deploy/pathplanner/paths/Coral Score Bottom.path
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

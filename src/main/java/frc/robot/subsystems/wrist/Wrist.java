@@ -58,7 +58,7 @@ public class Wrist extends SubsystemBase {
     }
 
     if (manualOverride) {
-      System.out.println("MANUAL OVERRIDE WRIST ENGAGED");
+      System.out.println("Wrist MANUAL OVERRIDE WRIST ENGAGED");
       return;
     }
     // set target position to 100 rotations
