@@ -31,11 +31,15 @@ public class VisionConstants {
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
   public static final Transform3d ROBOT_TO_ARDUCAM_LEFT =
-      new Transform3d(0, -0.3, 0.61, new Rotation3d(0.0, .35, 0.175)); // truly -0.35 rads pitch
+      new Transform3d(
+          0,
+          -0.3,
+          0.76,
+          new Rotation3d(0.0, .35, 0.175)); // unused due to no left camera on robot yet
   //   public static Transform3d robotToArducam1 =
   //       new Transform3d(0, 0.3, 0.61, new Rotation3d(0.0, 0.35, -0.175));
   public static final Transform3d ROBOT_TO_ARDUCAM_RIGHT =
-      new Transform3d(0, 0.3, 0.61, new Rotation3d(0.0, 0.35, -1.5708));
+      new Transform3d(0, 0.16, 0.65, new Rotation3d(0.0, 0.35, -0.174533));
 
   // Basic filtering thresholds
   public static final double maxAmbiguity = 0.2;
