@@ -179,7 +179,8 @@ public class RobotContainer {
     registerNamedCommandsAuto();
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    registerAutoChooser();
+   
+    //registerAutoChooser();
     // configure the autonomous named commands
 
     // Configure the button bindings
@@ -229,7 +230,7 @@ public class RobotContainer {
     /* */
     // resets encoders. THIS WILL BREAK THE ROBOT
     controller
-        .rightBumper()
+        .start()
         .onTrue(
             new InstantCommand(() -> elevator.resetEncoders())
                 .ignoringDisable(true)
@@ -237,7 +238,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // eject note as long as button as help
-    controller.rightBumper().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.3));
+   // controller.rightBumper().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.3));
 
     // moves elevator and wrist to the scoring positions level 2 after the right button is tapped
     controller.leftTrigger().whileTrue(ScoringCommands.prepForScoring(1, wrist, elevator));
@@ -247,18 +248,18 @@ public class RobotContainer {
 
     // intakes then vibrates controlller when in position and has coral
     // y shoots coral out
-    controller.y().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.5));
+    controller.a().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.5));
 
     // left bumper sets the wrist outwards manually
     controller
-        .leftBumper()
+        .b()
         .whileTrue(new SetWristTargetAngleCommand(wrist, WristAngle.STAGE2_ANGLE.getAngle()));
 
     // controller.leftTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> -0.2));
     // controller.rightTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> 0.2));
 
     // left trigger sets height to Stage 2
-    controller
+    /*controller
         .leftTrigger()
         .whileTrue(
             new InstantCommand(() -> elevator.setTargetHeight(Constants.Elevator.STAGE_2_LEVEL)));
@@ -267,16 +268,17 @@ public class RobotContainer {
         .rightTrigger()
         .whileTrue(
             new InstantCommand(() -> elevator.setTargetHeight(Constants.Elevator.STAGE_3_LEVEL)));
-    // x sets elevator height back down to 0
+            /* */
+    // right trigger sets elevator height back down to 0
     controller
-        .x()
+        .rightTrigger()
         .whileTrue(
             new InstantCommand(() -> elevator.setTargetHeight(Constants.Elevator.INTAKE_HEIGHT)));
             IntakingCommands.intakeCommand(wrist, elevator)
                 // vibrates the controller for half a second after intake
                 .andThen(
                     Commands.deadline(
-                        new WaitCommand(0.5), new ControllerVibrateCommand(0.7, controller))));
+                        new WaitCommand(0.5), new ControllerVibrateCommand(0.7, controller)));
 
     // old elevator default command
     // elevator.setDefaultCommand(
@@ -288,8 +290,8 @@ public class RobotContainer {
         new ConditionalCommand(
             // set the elevator to move up to stage 1 if it's below and has the coral(that way cycle
             // time is increased if they forgot to do it)
-            new SetElevatorPresetCommand(elevator, wrist, PElevator.FirstLevel.getValue())
-                .unless(() -> elevator.getCurrentHeight() > PElevator.FirstLevel.getValue()),
+            new SetElevatorPresetCommand(elevator, wrist, Constants.Elevator.STAGE_2_LEVEL)
+                .unless(() -> elevator.getCurrentHeight() > Constants.Elevator.STAGE_2_LEVEL),
             // sets the the elevator to go zero if it doesn't have a coral
             new SetElevatorPresetCommand(elevator, wrist, 0),
             // conditional that controls the elevator
@@ -299,8 +301,8 @@ public class RobotContainer {
     // back to intake position when the elevator is on the floor
     wrist.setDefaultCommand(
         new ConditionalCommand(
-            // if there is a note move the wrist angle back
-            new SetWristTargetAngleCommand(wrist, WristAngle.STAGE1_ANGLE.getAngle()),
+            // if there is a note move the wrist angle to the shooting angle
+            new SetWristTargetAngleCommand(wrist, Constants.Arm.WRIST_STAGE_2_ANGLE),
             // if there is not a note move the wrist to the target angle 0
             new SetWristTargetAngleCommand(wrist, 0)
                 // unless the elevator is not on the floor
@@ -391,14 +393,15 @@ public class RobotContainer {
   public void registerNamedCommandsAuto() {
 
     // if ur simulating it's better to just print everything
-    if (Constants.simulatingAuto) {
-      NamedCommands.registerCommand("test", new TellCommand("test"));
+  //  if (Constants.simulatingAuto) {
+   /*   NamedCommands.registerCommand("test", new TellCommand("test"));
       NamedCommands.registerCommand("intake", new TellCommand("intake auto command"));
       NamedCommands.registerCommand("prepStage1", new TellCommand("prep stage 1 auto command"));
       NamedCommands.registerCommand("prepStage2", new TellCommand("prep stage 2 auto command"));
       NamedCommands.registerCommand("Scoring", new TellCommand("Scoring auto command"));
       // if ur not simulating register commands as normal
-    } else {
+      /* */
+  //  } else {
       NamedCommands.registerCommand("test", new TellCommand("test"));
       NamedCommands.registerCommand("intake", IntakingCommands.intakeCommand(wrist, elevator));
       NamedCommands.registerCommand(
@@ -407,7 +410,7 @@ public class RobotContainer {
           "prepStage2", ScoringCommands.prepForScoring(2, wrist, elevator));
       NamedCommands.registerCommand(
           "Scoring", new WaitCommand(0.2).deadlineFor(new SetWristRollerSpeedCommand(wrist, -0.4)));
-    }
+    
   }
 
   //   public void sendVisionMeasurement() {
