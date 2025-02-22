@@ -29,14 +29,6 @@ public class Wrist extends SubsystemBase {
 
   @AutoLogOutput private boolean manualOverride = false;
 
-  private ProfiledPIDController PID =
-      new ProfiledPIDController(
-          PWrist.proportional.getValue(),
-          PWrist.integral.getValue(),
-          PWrist.derivative.getValue(),
-          new TrapezoidProfile.Constraints(
-              PWrist.speedLimit.getValue(), PWrist.accelerationLimit.getValue()));
-
   public Wrist(WristIO wristIO) {
     this.wristIO = wristIO;
   }
