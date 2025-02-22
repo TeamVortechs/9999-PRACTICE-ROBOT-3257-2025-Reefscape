@@ -61,6 +61,8 @@ public class CANdleSystem extends SubsystemBase {
   private Animation m_toAnimate = null;
 
   public enum AnimationTypes {
+    READY,
+    UNREADY,
     ColorFlow,
     Fire,
     Larson,
@@ -387,6 +389,16 @@ public class CANdleSystem extends SubsystemBase {
         m_candleChannel = 0;
         m_toAnimate = new RainbowAnimation(1, 0.7, LEDS_PER_ANIMATION, m_animDirection, LED_OFFSET);
         break;
+      case READY: // modified from strobe
+        m_candleChannel = 0;
+        m_toAnimate = new StrobeAnimation(0, 255, 0, 0, 1, LEDS_PER_ANIMATION, LED_OFFSET);
+        break;
+      case UNREADY: // copy of twinkle
+        m_candleChannel = 0;
+        m_toAnimate =
+            new TwinkleAnimation(
+                30, 70, 60, 0, 0.4, LEDS_PER_ANIMATION, TwinklePercent.Percent42, LED_OFFSET);
+        break;
 
       case SetAll:
         m_toAnimate = null;
@@ -428,6 +440,15 @@ public class CANdleSystem extends SubsystemBase {
       for (int i = 0; i < 10; ++i) {
         m_candle.clearAnimation(i);
       }
+    }
+  }
+
+  public void testReactionFunction(double inputAngle) {
+    if (Math.abs(inputAngle) < 5) {
+      changeAnimation(AnimationTypes.READY);
+    } else {
+      System.out.println("I'm not ready please help");
+      changeAnimation(AnimationTypes.UNREADY);
     }
   }
 
