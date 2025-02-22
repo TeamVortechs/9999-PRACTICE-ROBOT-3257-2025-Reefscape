@@ -39,7 +39,7 @@ public class Wrist extends SubsystemBase {
     CurrentAngle = wristIO.getAngleRotations();
 
     if (getAngleRotations() > Constants.Arm.WRIST_HIGHEST_ANGLE
-        || getAngleRotations() < targetBuffer) {
+        || getAngleRotations() < -targetBuffer) {
       setManualSpeed(0);
       System.out.println("WRIST OUT OF BOUNDS");
     }

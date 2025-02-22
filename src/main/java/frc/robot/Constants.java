@@ -63,5 +63,4 @@ public final class Constants {
     // public static final double WRIST_STAGE_4_ANGLE = 0; // currently impossible to achieve
     public static final double WRIST_HIGHEST_ANGLE = 2.56;
   }
-
 }
