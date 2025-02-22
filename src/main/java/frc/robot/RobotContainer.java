@@ -57,6 +57,7 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorModuleIOSimulation;
 import frc.robot.subsystems.elevator.ElevatorModuleTalonFXIO;
+// import frc.robot.subsystems.elevator.Elevator2;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -66,6 +67,8 @@ import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.Wrist.WristAngle;
 import frc.robot.subsystems.wrist.WristIOSimulation;
 import frc.robot.subsystems.wrist.WristIOTalonFX;
+
+// import frc.robot.subsystems.wrist.WristIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -81,12 +84,24 @@ public class RobotContainer {
   private final Vision vision;
 
   // physical subsystems
-  private final Wrist wrist = new Wrist(new WristIOSimulation());
+  private final Wrist wrist =
+      new Wrist(
+          new WristIOTalonFX(
+              Constants.Arm.ARM_MOTOR_ID,
+              Constants.Arm.ROLLER_MOTOR_ID,
+              Constants.Arm.CANBUS,
+              Constants.Arm.CANRANGE_ID));
 
   // DigitalInput limitSwitch =
   // new DigitalInput(20); // !!!!! FAKE CHANNEL! CHANGE WHEN PROPERLY IMPLEMENTED !!!!!!
   // private final Intake intake = new Intake(new IntakeIOTalonFX(), limitSwitch);
-  private final Elevator elevator = new Elevator(new ElevatorModuleIOSimulation(), wrist);
+  private final Elevator elevator =
+      new Elevator(
+          new ElevatorModuleTalonFXIO(
+              Constants.Elevator.MOTOR_LEFT_ID,
+              Constants.Elevator.MOTOR_RIGHT_ID,
+              Constants.Elevator.CANBUS),
+          wrist);
   //   private final Elevator2 elevator2 =
   //       new Elevator2(
   //           new ElevatorModuleTalonFXIO(
@@ -231,9 +246,32 @@ public class RobotContainer {
     controller.leftBumper().whileTrue(ScoringCommands.prepForScoring(2, wrist, elevator));
 
     // intakes then vibrates controlller when in position and has coral
+    // y shoots coral out
+    controller.y().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.5));
+
+    // left bumper sets the wrist outwards manually
+    controller
+        .leftBumper()
+        .whileTrue(new SetWristTargetAngleCommand(wrist, WristAngle.STAGE2_ANGLE.getAngle()));
+
+    // controller.leftTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> -0.2));
+    // controller.rightTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> 0.2));
+
+    // left trigger sets height to Stage 2
+    controller
+        .leftTrigger()
+        .whileTrue(
+            new InstantCommand(() -> elevator.setTargetHeight(Constants.Elevator.STAGE_2_LEVEL)));
+    // right trigger sets height to Stage 3
     controller
         .rightTrigger()
         .whileTrue(
+            new InstantCommand(() -> elevator.setTargetHeight(Constants.Elevator.STAGE_3_LEVEL)));
+    // x sets elevator height back down to 0
+    controller
+        .x()
+        .whileTrue(
+            new InstantCommand(() -> elevator.setTargetHeight(Constants.Elevator.INTAKE_HEIGHT)));
             IntakingCommands.intakeCommand(wrist, elevator)
                 // vibrates the controller for half a second after intake
                 .andThen(

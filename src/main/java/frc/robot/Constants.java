@@ -13,9 +13,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -39,59 +36,31 @@ public final class Constants {
   }
 
   // constants used for the elevator
-  public static final int ELEVATOR_MOTOR_LEFT_ID = 21;
-  public static final int ELEVATOR_MOTOR_RIGHT_ID = 22;
-  public static final String ELEVATOR_CANBUS = "rio";
-  public static final int CANRANGE_ID = 60;
+  public static final class Elevator {
 
-  public static final double ELEVATOR_MAX_HEIGHT = 29.754;
-  public static final double ELEVATOR_MIN_HEIGHT = 0;
+    public static final int MOTOR_LEFT_ID = 21;
+    public static final int MOTOR_RIGHT_ID = 22;
+    public static final String CANBUS = "rio";
 
-  // constants used for the arm
-  public static final int ROLLER_MOTOR_ID = 23;
-  public static final int ARM_MOTOR_ID = 24;
+    public static final double MAX_HEIGHT = 29.754;
+    public static final double MIN_HEIGHT = 0;
+    public static final double INTAKE_HEIGHT = 0;
+    // public static final double STAGE_1_LEVEL = 0; // currently unimplemented
+    public static final double STAGE_2_LEVEL = 6.803;
+    public static final double STAGE_3_LEVEL = 17.343;
+    // public static final double STAGE_4_LEVEL = 0; // currently impossible to achieve
 
-  public static final double WRIST_ANGLE_DROP = 2.4;
-  public static final double WRIST_HIGHEST_ANGLE = 2.56;
-
-  public static boolean simulatingAuto = true;
-
-  // public static final double ELEVATOR_HEIGHT_1 = 6.803;
-  // public static final double ELEVATOR_HEIGHT_2 = 17.343;
-
-  public static class VisionConstants {
-    // placeholder translation to use in the estimator(? i'm not sure how it'll detect the camera)
-    public static final Transform3d robotToCam =
-        new Transform3d(
-            new Translation3d(0.5, 0.0, 0.5),
-            new Rotation3d(
-                0, 0,
-                0)); // Cam mounted facing forward, half a meter forward of center, half a meter up
-    // from center.
-    // placeholder translation to use in the estimator(? i'm not sure how it'll detect the camera)
-    public static final Transform3d camToRobot =
-        new Transform3d(
-            new Translation3d(-0.5, -0.0, -0.5),
-            new Rotation3d(
-                0, 0,
-                0)); // Cam mounted facing forward, half a meter forward of center, half a meter up
-    // from center.
   }
 
-  // public static class Vision {
-  //   public static final String kCameraName = "Arducam_1";
-  //   // Cam mounted facing forward, half a meter forward of center, half a meter up from center.
-  //   // !!! these are placeholder numbers from the example
-  //   public static final Transform3d kRobotToCam =
-  //       new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
+  // constants used for the arm/wrist (naming inconsistency)
+  public static final class Arm {
+    public static final int ROLLER_MOTOR_ID = 23;
+    public static final int ARM_MOTOR_ID = 24;
+    public static final int CANRANGE_ID = 60;
+    public static final String CANBUS = "rio";
 
-  //   // The layout of the AprilTags on the field
-  //   public static final AprilTagFieldLayout kTagLayout =
-  //       AprilTagFields.kDefaultField.loadAprilTagLayoutField();
-
-  //   // The standard deviations of our vision estimated poses, which affect correction rate
-  //   // (Fake values. Experiment and determine estimation noise on an actual robot.)
-  //   public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-  //   public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
-  // }
+    public static final double WRIST_STAGE_2_ANGLE = 2.4;
+    // public static final double WRIST_STAGE_4_ANGLE = 0; // currently impossible to achieve
+    public static final double WRIST_HIGHEST_ANGLE = 2.56;
+  }
 }

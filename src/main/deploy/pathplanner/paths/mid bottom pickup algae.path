@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.89875,
-        "y": 4.0
+        "x": 5.868993506493506,
+        "y": 3.8493100649350653
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.89875,
-        "y": 4.0
+        "x": 6.868993506493506,
+        "y": 3.8493100649350653
       },
       "isLocked": false,
       "linkedName": "midcoralscoretop"
@@ -61,7 +61,7 @@
     "rotation": 175.29105861213714
   },
   "reversed": false,
-  "folder": "algae paths",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

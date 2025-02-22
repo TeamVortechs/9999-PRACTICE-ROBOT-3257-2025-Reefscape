@@ -8,6 +8,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.KDoublePreferences.PWrist;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class WristIOTalonFX implements WristIO {
@@ -26,18 +27,18 @@ public class WristIOTalonFX implements WristIO {
     TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
 
     var slot0Configs = talonFXConfigs.Slot0;
-    slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
-    slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
-    slot0Configs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
-    slot0Configs.kP = 4.8; // A position error of 2.5 rotations results in 12 V output
-    slot0Configs.kI = 0; // no output for integrated error
-    slot0Configs.kD = 0.1; // A velocity error of 1 rps results in 0.1 V output
+    slot0Configs.kS = PWrist.kS.getValue(); // Add 0.25 V output to overcome static friction
+    slot0Configs.kV = PWrist.kV.getValue(); // A velocity target of 1 rps results in 0.12 V output
+    slot0Configs.kA = PWrist.kA.getValue(); // An acceleration of 1 rps/s requires 0.01 V output
+    slot0Configs.kP =
+        PWrist.kP.getValue(); // A position error of 2.5 rotations results in 12 V output
+    slot0Configs.kI = PWrist.kI.getValue(); // no output for integrated error
+    slot0Configs.kD = PWrist.kD.getValue(); // A velocity error of 1 rps results in 0.1 V output
 
     var motionMagicConfigs = talonFXConfigs.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 3; // Target cruise velocity of 80 rps
-    motionMagicConfigs.MotionMagicAcceleration =
-        2.5; // Target acceleration of 160 rps/s (0.5 seconds)
-    motionMagicConfigs.MotionMagicJerk = 10; // Target jerk of 1600 rps/s/s (0.1 seconds)
+    motionMagicConfigs.MotionMagicCruiseVelocity = PWrist.speedLimit.getValue();
+    motionMagicConfigs.MotionMagicAcceleration = PWrist.accelerationLimit.getValue();
+    motionMagicConfigs.MotionMagicJerk = PWrist.jerkLimit.getValue();
 
     arm.getConfigurator().apply(talonFXConfigs);
 

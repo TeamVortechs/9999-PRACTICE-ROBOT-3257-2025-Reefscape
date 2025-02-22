@@ -7,31 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Coral Score Mid"
+            "pathName": "Coral Score Top Stage 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "prepStage1"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Scoring"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 8.0
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Mid Coral Score to Bottom Intake"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "intake"
           }
         }
       ]

@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.2165340909090911,
-        "y": 7.051377840909091
+        "x": 1.6848076923076918,
+        "y": 7.399807692307693
       },
       "prevControl": {
-        "x": 1.4117512932698482,
-        "y": 6.895204079020484
+        "x": 1.8800248946684488,
+        "y": 7.243633930419086
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": -54.492810375018536
   },
   "reversed": false,
-  "folder": "CoralFeed",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": 128.45370921670593
