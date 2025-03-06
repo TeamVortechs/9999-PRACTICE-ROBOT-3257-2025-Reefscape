@@ -21,6 +21,9 @@ import edu.wpi.first.wpilibj.RobotBase;
  * (log replay from a file).
  */
 public final class Constants {
+
+  public static final boolean increasedPathfindingSpeed = false;
+
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
@@ -42,14 +45,14 @@ public final class Constants {
     public static final int MOTOR_RIGHT_ID = 22;
     public static final String CANBUS = "rio";
 
-    public static final double MAX_HEIGHT = 29.754;
+    public static final double MAX_HEIGHT =
+        43.336; // old height 43.66 ABSOLUTELY NEVER ACHIEVE THIS OR EVERYTHING EXPLODES
     public static final double MIN_HEIGHT = 0;
     public static final double INTAKE_HEIGHT = 0;
     // public static final double STAGE_1_LEVEL = 0; // currently unimplemented
-    public static final double STAGE_2_LEVEL = 6.803;
-    public static final double STAGE_3_LEVEL = 17.343;
-    // public static final double STAGE_4_LEVEL = 0; // currently impossible to achieve
-
+    public static final double STAGE_2_LEVEL = 10.81066;
+    public static final double STAGE_3_LEVEL = 19.5383;
+    public static final double BARGE_LEVEL = 43.2; // currently impossible to achieve
   }
 
   // constants used for the arm/wrist (naming inconsistency)
@@ -59,8 +62,11 @@ public final class Constants {
     public static final int CANRANGE_ID = 60;
     public static final String CANBUS = "rio";
 
-    public static final double WRIST_STAGE_2_ANGLE = 2.4;
-    // public static final double WRIST_STAGE_4_ANGLE = 0; // currently impossible to achieve
-    public static final double WRIST_HIGHEST_ANGLE = 2.56;
+    public static final double WRIST_STAGE_2_ANGLE = 2.251;
+    public static final double WRIST_GROUND_ANGLE =
+        5.441; // we do not know this yet; input correct angle later
+    public static final double WRIST_STAGE_4_ANGLE = 1.3007; // currently impossible to achieve
+    public static final double WRIST_HIGHEST_ANGLE =
+        WRIST_GROUND_ANGLE + 0.2; // set highest angle to wrist ground angle plus arbitrary leeway
   }
 }

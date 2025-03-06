@@ -198,5 +198,37 @@
     "properties": {
       "persistent": true
     }
+  },
+  {
+    "name": "/Preferences/wrist jerk limit",
+    "type": "double",
+    "value": 10.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Wrist Target Tolerance",
+    "type": "double",
+    "value": 0.1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/wrist MANUAL speed limit",
+    "type": "double",
+    "value": 0.3,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/elevator jerk limit",
+    "type": "double",
+    "value": 30.0,
+    "properties": {
+      "persistent": true
+    }
   }
 ]
