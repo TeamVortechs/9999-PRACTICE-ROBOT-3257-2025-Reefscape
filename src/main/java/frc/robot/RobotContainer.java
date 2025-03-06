@@ -47,9 +47,7 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorModuleTalonFXIO;
 // import frc.robot.subsystems.elevator.Elevator2;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.Wrist.WristAngle;
 import frc.robot.subsystems.wrist.WristIOTalonFX;
@@ -138,17 +136,18 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.ARDUCAM_LEFT_NAME,
-                    VisionConstants.ROBOT_TO_ARDUCAM_LEFT,
-                    drive::getPose),
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.ARDUCAM_RIGHT_NAME,
-                    VisionConstants.ROBOT_TO_ARDUCAM_RIGHT,
-                    drive::getPose));
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new VisionIOPhotonVisionSim(
+        //             VisionConstants.ARDUCAM_LEFT_NAME,
+        //             VisionConstants.ROBOT_TO_ARDUCAM_LEFT,
+        //             drive::getPose),
+        //         new VisionIOPhotonVisionSim(
+        //             VisionConstants.ARDUCAM_RIGHT_NAME,
+        //             VisionConstants.ROBOT_TO_ARDUCAM_RIGHT,
+        //             drive::getPose));
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
 
       default:
@@ -433,27 +432,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return autoChooser.get();
-    // try {
-    //   final var path = PathPlannerPath.fromPathFile("Clear");
-    //   return AutoBuilder.followPath(path);
-    // } catch (Exception ignored) {
-
-    // }
-    // return null;
-    // if (DriverStation.getAlliance().get()
-    //     == DriverStation.Alliance.Red) { // If red, go in reverse (forwards on red side)
-    //   return DriveCommands.joystickDrive(drive, () -> -0.6, () -> 0, () -> 0)
-    //       .andThen(Commands.waitSeconds(2))
-    //       .andThen(DriveCommands.joystickDrive(drive, () -> 0, () -> 0, () -> 0));
-    // } else { // If not, go forwards (forwards on blue side)
-    //   return DriveCommands.joystickDrive(drive, () -> 0.6, () -> 0, () -> 0)
-    //       .andThen(Commands.waitSeconds(2))
-    //       .andThen(DriveCommands.joystickDrive(drive, () -> 0, () -> 0, () -> 0));
-    // }
-    return DriveCommands.joystickDrive(drive, () -> 0.6, () -> 0, () -> 0)
-        .andThen(Commands.waitSeconds(2))
-        .andThen(DriveCommands.joystickDrive(drive, () -> 0, () -> 0, () -> 0));
+    return autoChooser.get();
   }
 
   // registers pathplanner's named commands

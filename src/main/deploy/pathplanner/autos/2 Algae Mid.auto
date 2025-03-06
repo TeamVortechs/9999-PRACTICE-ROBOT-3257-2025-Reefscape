@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "StartPoint To Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score To Algae Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AlgaeIntake To Score"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

@@ -2,7 +2,7 @@
   {
     "name": "/Preferences/wrist proportional",
     "type": "double",
-    "value": 1.6,
+    "value": 0.7,
     "properties": {
       "persistent": true
     }
@@ -10,7 +10,7 @@
   {
     "name": "/Preferences/wrist integral",
     "type": "double",
-    "value": 0.0002,
+    "value": 0.0,
     "properties": {
       "persistent": true
     }
@@ -26,7 +26,7 @@
   {
     "name": "/Preferences/wrist speed limit",
     "type": "double",
-    "value": 0.01,
+    "value": 0.6,
     "properties": {
       "persistent": true
     }
@@ -34,7 +34,7 @@
   {
     "name": "/Preferences/wrist acceleration limit",
     "type": "double",
-    "value": 0.01,
+    "value": 0.13,
     "properties": {
       "persistent": true
     }
@@ -42,7 +42,7 @@
   {
     "name": "/Preferences/elevator proportional",
     "type": "double",
-    "value": 0.1,
+    "value": 2.0,
     "properties": {
       "persistent": true
     }
@@ -50,7 +50,7 @@
   {
     "name": "/Preferences/elevator integral",
     "type": "double",
-    "value": 0.0002,
+    "value": 0.0,
     "properties": {
       "persistent": true
     }
@@ -66,7 +66,7 @@
   {
     "name": "/Preferences/elevator speed limit",
     "type": "double",
-    "value": 0.01,
+    "value": 2.0,
     "properties": {
       "persistent": true
     }
@@ -74,7 +74,7 @@
   {
     "name": "/Preferences/elevator acceleration limit",
     "type": "double",
-    "value": 0.01,
+    "value": 1.0,
     "properties": {
       "persistent": true
     }
@@ -82,7 +82,7 @@
   {
     "name": "/Preferences/Elevator Max height",
     "type": "double",
-    "value": 1.6637,
+    "value": 29.754,
     "properties": {
       "persistent": true
     }
@@ -106,7 +106,7 @@
   {
     "name": "/Preferences/Elevator First Level",
     "type": "double",
-    "value": 0.1,
+    "value": 6.803,
     "properties": {
       "persistent": true
     }
@@ -114,87 +114,7 @@
   {
     "name": "/Preferences/Elevator Second Level",
     "type": "double",
-    "value": 0.2,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/Elevator Third Level",
-    "type": "double",
-    "value": 0.3,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/kG",
-    "type": "double",
-    "value": 0.2,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/kS",
-    "type": "double",
-    "value": 0.25,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/kV",
-    "type": "double",
-    "value": 0.12,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/kA",
-    "type": "double",
-    "value": 0.01,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/kP",
-    "type": "double",
-    "value": 7.5,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/kI",
-    "type": "double",
-    "value": 0.0,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/kD",
-    "type": "double",
-    "value": 0.01,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/jerk limit",
-    "type": "double",
-    "value": 30.0,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/elevator MANUAL speed limit",
-    "type": "double",
-    "value": 0.3,
+    "value": 17.343,
     "properties": {
       "persistent": true
     }
