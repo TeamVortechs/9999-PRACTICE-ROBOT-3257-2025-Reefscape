@@ -38,16 +38,16 @@ public class Wrist extends SubsystemBase {
 
     CurrentAngle = wristIO.getAngleRotations();
 
-    if (getAngleRotations() > Constants.Arm.WRIST_HIGHEST_ANGLE
-        || getAngleRotations() < -targetBuffer) {
-      setManualSpeed(0);
-      System.out.println("WRIST OUT OF BOUNDS");
-    }
+    // if (getAngleRotations() > Constants.Arm.WRIST_HIGHEST_ANGLE
+    //     || getAngleRotations() < -targetBuffer) {
+    //   setManualSpeed(-0.05);
+    //   System.out.println("WRIST OUT OF BOUNDS");
+    // }
 
-    if (manualOverride) {
-      System.out.println("Wrist MANUAL OVERRIDE WRIST ENGAGED");
-      return;
-    }
+    // if (manualOverride) {
+    //   System.out.println("Wrist MANUAL OVERRIDE WRIST ENGAGED");
+    //   return;
+    // }
     // set target position to 100 rotations
     wristIO.PIDVoltage(targetAngle);
   }
@@ -74,7 +74,7 @@ public class Wrist extends SubsystemBase {
 
   // returns wether or not the arm is clear from the elevator
   public boolean isClearFromElevator() {
-    return wristIO.getAngleRotations() > 2;
+    return wristIO.getAngleRotations() > Constants.Arm.WRIST_STAGE_4_ANGLE - 0.1;
   }
 
   // turns manual override and sets the manual speeed
@@ -126,7 +126,8 @@ public class Wrist extends SubsystemBase {
   // enum for each level that the wrist could be
   public enum WristAngle {
     STAGE2_ANGLE(Constants.Arm.WRIST_STAGE_2_ANGLE),
-    INTAKE_ANGLE(0);
+    INTAKE_ANGLE(0),
+    ALGAE_GROUND_INTAKE(Constants.Arm.WRIST_GROUND_ANGLE);
     // STAGE2_ANGLE(Stage2angle),
 
     private double angle;

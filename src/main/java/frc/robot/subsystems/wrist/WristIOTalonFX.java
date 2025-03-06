@@ -1,32 +1,47 @@
 package frc.robot.subsystems.wrist;
 
+import static edu.wpi.first.units.Units.Amps;
+
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.KDoublePreferences.PWrist;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class WristIOTalonFX implements WristIO {
   private TalonFX arm;
-  private SparkMax rollers;
+  private TalonFX rollers;
   private CANrange canRange;
 
   @AutoLogOutput private double angle;
 
-  public WristIOTalonFX(int armID, int rollerID, String canbusName, int CanrangeID) {
+  public WristIOTalonFX(int armID, int rollerID, String canbusName) {
 
     this.arm = new TalonFX(armID, canbusName);
-    this.rollers = new SparkMax(rollerID, MotorType.kBrushless);
-    this.canRange = new CANrange(CanrangeID);
+    this.rollers = new TalonFX(rollerID, canbusName);
 
-    TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
+    // this.canRange = new CANrange(CanrangeID);
 
-    var slot0Configs = talonFXConfigs.Slot0;
+    TalonFXConfiguration armMotorConfigs =
+        new TalonFXConfiguration()
+            .withCurrentLimits(
+                new CurrentLimitsConfigs()
+                    // Swerve azimuth does not require much torque output, so we can set a
+                    // relatively
+                    // low
+                    // stator current limit to help avoid brownouts without impacting performance.
+                    .withStatorCurrentLimit(Amps.of(65))
+                    .withStatorCurrentLimitEnable(true))
+            .withMotorOutput(
+                new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+
+    var slot0Configs = armMotorConfigs.Slot0;
     slot0Configs.kS = PWrist.kS.getValue(); // Add 0.25 V output to overcome static friction
     slot0Configs.kV = PWrist.kV.getValue(); // A velocity target of 1 rps results in 0.12 V output
     slot0Configs.kA = PWrist.kA.getValue(); // An acceleration of 1 rps/s requires 0.01 V output
@@ -35,15 +50,30 @@ public class WristIOTalonFX implements WristIO {
     slot0Configs.kI = PWrist.kI.getValue(); // no output for integrated error
     slot0Configs.kD = PWrist.kD.getValue(); // A velocity error of 1 rps results in 0.1 V output
 
-    var motionMagicConfigs = talonFXConfigs.MotionMagic;
+    var motionMagicConfigs = armMotorConfigs.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity = PWrist.speedLimit.getValue();
     motionMagicConfigs.MotionMagicAcceleration = PWrist.accelerationLimit.getValue();
     motionMagicConfigs.MotionMagicJerk = PWrist.jerkLimit.getValue();
 
-    arm.getConfigurator().apply(talonFXConfigs);
+    arm.getConfigurator().apply(armMotorConfigs);
 
     // Set motor to Brake mode by default.
     arm.setNeutralMode(NeutralModeValue.Brake);
+
+    TalonFXConfiguration rollerMotorConfigs =
+        new TalonFXConfiguration()
+            .withCurrentLimits(
+                new CurrentLimitsConfigs()
+                    // Swerve azimuth does not require much torque output, so we can set a
+                    // relatively
+                    // low
+                    // stator current limit to help avoid brownouts without impacting performance.
+                    .withStatorCurrentLimit(Amps.of(100))
+                    .withStatorCurrentLimitEnable(true));
+    rollers.getConfigurator().apply(rollerMotorConfigs);
+
+    // Set motor to Brake mode by default.
+    rollers.setNeutralMode(NeutralModeValue.Brake);
   }
 
   // sets the PID target angle
@@ -83,10 +113,10 @@ public class WristIOTalonFX implements WristIO {
     inputs.wristSpeedRotations = arm.get();
     inputs.wristLocationRotations = getAngleRotations();
 
-    inputs.canRangeDistance = canRange.getDistance().getValueAsDouble();
+    // inputs.canRangeDistance = canRange.getDistance().getValueAsDouble();
 
-    inputs.rollersCurrent = rollers.getOutputCurrent();
-    inputs.rollersEncoder = rollers.getEncoder().getPosition();
+    inputs.rollersCurrent = rollers.getStatorCurrent().getValueAsDouble();
+    inputs.rollersEncoder = rollers.getPosition().getValueAsDouble();
     inputs.rollersSpeed = rollers.get();
   }
 
@@ -101,16 +131,16 @@ public class WristIOTalonFX implements WristIO {
   }
 
   // returns wether or not the can range is detected
-  @Override
-  public boolean isDetected() {
-    return canRange.getIsDetected().getValue();
-  }
+  // @Override
+  // public boolean isDetected() {
+  //   return canRange.getIsDetected().getValue();
+  // }
 
   // gets the distance from the can range
-  @Override
-  public double getDistance() {
-    return canRange.getDistance().getValueAsDouble();
-  }
+  // @Override
+  // public double getDistance() {
+  //   return canRange.getDistance().getValueAsDouble();
+  // }
 
   // sets the voltage of the arm
   @Override
