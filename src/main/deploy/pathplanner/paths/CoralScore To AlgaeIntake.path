@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.9575,
+        "y": 4.014679487179487
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.556457476666755,
+        "y": 4.001029611902969
+      },
+      "isLocked": false,
+      "linkedName": "CoralScore"
+    },
+    {
+      "anchor": {
+        "x": 5.92,
+        "y": 4.0
+      },
+      "prevControl": {
+        "x": 5.655521516800179,
+        "y": 4.02227439950231
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "AlgaeIntakeMid"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 0.5,
+    "maxAcceleration": 0.4,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 179.16968451374197
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}
