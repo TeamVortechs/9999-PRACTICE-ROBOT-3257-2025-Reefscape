@@ -68,6 +68,17 @@ public final class Constants {
     public static final double SCORING_ANGLE = 1.3007; // currently impossible to achieve
     public static final double WRIST_HIGHEST_ANGLE =
         GROUND_INTAKE_ANGLE + 0.2; // set highest angle to wrist ground angle plus arbitrary leeway
+  }
+
+  public static final class CoralArm {
+    public static final int CORAL_ROLLER_MOTOR_ID = 27;
+    public static final int CORAL_ARM_MOTOR_ID = 26;
     public static final double WRIST_CORAL_SCORE = 0.5;
+    public static final double CORAL_GROUND_INTAKE_ANGLE =
+        5.441;
+
+    public static final double RESTING_POSITION = 0;
+
+    public static final double SCORING_POSITION = 1;
   }
 }

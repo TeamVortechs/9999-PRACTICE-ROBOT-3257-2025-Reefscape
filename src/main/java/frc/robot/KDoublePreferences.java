@@ -75,4 +75,28 @@ public class KDoublePreferences {
 
     public static KDoublePref manualSpeedLimit = new KDoublePref("wrist MANUAL speed limit", 0.3);
   }
+
+  public static class PCoralWrist {
+    public static KDoublePref kS =
+        new KDoublePref("coralWrist kS", 0.25); // Add kS V output to overcome static friction
+    public static KDoublePref kV =
+        new KDoublePref("coralWrist kV", 0.12); // A velocity target of 1 rps results in kV V output
+    public static KDoublePref kA =
+        new KDoublePref("coralWrist kA", 0.01); // An acceleration of 1 rps/s requires kA V output
+    public static KDoublePref kP =
+        new KDoublePref(
+            "coralWrist kP", 7.5); // A position error of 1 rotation results in kP V output
+    public static KDoublePref kI =
+        new KDoublePref("coralWrist kI", 0); // no output for error over time
+    public static KDoublePref kD =
+        new KDoublePref("coralWrist kD", 0.1); // A velocity error of 1 rps results in 0.1 V output
+
+    public static KDoublePref speedLimit = new KDoublePref("coralWrist velocity limit", 3);
+    public static KDoublePref accelerationLimit = new KDoublePref("coralWrist accel limit", 2.5);
+    public static KDoublePref jerkLimit = new KDoublePref("coralWrist jerk limit", 10);
+    public static KDoublePref tolerance = new KDoublePref("coralWrist Target Tolerance", 0.1);
+
+    public static KDoublePref manualSpeedLimit =
+        new KDoublePref("coralWrist MANUAL speed limit", 0.3);
+  }
 }

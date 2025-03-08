@@ -5,18 +5,21 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
+import frc.robot.commands.coralWrist.SetCoralWristTargetAngleCommand;
 import frc.robot.commands.elevator.SetElevatorPresetCommand;
 import frc.robot.commands.wrist.SetWristTargetAngleCommand;
+import frc.robot.subsystems.CoralWrist.CoralWrist;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.wrist.Wrist;
 
 public class ScoringCommands {
 
-  public static Command coralScoreAuto(Wrist wrist) {
-    return new SetWristTargetAngleCommand(wrist, () -> Constants.Arm.WRIST_CORAL_SCORE)
-        .andThen(new InstantCommand(() -> wrist.setRollerSpeed(-0.2)))
-        .withDeadline(new WaitCommand(0.2))
-        .andThen(new InstantCommand(() -> wrist.setHasCoral(false)));
+  public static Command coralScoreAuto(CoralWrist coralWrist) {
+    return new SetCoralWristTargetAngleCommand(
+            coralWrist, () -> Constants.CoralArm.WRIST_CORAL_SCORE)
+            .andThen(new WaitUntilCommand(() -> coralWrist.isOnTarget()))
+        .andThen(new InstantCommand(() -> coralWrist.setRollerSpeed(-0.2)))
+        .withDeadline(new WaitCommand(0.2));
   }
 
   public static Command prepForScoring(int level, Wrist wrist, Elevator elevator) {

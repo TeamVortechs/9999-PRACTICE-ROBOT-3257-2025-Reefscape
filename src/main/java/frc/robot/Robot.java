@@ -145,9 +145,6 @@ public class Robot extends LoggedRobot {
   public void autonomousInit() {
     autonomousCommand = robotContainer.getAutonomousCommand();
 
-    // autos starts withthe corla
-    robotContainer.getWrist().setHasCoral(true);
-
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
@@ -161,9 +158,6 @@ public class Robot extends LoggedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-
-    // it shouldn't have a coral in telop
-    robotContainer.getWrist().setHasCoral(false);
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to

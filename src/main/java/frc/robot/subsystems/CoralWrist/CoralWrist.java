@@ -1,6 +1,5 @@
-package frc.robot.subsystems.wrist;
+package frc.robot.subsystems.CoralWrist;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.KDoublePreferences.PWrist;
@@ -8,9 +7,9 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 // again I'm not adding stuff to this class while we don't whats gonna go here
-public class Wrist extends SubsystemBase {
+public class CoralWrist extends SubsystemBase {
 
-  private WristIO wristIO;
+  private CoralWristIO wristIO;
   private WristIOInputsAutoLogged inputsAutoLogged = new WristIOInputsAutoLogged();
 
   @AutoLogOutput private double CurrentAngle = 0;
@@ -23,22 +22,13 @@ public class Wrist extends SubsystemBase {
 
   @AutoLogOutput private boolean manualOverride = false;
 
-  // this controls the default command of the wrist bc if it has a coral attached then it shouldn't
-  // move;
-  // this is set in auto commands and on field initialization
-  @AutoLogOutput private boolean hasCoral;
-
-  public Wrist(WristIO wristIO) {
+  public CoralWrist(CoralWristIO wristIO) {
     this.wristIO = wristIO;
-
-    hasCoral = false;
   }
 
   @Override
   public void periodic() {
     // advantageKit inputs updating
-    SmartDashboard.putNumber("Canrange distance", wristIO.getDistance());
-    SmartDashboard.putBoolean("Canrange detected", wristIO.isDetected());
 
     wristIO.updateInputs(inputsAutoLogged);
     Logger.processInputs("Wrist", inputsAutoLogged);
@@ -80,9 +70,10 @@ public class Wrist extends SubsystemBase {
   // }
 
   // returns wether or not the arm is clear from the elevator
-  public boolean isClearFromElevator() {
+  /*  public boolean isClearFromElevator() {
     return wristIO.getAngleRotations() > Constants.Arm.SCORING_ANGLE - 0.1;
   }
+    /* */
 
   // turns manual override and sets the manual speeed
   public void setManualSpeed(double speed) {
@@ -111,32 +102,21 @@ public class Wrist extends SubsystemBase {
     wristIO.setRollerSpeed(speed);
   }
 
-  // gets the distance of the can Range
-  public double getCanDistance() {
-    return wristIO.getDistance();
-  }
-
   // resets the encoder of the wrist
   public void resetWristEncoder() {
     wristIO.zeroArmEncoder();
   }
 
-  // returns wether or not the canRange is closer than the given distance
-  public boolean isCanCloserThan(double distance) {
-    return getCanDistance() < distance;
-  }
-
   // enum for each level that the wrist could be
-  public enum WristAngle {
-    STAGE2_ANGLE(Constants.Arm.REEF_INTAKE_ANGLE),
-    INTAKE_ANGLE(0),
-    ALGAE_GROUND_INTAKE(Constants.Arm.GROUND_INTAKE_ANGLE);
+  public enum CoralWristAngle {
+    INTAKE_ANGLE(Constants.CoralArm.CORAL_GROUND_INTAKE_ANGLE),
+    SCORING_ANGLE(Constants.CoralArm.WRIST_CORAL_SCORE);
 
     // STAGE2_ANGLE(Stage2angle),
 
     private double angle;
 
-    private WristAngle(double angleRot) {
+    private CoralWristAngle(double angleRot) {
       this.angle = angleRot;
     }
 

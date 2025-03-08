@@ -1,4 +1,4 @@
-package frc.robot.subsystems.wrist;
+package frc.robot.subsystems.CoralWrist;
 
 import static edu.wpi.first.units.Units.Amps;
 
@@ -10,21 +10,23 @@ import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.KDoublePreferences.PWrist;
+import frc.robot.KDoublePreferences.PCoralWrist;
 import org.littletonrobotics.junction.AutoLogOutput;
 
-public class WristIOTalonFX implements WristIO {
+public class CoralWristTalonFXIO implements CoralWristIO {
   private TalonFX arm;
-  private TalonFX rollers;
+  private SparkMax rollers;
   private CANrange canRange;
 
   @AutoLogOutput private double angle;
 
-  public WristIOTalonFX(int armID, int rollerID, String canbusName) {
+  public CoralWristTalonFXIO(int armID, int rollerID, String canbusName) {
 
     this.arm = new TalonFX(armID, canbusName);
-    this.rollers = new TalonFX(rollerID, canbusName);
+    this.rollers = new SparkMax(rollerID, MotorType.kBrushless);
 
     // this.canRange = new CANrange(CanrangeID);
 
@@ -42,25 +44,28 @@ public class WristIOTalonFX implements WristIO {
                 new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
 
     var slot0Configs = armMotorConfigs.Slot0;
-    slot0Configs.kS = PWrist.kS.getValue(); // Add 0.25 V output to overcome static friction
-    slot0Configs.kV = PWrist.kV.getValue(); // A velocity target of 1 rps results in 0.12 V output
-    slot0Configs.kA = PWrist.kA.getValue(); // An acceleration of 1 rps/s requires 0.01 V output
+    slot0Configs.kS = PCoralWrist.kS.getValue(); // Add 0.25 V output to overcome static friction
+    slot0Configs.kV =
+        PCoralWrist.kV.getValue(); // A velocity target of 1 rps results in 0.12 V output
+    slot0Configs.kA =
+        PCoralWrist.kA.getValue(); // An acceleration of 1 rps/s requires 0.01 V output
     slot0Configs.kP =
-        PWrist.kP.getValue(); // A position error of 2.5 rotations results in 12 V output
-    slot0Configs.kI = PWrist.kI.getValue(); // no output for integrated error
-    slot0Configs.kD = PWrist.kD.getValue(); // A velocity error of 1 rps results in 0.1 V output
+        PCoralWrist.kP.getValue(); // A position error of 2.5 rotations results in 12 V output
+    slot0Configs.kI = PCoralWrist.kI.getValue(); // no output for integrated error
+    slot0Configs.kD =
+        PCoralWrist.kD.getValue(); // A velocity error of 1 rps results in 0.1 V output
 
     var motionMagicConfigs = armMotorConfigs.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = PWrist.speedLimit.getValue();
-    motionMagicConfigs.MotionMagicAcceleration = PWrist.accelerationLimit.getValue();
-    motionMagicConfigs.MotionMagicJerk = PWrist.jerkLimit.getValue();
+    motionMagicConfigs.MotionMagicCruiseVelocity = PCoralWrist.speedLimit.getValue();
+    motionMagicConfigs.MotionMagicAcceleration = PCoralWrist.accelerationLimit.getValue();
+    motionMagicConfigs.MotionMagicJerk = PCoralWrist.jerkLimit.getValue();
 
     arm.getConfigurator().apply(armMotorConfigs);
 
     // Set motor to Brake mode by default.
     arm.setNeutralMode(NeutralModeValue.Brake);
 
-    TalonFXConfiguration rollerMotorConfigs =
+    /*  TalonFXConfiguration rollerMotorConfigs =
         new TalonFXConfiguration()
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
@@ -74,6 +79,7 @@ public class WristIOTalonFX implements WristIO {
 
     // Set motor to Brake mode by default.
     rollers.setNeutralMode(NeutralModeValue.Brake);
+    /* */
   }
 
   // sets the PID target angle
@@ -115,8 +121,8 @@ public class WristIOTalonFX implements WristIO {
 
     // inputs.canRangeDistance = canRange.getDistance().getValueAsDouble();
 
-    inputs.rollersCurrent = rollers.getStatorCurrent().getValueAsDouble();
-    inputs.rollersEncoder = rollers.getPosition().getValueAsDouble();
+    inputs.rollersCurrent = rollers.getOutputCurrent();
+    // inputs.rollersEncoder = rollers.get.getValueAsDouble();
     inputs.rollersSpeed = rollers.get();
   }
 
