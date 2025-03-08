@@ -15,7 +15,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -454,6 +453,8 @@ public class RobotContainer {
     // if (Constants.currentMode == Mode.SIM) isReal = false;
 
     // comm
+    addNamedCommand("prepScore", ScoringCommands.prepForScoring(3, wrist, elevator), isReal);
+
     addNamedCommand(
         "intakeStage1",
         ScoringCommands.prepForScoring(1, wrist, elevator)
@@ -465,11 +466,19 @@ public class RobotContainer {
         ScoringCommands.prepForScoring(2, wrist, elevator)
             .alongWith(new InstantCommand(() -> wrist.setHasCoral(false))),
         isReal);
+
+    addNamedCommand(
+        "intakePrepStage1", ScoringCommands.prepForIntakeAuto(1, wrist, elevator), isReal);
+
+    addNamedCommand(
+        "intakePrepStage2", ScoringCommands.prepForIntakeAuto(2, wrist, elevator), isReal);
+
     addNamedCommand(
         "score",
         ScoringCommands.prepForScoring(3, wrist, elevator)
             .andThen(new WaitCommand(0.2).deadlineFor(new SetWristRollerSpeedCommand(wrist, -1))),
         isReal);
+
     addNamedCommand(
         "mechanismBack",
         new SetElevatorPresetCommand(elevator, wrist, 0)
@@ -488,7 +497,7 @@ public class RobotContainer {
 
     if (isReal) {
       NamedCommands.registerCommand(commandName, command);
-      new EventTrigger(commandName).onTrue(command);
+      // new EventTrigger(commandName).onTrue(command);
     } else {
       // registers the named commands to print something out instead of actually running anything
       NamedCommands.registerCommand(
@@ -498,13 +507,13 @@ public class RobotContainer {
                   new ControllerVibrateCommand(1, controller).withDeadline(new WaitCommand(0.2)))
               .andThen(new WaitCommand(0.3)));
 
-      new EventTrigger(commandName)
-          .onTrue(
-              new TellCommand(commandName + " auto event trigger command")
-                  .andThen(
-                      new ControllerVibrateCommand(1, controller)
-                          .withDeadline(new WaitCommand(0.2)))
-                  .andThen(new WaitCommand(0.3)));
+      //   new EventTrigger(commandName)
+      //       .onTrue(
+      //           new TellCommand(commandName + " auto event trigger command")
+      //               .andThen(
+      //                   new ControllerVibrateCommand(1, controller)
+      //                       .withDeadline(new WaitCommand(0.2)))
+      //               .andThen(new WaitCommand(0.3)));
     }
   }
 

@@ -35,33 +35,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "mechanismBack"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "AlgaeIntake To Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "mechanismBack"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score to TopAlgaeIntake"
+            "pathName": "Algae Intake Score and TopIntake"
           }
         },
         {
@@ -71,33 +47,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "mechanismBack"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "TopAlgaeIntake to HigherScore"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "mechanismBack"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "HigherScore to Clear"
+            "pathName": "Top Algae Intake Score And Clear"
           }
         }
       ]

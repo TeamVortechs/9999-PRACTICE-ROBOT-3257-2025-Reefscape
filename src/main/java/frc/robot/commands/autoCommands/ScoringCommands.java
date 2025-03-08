@@ -19,6 +19,30 @@ public class ScoringCommands {
         .andThen(new InstantCommand(() -> wrist.setHasCoral(false)));
   }
 
+  public static Command prepForIntakeAuto(int level, Wrist wrist, Elevator elevator) {
+    switch (level) { // bit of a misnomer here
+      case 1: // low reef algae
+        return new SetWristTargetAngleCommand(wrist, () -> Constants.Arm.REEF_INTAKE_ANGLE)
+            .andThen(new WaitUntilCommand(() -> wrist.isClearFromElevator()))
+            .andThen(
+                new SetElevatorPresetCommand(elevator, wrist, Constants.Elevator.INTAKE_LEVEL_1));
+        // .andThen(
+        //     new SetElevatorPresetCommand(elevator, wrist, Constants.Elevator.STAGE_2_LEVEL)
+        //         .alongWith(
+        //             new SetWristTargetAngleCommand(
+        //                 wrist, () -> WristAngle.STAGE2_ANGLE.getAngle())));
+
+      case 2: // high reef algae
+        return new SetWristTargetAngleCommand(wrist, () -> Constants.Arm.REEF_INTAKE_ANGLE)
+            .andThen(new WaitUntilCommand(() -> wrist.isClearFromElevator()))
+            .andThen(
+                new SetElevatorPresetCommand(elevator, wrist, Constants.Elevator.INTAKE_LEVEL_2));
+
+      default:
+        return new InstantCommand();
+    }
+  }
+
   public static Command prepForScoring(int level, Wrist wrist, Elevator elevator) {
     switch (level) { // bit of a misnomer here
       case 1: // low reef algae
