@@ -350,7 +350,8 @@ public class RobotContainer {
     //             .unless(() -> !elevator.isOnFloor()),
     //         // controller of the conditional
     //         () -> wrist.isCanCloserThan(0.1)));
-    wrist.setDefaultCommand(new SetWristRollerSpeedCommand(wrist, 0.2));
+    wrist.setDefaultCommand(
+        new SetWristRollerSpeedCommand(wrist, 0.2).unless(() -> wrist.hasCoral()));
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -467,7 +468,9 @@ public class RobotContainer {
         isReal);
 
     // unbounded this for now bc we don't know
-    addNamedCommand("coralScore", new InstantCommand(), isReal);
+    NamedCommands.registerCommand("coralScore", new InstantCommand(() -> wrist.setHasCoral(false)));
+
+    // addNamedCommand("coralScore", ScoringCommands.coralScoreAuto(wrist), isReal);
   }
 
   // function to add named commands because we need to add is an an event too and not just as a
@@ -518,5 +521,9 @@ public class RobotContainer {
     SmartDashboard.putNumber("x position:", drive.getPose().getX());
     SmartDashboard.putNumber("y position:", drive.getPose().getY());
     SmartDashboard.putNumber("current rotation:", drive.getPose().getRotation().getDegrees());
+  }
+
+  public Wrist getWrist() {
+    return wrist;
   }
 }
