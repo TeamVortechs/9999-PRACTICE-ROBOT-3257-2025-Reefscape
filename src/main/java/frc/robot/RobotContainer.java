@@ -278,7 +278,7 @@ public class RobotContainer {
         .whileTrue(
             new InstantCommand(() -> wrist.setRollerSpeed(0.2), wrist)
                 .andThen(
-                    new SetWristTargetAngleCommand(wrist, () -> Constants.Arm.WRIST_GROUND_ANGLE)));
+                    new SetWristTargetAngleCommand(wrist, () -> Constants.Arm.GROUND_INTAKE_ANGLE)));
 
     // controller.leftTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> -0.2));
     // controller.rightTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> 0.2));
@@ -383,7 +383,7 @@ public class RobotContainer {
 
     controller
         .x()
-        .onTrue(new SetWristTargetAngleCommand(wrist, () -> Constants.Arm.WRIST_GROUND_ANGLE));
+        .onTrue(new SetWristTargetAngleCommand(wrist, () -> Constants.Arm.GROUND_INTAKE_ANGLE));
 
     // controller.y().whileTrue(new PathfindToClosestDepotCommand(drive, true));
     // controller.y().onFalse(new PathfindingCommandCancel(drive));
@@ -445,11 +445,10 @@ public class RobotContainer {
     // if (Constants.currentMode == Mode.SIM) isReal = false;
 
     // comm
-    addNamedCommand("intakeStage2", IntakingCommands.intakeCommandAuto(wrist, elevator, 2), isReal);
-    addNamedCommand("intakeStage1", IntakingCommands.intakeCommandAuto(wrist, elevator, 1), isReal);
-    addNamedCommand(
-        "score",
-        new WaitCommand(0.2).deadlineFor(new SetWristRollerSpeedCommand(wrist, -0.4)),
+    addNamedCommand("intakeStage1", ScoringCommands.prepForScoring(1, wrist, elevator), isReal);
+    addNamedCommand("intakeStage2", ScoringCommands.prepForScoring(2, wrist, elevator), isReal);
+    addNamedCommand("score", ScoringCommands.prepForScoring(3, wrist, elevator).andThen(
+        new WaitCommand(0.2).deadlineFor(new SetWristRollerSpeedCommand(wrist,-1))),
         isReal);
   }
 

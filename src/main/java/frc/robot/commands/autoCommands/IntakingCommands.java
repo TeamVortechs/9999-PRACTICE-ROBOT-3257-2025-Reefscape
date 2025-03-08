@@ -19,19 +19,20 @@ public class IntakingCommands {
         .alongWith(new IntakeWristCommand(wrist, 0.6));
   }
 
-  public static Command intakeCommandAuto(Wrist wrist, Elevator elevator, int stage) {
-    double height;
+  // public static Command intakeCommandAuto(Wrist wrist, Elevator elevator, int stage) {
+  //   double height;
 
-    if (stage == 1) {
-      height = Constants.Elevator.STAGE_2_LEVEL;
-    } else {
-      height = Constants.Elevator.STAGE_3_LEVEL;
-    }
+  //   if (stage == 1) {
+  //     height = Constants.Elevator.INTAKE_LEVEL_1;
+  //   } else {
+  //     height = Constants.Elevator.INTAKE_LEVEL_2;
+  //   }
 
-    return new SetWristTargetAngleCommand(wrist, () -> WristAngle.INTAKE_ANGLE.getAngle())
-        .andThen(new SetElevatorPresetCommand(elevator, wrist, height))
-        .andThen(new SetWristRollerSpeedCommand(wrist, 0.6));
-  }
+  //   return new SetWristTargetAngleCommand(wrist, () -> WristAngle.INTAKE_ANGLE.getAngle())
+  //       .andThen(new InstantCommand(() -> elevator.setTargetHeight(height)))
+  //       .andThen()
+  //       .andThen(new SetWristRollerSpeedCommand(wrist, 0.6));
+  // }
 
   public static Command prepForIntakeCommandAuto(Wrist wrist, Elevator elevator) {
     return new InstantCommand(

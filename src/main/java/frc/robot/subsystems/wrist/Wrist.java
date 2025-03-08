@@ -74,7 +74,7 @@ public class Wrist extends SubsystemBase {
 
   // returns wether or not the arm is clear from the elevator
   public boolean isClearFromElevator() {
-    return wristIO.getAngleRotations() > Constants.Arm.WRIST_STAGE_4_ANGLE - 0.1;
+    return wristIO.getAngleRotations() > Constants.Arm.SCORING_ANGLE - 0.1;
   }
 
   // turns manual override and sets the manual speeed
@@ -125,9 +125,9 @@ public class Wrist extends SubsystemBase {
 
   // enum for each level that the wrist could be
   public enum WristAngle {
-    STAGE2_ANGLE(Constants.Arm.WRIST_STAGE_2_ANGLE),
+    STAGE2_ANGLE(Constants.Arm.REEF_INTAKE_ANGLE),
     INTAKE_ANGLE(0),
-    ALGAE_GROUND_INTAKE(Constants.Arm.WRIST_GROUND_ANGLE);
+    ALGAE_GROUND_INTAKE(Constants.Arm.GROUND_INTAKE_ANGLE);
     // STAGE2_ANGLE(Stage2angle),
 
     private double angle;
