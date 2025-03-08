@@ -11,8 +11,6 @@ public interface CoralWristIO {
     double wristCurrentAmps = 0.0;
     double wristAppliedVoltage = 0.0;
 
-    double canRangeDistance = 0.0;
-
     double rollersCurrent = 0.0;
     double rollersEncoder = 0.0;
     double rollersSpeed = 0.0;

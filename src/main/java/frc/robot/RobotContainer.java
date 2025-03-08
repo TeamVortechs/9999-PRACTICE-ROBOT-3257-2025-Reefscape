@@ -20,7 +20,6 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Power;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,7 +34,6 @@ import frc.robot.commands.communication.ControllerVibrateCommand;
 import frc.robot.commands.communication.TellCommand;
 import frc.robot.commands.coralWrist.ManualSetCoralWristSpeedCommand;
 import frc.robot.commands.coralWrist.SetCoralWristRollerSpeedCommand;
-import frc.robot.commands.coralWrist.SetCoralWristTargetAngleCommand;
 import frc.robot.commands.elevator.SetElevatorPresetCommand;
 import frc.robot.commands.wrist.ManualSetWristSpeedCommand;
 import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
@@ -196,7 +194,6 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    
     // resets encoders. THIS WILL BREAK THE ROBOT
     controller
         .start()
@@ -224,30 +221,29 @@ public class RobotContainer {
     // moves elevator and wrist to scoring position for level 3
     controller.rightBumper().whileTrue(ScoringCommands.prepForScoring(3, wrist, elevator));
 
-
-    //manually moves coral wrist back and forth
+    // manually moves coral wrist back and forth
 
     /*operatorController.povRight().whileTrue(new SetCoralWristTargetAngleCommand(coralWrist, () -> Constants.CoralArm.CORAL_GROUND_INTAKE_ANGLE)
-    .andThen(new SetCoralWristRollerSpeedCommand(coralWrist, 0.7)));
+        .andThen(new SetCoralWristRollerSpeedCommand(coralWrist, 0.7)));
 
-    controller.povRight().whileTrue(new SetCoralWristTargetAngleCommand(coralWrist, () -> Constants.CoralArm.CORAL_GROUND_INTAKE_ANGLE)
-    .andThen(new SetCoralWristRollerSpeedCommand(coralWrist, 0.7)));
+        controller.povRight().whileTrue(new SetCoralWristTargetAngleCommand(coralWrist, () -> Constants.CoralArm.CORAL_GROUND_INTAKE_ANGLE)
+        .andThen(new SetCoralWristRollerSpeedCommand(coralWrist, 0.7)));
 
-    controller.a().whileTrue(new SetCoralWristTargetAngleCommand(coralWrist, () -> Constants.CoralArm.SCORING_POSITION)
-    .alongWith(new SetCoralWristRollerSpeedCommand(coralWrist, -1).unless(() -> !coralWrist.isOnTarget())));
+        controller.a().whileTrue(new SetCoralWristTargetAngleCommand(coralWrist, () -> Constants.CoralArm.SCORING_POSITION)
+        .alongWith(new SetCoralWristRollerSpeedCommand(coralWrist, -1).unless(() -> !coralWrist.isOnTarget())));
 
-    operatorController.back().whileTrue(new SetCoralWristTargetAngleCommand(coralWrist, () -> Constants.CoralArm.SCORING_POSITION)
-    .alongWith(new SetCoralWristRollerSpeedCommand(coralWrist, -1).unless(() -> !coralWrist.isOnTarget())));
+        operatorController.back().whileTrue(new SetCoralWristTargetAngleCommand(coralWrist, () -> Constants.CoralArm.SCORING_POSITION)
+        .alongWith(new SetCoralWristRollerSpeedCommand(coralWrist, -1).unless(() -> !coralWrist.isOnTarget())));
 
-    coralWrist.setDefaultCommand(new SetCoralWristTargetAngleCommand(coralWrist, () -> Constants.CoralArm.SCORING_POSITION));
-/* */
+        coralWrist.setDefaultCommand(new SetCoralWristTargetAngleCommand(coralWrist, () -> Constants.CoralArm.SCORING_POSITION));
+    /* */
 
-    coralWrist.setDefaultCommand(new ManualSetCoralWristSpeedCommand(coralWrist, () -> operatorController.getLeftY() * 0.1));
+    coralWrist.setDefaultCommand(
+        new ManualSetCoralWristSpeedCommand(coralWrist, () -> operatorController.getLeftY() * 0.1));
 
     operatorController.start().whileTrue(new SetCoralWristRollerSpeedCommand(coralWrist, 0.1));
     operatorController.back().whileTrue(new SetCoralWristRollerSpeedCommand(coralWrist, -0.1));
 
-   
     // op left trigger brings elevator down AT WHATEVER ANGLE THE ARM IS AT
     operatorController.leftTrigger().whileTrue(ScoringCommands.prepForScoring(4, wrist, elevator));
 
@@ -258,7 +254,7 @@ public class RobotContainer {
     operatorController.rightBumper().whileTrue(ScoringCommands.prepForScoring(3, wrist, elevator));
 
     operatorController.rightTrigger().whileTrue(new SetWristRollerSpeedCommand(wrist, 0.6));
-    
+
     // intakes then vibrates controlller when in position and has coral
     // driver A shoots algae
     controller.a().whileTrue(new SetWristRollerSpeedCommand(wrist, -1));
@@ -282,12 +278,10 @@ public class RobotContainer {
                     new SetWristTargetAngleCommand(
                         wrist, () -> Constants.Arm.GROUND_INTAKE_ANGLE)));
 
-  
     // driver right trigger intakes algae
     controller.rightTrigger().whileTrue(new SetWristRollerSpeedCommand(wrist, 0.6));
 
-    wrist.setDefaultCommand(
-        new SetWristRollerSpeedCommand(wrist, 0.2));
+    wrist.setDefaultCommand(new SetWristRollerSpeedCommand(wrist, 0.2));
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -296,10 +290,7 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-
     controller.povLeft().whileTrue(new SetWristRollerSpeedCommand(wrist, 0.05));
-
-   
 
     operatorController.povDown().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> -0.1));
     operatorController.povUp().whileTrue(new ManualSetWristSpeedCommand(wrist, () -> 0.15));
@@ -313,8 +304,6 @@ public class RobotContainer {
     controller
         .x()
         .onTrue(new SetWristTargetAngleCommand(wrist, () -> Constants.Arm.GROUND_INTAKE_ANGLE));
-
-   
 
     // // Reset gyro to 0° when B button is pressed
     controller
@@ -339,7 +328,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // add a free disturbance when pressing the y button to test vision
-   
+
   } // end configure bindings
 
   /**
@@ -361,16 +350,9 @@ public class RobotContainer {
     // if (Constants.currentMode == Mode.SIM) isReal = false;
 
     // comm
-    addNamedCommand(
-        "intakeStage1",
-        ScoringCommands.prepForScoring(1, wrist, elevator),
-        isReal);
+    addNamedCommand("intakeStage1", ScoringCommands.prepForScoring(1, wrist, elevator), isReal);
 
-    addNamedCommand(
-        "intakeStage2",
-        ScoringCommands.prepForScoring(2, wrist, elevator)
-            ,
-        isReal);
+    addNamedCommand("intakeStage2", ScoringCommands.prepForScoring(2, wrist, elevator), isReal);
     addNamedCommand(
         "score",
         ScoringCommands.prepForScoring(3, wrist, elevator)
@@ -413,7 +395,6 @@ public class RobotContainer {
     }
   }
 
-  
   // intended for testing usage only
   // puts sendables on shuffleboard
   public void putPositionData() {

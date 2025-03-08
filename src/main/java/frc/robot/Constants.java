@@ -74,8 +74,7 @@ public final class Constants {
     public static final int CORAL_ROLLER_MOTOR_ID = 27;
     public static final int CORAL_ARM_MOTOR_ID = 26;
     public static final double WRIST_CORAL_SCORE = 0.5;
-    public static final double CORAL_GROUND_INTAKE_ANGLE =
-        5.441;
+    public static final double CORAL_GROUND_INTAKE_ANGLE = 5.441;
 
     public static final double RESTING_POSITION = 0;
 

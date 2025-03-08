@@ -17,7 +17,7 @@ public class ScoringCommands {
   public static Command coralScoreAuto(CoralWrist coralWrist) {
     return new SetCoralWristTargetAngleCommand(
             coralWrist, () -> Constants.CoralArm.WRIST_CORAL_SCORE)
-            .andThen(new WaitUntilCommand(() -> coralWrist.isOnTarget()))
+        .andThen(new WaitUntilCommand(() -> coralWrist.isOnTarget()))
         .andThen(new InstantCommand(() -> coralWrist.setRollerSpeed(-0.2)))
         .withDeadline(new WaitCommand(0.2));
   }

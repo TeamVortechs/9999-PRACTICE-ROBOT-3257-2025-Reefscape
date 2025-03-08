@@ -26,12 +26,10 @@ public class Wrist extends SubsystemBase {
   // this controls the default command of the wrist bc if it has a coral attached then it shouldn't
   // move;
   // this is set in auto commands and on field initialization
-  @AutoLogOutput private boolean hasCoral;
 
   public Wrist(WristIO wristIO) {
     this.wristIO = wristIO;
 
-    hasCoral = false;
   }
 
   @Override

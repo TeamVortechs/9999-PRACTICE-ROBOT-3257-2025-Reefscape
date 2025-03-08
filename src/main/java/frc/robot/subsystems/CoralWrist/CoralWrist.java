@@ -31,7 +31,7 @@ public class CoralWrist extends SubsystemBase {
     // advantageKit inputs updating
 
     wristIO.updateInputs(inputsAutoLogged);
-    Logger.processInputs("Wrist", inputsAutoLogged);
+    Logger.processInputs("CoralWrist", inputsAutoLogged);
 
     CurrentAngle = wristIO.getAngleRotations();
 
