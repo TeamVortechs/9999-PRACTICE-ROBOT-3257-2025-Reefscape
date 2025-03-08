@@ -61,13 +61,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score To StartPoint"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "StartPoint to Clear"
+            "pathName": "Score To Clear"
           }
         }
       ]

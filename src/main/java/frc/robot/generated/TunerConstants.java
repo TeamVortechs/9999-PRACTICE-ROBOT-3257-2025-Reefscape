@@ -34,7 +34,7 @@ public class TunerConstants {
   // dont do 0.5 on kp that breaks everything
   private static final Slot0Configs driveGains =
       new Slot0Configs()
-          .withKP(0.28)
+          .withKP(0.35)
           .withKI(0)
           .withKD(0.08)
           .withKS(0)
@@ -83,8 +83,8 @@ public class TunerConstants {
   public static final CANBus kCANBus = new CANBus("Canivore", "./logs/example.hoot");
 
   // Theoretical free speed (m/s) at 12 V applied output;
-  // This needs to be tuned to your individual robot
-  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(5.7);
+  // This needs to be tuned to your individual robot old speed 5.7
+  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(14);
 
   // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
   // This may need to be tuned to your individual robot

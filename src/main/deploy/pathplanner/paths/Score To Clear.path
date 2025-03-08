@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.0,
+        "x": 7.555,
         "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.043100736640787,
-        "y": 4.126084376281676
+        "x": 7.233576503654088,
+        "y": 4.509939860729752
       },
       "isLocked": false,
-      "linkedName": "AlgaeIntakeMid"
+      "linkedName": "ScoreTop"
     },
     {
       "anchor": {
-        "x": 7.555,
-        "y": 4.0
+        "x": 6.80378205128205,
+        "y": 6.171666666666666
       },
       "prevControl": {
-        "x": 7.053452462277423,
-        "y": 3.8109541735605
+        "x": 6.791423753297705,
+        "y": 5.000728896782604
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ScoreTop"
+      "linkedName": "Clear"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 33.21150403868503
+    "rotation": 90.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 179.16968451374197
+    "rotation": 33.21150403868503
   },
   "useDefaultConstraints": true
 }

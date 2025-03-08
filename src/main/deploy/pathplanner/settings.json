@@ -1,6 +1,6 @@
 {
-  "robotWidth": 0.8509,
-  "robotLength": 0.851,
+  "robotWidth": 0.873,
+  "robotLength": 0.873,
   "holonomicMode": true,
   "pathFolders": [
     "CoralFeed Left",
@@ -8,8 +8,8 @@
     "Simple paths"
   ],
   "autoFolders": [],
-  "defaultMaxVel": 0.5,
-  "defaultMaxAccel": 0.4,
+  "defaultMaxVel": 2.0,
+  "defaultMaxAccel": 1.5,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,

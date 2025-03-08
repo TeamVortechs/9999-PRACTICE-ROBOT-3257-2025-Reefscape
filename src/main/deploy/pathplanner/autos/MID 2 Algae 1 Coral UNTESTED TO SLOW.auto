@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartPoint To Score"
+            "pathName": "StartPoint to CoralScore"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "score"
+            "name": "coralScore"
           }
         },
         {
@@ -25,7 +25,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score To Algae Intake"
+            "pathName": "CoralScore To AlgaeIntake"
           }
         },
         {
@@ -97,13 +97,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score To StartPoint"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "StartPoint to Clear"
+            "pathName": "Score To Clear"
           }
         }
       ]

@@ -101,7 +101,7 @@ public class RobotContainer {
 
   // pathconstraints for pathplanner paths
   private final PathConstraints pathConstraints =
-      new PathConstraints(3, 4, Units.degreesToRadians(540), Units.degreesToRadians(720));
+      new PathConstraints(1, 0.5, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -167,7 +167,7 @@ public class RobotContainer {
     registerNamedCommandsAuto();
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    autoChooser.addDefaultOption("Clear", getAutonomousCommand());
+    autoChooser.addDefaultOption("Clear Command Based", getAutonomousCommand());
 
     // registerAutoChooser();
     // configure the autonomous named commands
@@ -233,7 +233,7 @@ public class RobotContainer {
         .y()
         .whileTrue(
             AutoBuilder.pathfindToPose(
-                new Pose2d(7.555, 4.000, Rotation2d.fromDegrees((180))), pathConstraints));
+                new Pose2d(7.230, 4.000, Rotation2d.fromDegrees((180))), pathConstraints));
 
     // moves elevator and wrist to the scoring positions level 2 after the right button is tapped
     controller.leftTrigger().whileTrue(ScoringCommands.prepForScoring(1, wrist, elevator));
@@ -465,6 +465,9 @@ public class RobotContainer {
         new SetElevatorPresetCommand(elevator, wrist, 0)
             .andThen(new SetWristTargetAngleCommand(wrist, () -> 0)),
         isReal);
+
+    // unbounded this for now bc we don't know
+    addNamedCommand("coralScore", new InstantCommand(), isReal);
   }
 
   // function to add named commands because we need to add is an an event too and not just as a
@@ -480,16 +483,16 @@ public class RobotContainer {
           commandName,
           new TellCommand(commandName + " auto command")
               .andThen(
-                  new ControllerVibrateCommand(1, controller).withDeadline(new WaitCommand(0.1)))
-              .andThen(new WaitCommand(0.25)));
+                  new ControllerVibrateCommand(1, controller).withDeadline(new WaitCommand(0.2)))
+              .andThen(new WaitCommand(0.3)));
 
       new EventTrigger(commandName)
           .onTrue(
               new TellCommand(commandName + " auto event trigger command")
                   .andThen(
                       new ControllerVibrateCommand(1, controller)
-                          .withDeadline(new WaitCommand(0.75)))
-                  .andThen(new WaitCommand(0.25)));
+                          .withDeadline(new WaitCommand(0.2)))
+                  .andThen(new WaitCommand(0.3)));
     }
   }
 

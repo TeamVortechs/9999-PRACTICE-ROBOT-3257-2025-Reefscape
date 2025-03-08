@@ -7,7 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartPoint To Score"
+            "pathName": "StartPoint To Algae Intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeStage1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "mechanismBack"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AlgaeIntake To Score"
           }
         },
         {
@@ -25,13 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score To StartPoint"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "StartPoint to Clear"
+            "pathName": "Score To Clear"
           }
         }
       ]
