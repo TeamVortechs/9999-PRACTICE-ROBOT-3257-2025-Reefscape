@@ -29,9 +29,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.autoCommands.DriveCommands;
-import frc.robot.commands.autoCommands.IntakingCommands;
 import frc.robot.commands.autoCommands.ScoringCommands;
+import frc.robot.commands.communication.ControllerVibrateCommand;
 import frc.robot.commands.communication.TellCommand;
+import frc.robot.commands.elevator.SetElevatorPresetCommand;
 import frc.robot.commands.wrist.ManualSetWristSpeedCommand;
 import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
 import frc.robot.commands.wrist.SetWristTargetAngleCommand;
@@ -228,6 +229,12 @@ public class RobotContainer {
     // eject note as long as button as help
     // controller.rightBumper().whileTrue(new SetWristRollerSpeedCommand(wrist, -0.3));
 
+    controller
+        .y()
+        .whileTrue(
+            AutoBuilder.pathfindToPose(
+                new Pose2d(7.555, 4.000, Rotation2d.fromDegrees((180))), pathConstraints));
+
     // moves elevator and wrist to the scoring positions level 2 after the right button is tapped
     controller.leftTrigger().whileTrue(ScoringCommands.prepForScoring(1, wrist, elevator));
 
@@ -278,7 +285,8 @@ public class RobotContainer {
         .whileTrue(
             new InstantCommand(() -> wrist.setRollerSpeed(0.2), wrist)
                 .andThen(
-                    new SetWristTargetAngleCommand(wrist, () -> Constants.Arm.GROUND_INTAKE_ANGLE)));
+                    new SetWristTargetAngleCommand(
+                        wrist, () -> Constants.Arm.GROUND_INTAKE_ANGLE)));
 
     // controller.leftTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> -0.2));
     // controller.rightTrigger().whileTrue(new ManualElevatorCommand(elevator, () -> 0.2));
@@ -447,8 +455,15 @@ public class RobotContainer {
     // comm
     addNamedCommand("intakeStage1", ScoringCommands.prepForScoring(1, wrist, elevator), isReal);
     addNamedCommand("intakeStage2", ScoringCommands.prepForScoring(2, wrist, elevator), isReal);
-    addNamedCommand("score", ScoringCommands.prepForScoring(3, wrist, elevator).andThen(
-        new WaitCommand(0.2).deadlineFor(new SetWristRollerSpeedCommand(wrist,-1))),
+    addNamedCommand(
+        "score",
+        ScoringCommands.prepForScoring(3, wrist, elevator)
+            .andThen(new WaitCommand(0.2).deadlineFor(new SetWristRollerSpeedCommand(wrist, -1))),
+        isReal);
+    addNamedCommand(
+        "mechanismBack",
+        new SetElevatorPresetCommand(elevator, wrist, 0)
+            .andThen(new SetWristTargetAngleCommand(wrist, () -> 0)),
         isReal);
   }
 
@@ -461,9 +476,20 @@ public class RobotContainer {
       new EventTrigger(commandName).onTrue(command);
     } else {
       // registers the named commands to print something out instead of actually running anything
-      NamedCommands.registerCommand(commandName, new TellCommand(commandName + " auto command"));
+      NamedCommands.registerCommand(
+          commandName,
+          new TellCommand(commandName + " auto command")
+              .andThen(
+                  new ControllerVibrateCommand(1, controller).withDeadline(new WaitCommand(0.1)))
+              .andThen(new WaitCommand(0.25)));
+
       new EventTrigger(commandName)
-          .onTrue(new TellCommand(commandName + " auto event trigger command"));
+          .onTrue(
+              new TellCommand(commandName + " auto event trigger command")
+                  .andThen(
+                      new ControllerVibrateCommand(1, controller)
+                          .withDeadline(new WaitCommand(0.1)))
+                  .andThen(new WaitCommand(0.25)));
     }
   }
 

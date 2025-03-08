@@ -25,42 +25,6 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score To Algae Intake"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "intakeStage1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "mechanismBack"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "AlgaeIntake To Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "mechanismBack"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
             "pathName": "Score To StartPoint"
           }
         },

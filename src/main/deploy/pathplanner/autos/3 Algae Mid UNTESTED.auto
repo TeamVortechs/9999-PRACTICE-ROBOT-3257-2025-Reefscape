@@ -61,6 +61,42 @@
         {
           "type": "path",
           "data": {
+            "pathName": "Score to TopAlgaeIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeStage2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "mechanismBack"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TopAlgaeIntake to Score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "mechanismBack"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
             "pathName": "Score To StartPoint"
           }
         },
