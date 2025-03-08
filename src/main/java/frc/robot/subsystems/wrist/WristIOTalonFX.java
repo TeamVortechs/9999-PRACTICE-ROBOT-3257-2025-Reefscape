@@ -10,13 +10,16 @@ import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.KDoublePreferences.PWrist;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class WristIOTalonFX implements WristIO {
   private TalonFX arm;
-  private TalonFX rollers;
+  private SparkMax rollers;
   private CANrange canRange;
 
   @AutoLogOutput private double angle;
@@ -24,7 +27,7 @@ public class WristIOTalonFX implements WristIO {
   public WristIOTalonFX(int armID, int rollerID, String canbusName) {
 
     this.arm = new TalonFX(armID, canbusName);
-    this.rollers = new TalonFX(rollerID, canbusName);
+    this.rollers = new SparkMax(rollerID, MotorType.kBrushless);
 
     // this.canRange = new CANrange(CanrangeID);
 
@@ -60,7 +63,7 @@ public class WristIOTalonFX implements WristIO {
     // Set motor to Brake mode by default.
     arm.setNeutralMode(NeutralModeValue.Brake);
 
-    TalonFXConfiguration rollerMotorConfigs =
+   /*  TalonFXConfiguration rollerMotorConfigs =
         new TalonFXConfiguration()
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
@@ -74,6 +77,7 @@ public class WristIOTalonFX implements WristIO {
 
     // Set motor to Brake mode by default.
     rollers.setNeutralMode(NeutralModeValue.Brake);
+    /* */
   }
 
   // sets the PID target angle
@@ -115,8 +119,8 @@ public class WristIOTalonFX implements WristIO {
 
     // inputs.canRangeDistance = canRange.getDistance().getValueAsDouble();
 
-    inputs.rollersCurrent = rollers.getStatorCurrent().getValueAsDouble();
-    inputs.rollersEncoder = rollers.getPosition().getValueAsDouble();
+    inputs.rollersCurrent = rollers.getOutputCurrent();
+   // inputs.rollersEncoder = rollers.get.getValueAsDouble();
     inputs.rollersSpeed = rollers.get();
   }
 
