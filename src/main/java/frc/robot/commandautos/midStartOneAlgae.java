@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.autoCommands.DriveCommands;
+import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.wrist.Wrist;
@@ -51,8 +52,8 @@ public class midStartOneAlgae extends SequentialCommandGroup {
         new PrintCommand("Setting wrist roller speed to intake."),
         // new ScheduleCommand(
         //     new SetWristRollerSpeedCommand(wrist, 0.6)
-        //         .withTimeout(1)), // keep the command rolling while the timeout runs
-        // have arm drive into the algae, then stop intake after 1 second (assume successful)
+        //         .withTimeout(1).andThen(new SetWristRollerSpeedCommand(wrist, -0.2))), // keep the command rolling while the timeout runs
+        // have arm drive into the algae, then stop intake after 1 second (assume successful) and enable powered intake holding
         // future: put canrange in the arm to detect success
         DriveCommands.joystickDrive(drive, () -> (-driveVelocity * 0.75), () -> 0, () -> 0)
             .withTimeout(0.6).beforeStarting(new WaitUntilCommand( () -> elevator.isOnTarget())), // make sure the elevator is actually up before moving in
