@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commandautos.midStartOneAlgae;
+import frc.robot.commandautos.midStartSingleCoral;
 import frc.robot.commands.autoCommands.DriveCommands;
 import frc.robot.commands.autoCommands.IntakingCommands;
 import frc.robot.commands.autoCommands.ScoringCommands;
@@ -179,6 +180,8 @@ public class RobotContainer {
         "Red Clear",
         DriveCommands.joystickDrive(drive, () -> -0.6, () -> 0, () -> 0).withTimeout(2));
     autoChooser.addOption("Mid Start, One Algae", new midStartOneAlgae(wrist, elevator, drive));
+    autoChooser.addOption(
+        "Mid Start, Single Coral", new midStartSingleCoral(wrist, elevator, drive));
 
     // registerAutoChooser();
 
