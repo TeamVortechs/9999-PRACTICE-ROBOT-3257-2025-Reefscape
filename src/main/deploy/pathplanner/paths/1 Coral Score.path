@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.305,
-        "y": 4.0
+        "x": 7.305003725789712,
+        "y": 3.9986351260223856
       },
       "isLocked": false,
       "linkedName": "MidStartPoint"
     },
     {
       "anchor": {
-        "x": 5.9575,
-        "y": 4.014679487179487
+        "x": 5.802692307692308,
+        "y": 3.9837179487179486
       },
       "prevControl": {
-        "x": 6.2075,
-        "y": 4.014679487179487
+        "x": 6.052691250455743,
+        "y": 3.98299088808449
       },
       "nextControl": null,
       "isLocked": false,

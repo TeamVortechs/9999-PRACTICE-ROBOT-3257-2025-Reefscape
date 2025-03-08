@@ -101,7 +101,7 @@ public class RobotContainer {
 
   // pathconstraints for pathplanner paths
   private final PathConstraints pathConstraints =
-      new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+      new PathConstraints(3, 4, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -488,7 +488,7 @@ public class RobotContainer {
               new TellCommand(commandName + " auto event trigger command")
                   .andThen(
                       new ControllerVibrateCommand(1, controller)
-                          .withDeadline(new WaitCommand(0.1)))
+                          .withDeadline(new WaitCommand(0.75)))
                   .andThen(new WaitCommand(0.25)));
     }
   }
