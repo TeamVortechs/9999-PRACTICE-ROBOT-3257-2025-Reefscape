@@ -454,8 +454,17 @@ public class RobotContainer {
     // if (Constants.currentMode == Mode.SIM) isReal = false;
 
     // comm
-    addNamedCommand("intakeStage1", ScoringCommands.prepForScoring(1, wrist, elevator), isReal);
-    addNamedCommand("intakeStage2", ScoringCommands.prepForScoring(2, wrist, elevator), isReal);
+    addNamedCommand(
+        "intakeStage1",
+        ScoringCommands.prepForScoring(1, wrist, elevator)
+            .alongWith(new InstantCommand(() -> wrist.setHasCoral(false))),
+        isReal);
+
+    addNamedCommand(
+        "intakeStage2",
+        ScoringCommands.prepForScoring(2, wrist, elevator)
+            .alongWith(new InstantCommand(() -> wrist.setHasCoral(false))),
+        isReal);
     addNamedCommand(
         "score",
         ScoringCommands.prepForScoring(3, wrist, elevator)

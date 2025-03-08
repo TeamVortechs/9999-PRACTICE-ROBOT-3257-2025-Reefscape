@@ -79,7 +79,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "TopAlgaeIntake to Score"
+            "pathName": "TopAlgaeIntake to HigherScore"
           }
         },
         {
@@ -97,7 +97,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score To Clear"
+            "pathName": "HigherScore to Clear"
           }
         }
       ]
