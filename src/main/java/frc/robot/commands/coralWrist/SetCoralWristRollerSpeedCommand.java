@@ -23,7 +23,6 @@ public class SetCoralWristRollerSpeedCommand extends Command {
     // addRequirements(null);
     this.wrist = wrist;
     this.speed = speed;
-    addRequirements(wrist);
   }
 
   // Called when the command is initially scheduled.

@@ -78,6 +78,6 @@ public final class Constants {
 
     public static final double RESTING_POSITION = 0;
 
-    public static final double SCORING_POSITION = 1;
+    public static final double SCORING_POSITION = -1.296;
   }
 }

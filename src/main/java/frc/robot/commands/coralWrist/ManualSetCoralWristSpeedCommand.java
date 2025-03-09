@@ -30,14 +30,14 @@ public class ManualSetCoralWristSpeedCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    wrist.setManualSpeed(supplierspeed.getAsDouble());
-    System.out.println("Manual Mode is in session");
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    wrist.setManualSpeed(supplierspeed.getAsDouble());
+    System.out.println("Manual Mode is in session");
+  }
 
   // Called once the command ends or is interrupted.
   @Override

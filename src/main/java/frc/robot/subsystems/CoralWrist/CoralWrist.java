@@ -1,5 +1,6 @@
 package frc.robot.subsystems.CoralWrist;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.KDoublePreferences.PWrist;
@@ -32,6 +33,8 @@ public class CoralWrist extends SubsystemBase {
 
     wristIO.updateInputs(inputsAutoLogged);
     Logger.processInputs("CoralWrist", inputsAutoLogged);
+
+    SmartDashboard.putNumber("coral wrist angle", CurrentAngle);
 
     CurrentAngle = wristIO.getAngleRotations();
 

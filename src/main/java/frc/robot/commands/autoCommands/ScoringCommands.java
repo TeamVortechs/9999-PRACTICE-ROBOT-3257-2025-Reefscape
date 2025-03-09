@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
-import frc.robot.commands.coralWrist.SetCoralWristRollerSpeedCommand;
 import frc.robot.commands.coralWrist.SetCoralWristTargetAngleCommand;
 import frc.robot.commands.elevator.SetElevatorPresetCommand;
 import frc.robot.commands.wrist.SetWristTargetAngleCommand;
@@ -22,14 +21,17 @@ public class ScoringCommands {
         .andThen(new InstantCommand(() -> coralWrist.setRollerSpeed(-0.2)))
         .withDeadline(new WaitCommand(0.2));
   }
- 
+
   // public static Command shootCoralWrist(CoralWrist coralWrist) {
-  //   return new SetCoralWristTargetAngleCommand(coralWrist, () -> Constants.CoralArm.SCORING_POSITION)
-  //   .alongWith(new SetCoralWristRollerSpeedCommand(coralWrist, -1).unless(() -> !coralWrist.isOnTarget()))
+  //   return new SetCoralWristTargetAngleCommand(coralWrist, () ->
+  // Constants.CoralArm.SCORING_POSITION)
+  //   .alongWith(new SetCoralWristRollerSpeedCommand(coralWrist, -1).unless(() ->
+  // !coralWrist.isOnTarget()))
   // }
 
   // public static Command intakeCoralWrist(CoralWrist coralWrist) {
-  //   return new SetCoralWristTargetAngleCommand(coralWrist, () -> Constants.CoralArm.CORAL_GROUND_INTAKE_ANGLE)
+  //   return new SetCoralWristTargetAngleCommand(coralWrist, () ->
+  // Constants.CoralArm.CORAL_GROUND_INTAKE_ANGLE)
   //   .andThen(new SetCoralWristRollerSpeedCommand(coralWrist, 0.7));
   // }
 
