@@ -79,5 +79,7 @@ public final class Constants {
     public static final double RESTING_POSITION = 0;
 
     public static final double SCORING_POSITION = -1.296;
+    public static final double CORAL_HIGHEST_ANGLE = -4.465;
+    public static final double CORAL_LOWEST_ANGLE = 0;
   }
 }
