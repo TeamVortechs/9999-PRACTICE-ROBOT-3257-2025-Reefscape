@@ -10,9 +10,8 @@ import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-
+import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.KDoublePreferences.PWrist;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -63,7 +62,7 @@ public class WristIOTalonFX implements WristIO {
     // Set motor to Brake mode by default.
     arm.setNeutralMode(NeutralModeValue.Brake);
 
-   /*  TalonFXConfiguration rollerMotorConfigs =
+    /*  TalonFXConfiguration rollerMotorConfigs =
         new TalonFXConfiguration()
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
@@ -120,7 +119,7 @@ public class WristIOTalonFX implements WristIO {
     // inputs.canRangeDistance = canRange.getDistance().getValueAsDouble();
 
     inputs.rollersCurrent = rollers.getOutputCurrent();
-   // inputs.rollersEncoder = rollers.get.getValueAsDouble();
+    // inputs.rollersEncoder = rollers.get.getValueAsDouble();
     inputs.rollersSpeed = rollers.get();
   }
 
