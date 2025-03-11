@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.Climber.SetClimberSpeed;
 import frc.robot.commands.autoCommands.DriveCommands;
 import frc.robot.commands.autoCommands.ScoringCommands;
 import frc.robot.commands.communication.ControllerVibrateCommand;
@@ -38,6 +39,8 @@ import frc.robot.commands.wrist.SetWristRollerSpeedCommand;
 import frc.robot.commands.wrist.SetWristTargetAngleCommand;
 // import frc.robot.commands.SetWristRollerSpeed;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -74,6 +77,9 @@ public class RobotContainer {
               Constants.Arm.ARM_MOTOR_ID, Constants.Arm.ROLLER_MOTOR_ID, Constants.Arm.CANBUS
               //   Constants.Arm.CANRANGE_ID
               ));
+
+  private final Climber climber =
+      new Climber(new ClimberIOTalonFX(Constants.Climber.CLIMBER_MOTOR_ID));
 
   // DigitalInput limitSwitch =
   // new DigitalInput(20); // !!!!! FAKE CHANNEL! CHANGE WHEN PROPERLY IMPLEMENTED !!!!!!
@@ -256,6 +262,8 @@ public class RobotContainer {
     operatorController.rightBumper().whileTrue(ScoringCommands.prepForScoring(3, wrist, elevator));
 
     operatorController.rightTrigger().whileTrue(new SetWristRollerSpeedCommand(wrist, 0.6));
+
+    controller.povDownLeft().whileTrue(new SetClimberSpeed(0.1, climber));
     // new InstantCommand(() ->
     // elevator.setTargetHeight(Constants.Elevator.INTAKE_HEIGHT)));
     // IntakingCommands.intakeCommand(wrist, elevator)
