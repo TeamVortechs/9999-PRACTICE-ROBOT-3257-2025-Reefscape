@@ -14,13 +14,18 @@ public class PathfindingCommands {
   private static PathPlannerPath[] coralPaths = new PathPlannerPath[1];
   private static boolean initialized = false;
 
-  private static final PathConstraints pathConstraints =
+  private static PathConstraints pathConstraints =
       new PathConstraints(0.75, 0.5, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
   // creates the array of paths from hardcode path files
   private static void init() {
     // if it is not initailized initialize it
     if (initialized) return;
+
+    if (frc.robot.Constants.increasedPathfindingSpeed) {
+      pathConstraints =
+          new PathConstraints(3.5, 3, Units.degreesToRadians(540), Units.degreesToRadians(720));
+    }
 
     initialized = true;
     coralPaths = new PathPlannerPath[6];

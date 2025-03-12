@@ -23,8 +23,17 @@ public class Wrist extends SubsystemBase {
 
   @AutoLogOutput private boolean manualOverride = false;
 
+  // this controls the default command of the wrist bc if it has a coral attached then it shouldn't
+  // move;
+  // this is set in auto commands and on field initialization
+  @AutoLogOutput private boolean hasCoral;
+
+  @AutoLogOutput private boolean isOnTarget = false;
+
   public Wrist(WristIO wristIO) {
     this.wristIO = wristIO;
+
+    hasCoral = false;
   }
 
   @Override
@@ -36,25 +45,16 @@ public class Wrist extends SubsystemBase {
     wristIO.updateInputs(inputsAutoLogged);
     Logger.processInputs("Wrist", inputsAutoLogged);
 
+    isOnTarget = isOnTarget();
+
     CurrentAngle = wristIO.getAngleRotations();
 
-    if (getAngleRotations() > Constants.Arm.WRIST_HIGHEST_ANGLE
-        || getAngleRotations() < -targetBuffer) {
-      setManualSpeed(0);
-      System.out.println("WRIST OUT OF BOUNDS");
-    }
-
-    if (manualOverride) {
-      System.out.println("Wrist MANUAL OVERRIDE WRIST ENGAGED");
-      return;
-    }
-    // set target position to 100 rotations
     wristIO.PIDVoltage(targetAngle);
   }
 
   // returns wether or not the wrist is on target
   public boolean isOnTarget() {
-    return Math.abs(targetAngle - CurrentAngle) < targetBuffer;
+    return Math.abs(targetAngle - CurrentAngle) < 0.5;
   }
   // Math.abs(targetAngle - CurrentAngle) > 0.1 ||
 
@@ -68,13 +68,9 @@ public class Wrist extends SubsystemBase {
     return wristIO.getAngleRotations();
   }
 
-  // public boolean isDetected() {
-  //   return wristIO.isDetected();
-  // }
-
   // returns wether or not the arm is clear from the elevator
   public boolean isClearFromElevator() {
-    return wristIO.getAngleRotations() > 2;
+    return wristIO.getAngleRotations() > Constants.Arm.ELEVATOR_CLEARANCE_ANGLE - 0.1;
   }
 
   // turns manual override and sets the manual speeed
@@ -104,6 +100,11 @@ public class Wrist extends SubsystemBase {
     wristIO.setRollerSpeed(speed);
   }
 
+  // gets the roller speed
+  public double getRollerSpeed() {
+    return wristIO.getRollerSpeed();
+  }
+
   // gets the distance of the can Range
   public double getCanDistance() {
     return wristIO.getDistance();
@@ -114,9 +115,13 @@ public class Wrist extends SubsystemBase {
     wristIO.zeroArmEncoder();
   }
 
-  // public boolean isCanDetected() {
-  //   return wristIO.isDetected();
-  // }
+  public void setHasCoral(boolean hasCoral) {
+    this.hasCoral = hasCoral;
+  }
+
+  public boolean hasCoral() {
+    return hasCoral;
+  }
 
   // returns wether or not the canRange is closer than the given distance
   public boolean isCanCloserThan(double distance) {
@@ -125,8 +130,11 @@ public class Wrist extends SubsystemBase {
 
   // enum for each level that the wrist could be
   public enum WristAngle {
-    STAGE2_ANGLE(Constants.Arm.WRIST_STAGE_2_ANGLE),
-    INTAKE_ANGLE(0);
+    STAGE2_ANGLE(Constants.Arm.REEF_INTAKE_ANGLE),
+    INTAKE_ANGLE(0),
+    ALGAE_GROUND_INTAKE(Constants.Arm.GROUND_INTAKE_ANGLE),
+    CORAL_SCORE(Constants.Arm.WRIST_CORAL_SCORE);
+
     // STAGE2_ANGLE(Stage2angle),
 
     private double angle;

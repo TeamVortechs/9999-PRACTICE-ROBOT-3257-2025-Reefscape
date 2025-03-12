@@ -1,7 +1,9 @@
 package frc.robot.commands.wrist;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.wrist.Wrist;
+import java.util.function.DoubleSupplier;
 
 /*
 Names
@@ -17,9 +19,9 @@ public class SetWristTargetAngleCommand extends Command {
    */
   private final Wrist wrist;
 
-  private final double targetAngle;
+  private final DoubleSupplier targetAngle;
 
-  public SetWristTargetAngleCommand(Wrist wrist, double targetAngle) {
+  public SetWristTargetAngleCommand(Wrist wrist, DoubleSupplier targetAngle) {
     addRequirements(wrist);
 
     this.wrist = wrist;
@@ -33,7 +35,8 @@ public class SetWristTargetAngleCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    wrist.setTargetAngle(targetAngle);
+    wrist.setRollerSpeed(0.2);
+    wrist.setTargetAngle(targetAngle.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.
@@ -43,6 +46,12 @@ public class SetWristTargetAngleCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return wrist.isOnTarget() && Math.abs(targetAngle - wrist.getTargetAngle()) < 0.001;
+    // return wrist.isOnTarget();
+    return true;
+  }
+
+  public static Command withConsistentEnd(Wrist wrist, DoubleSupplier targetAngle) {
+    return new SetWristTargetAngleCommand(wrist, targetAngle)
+        .andThen(new WaitUntilCommand(() -> wrist.isOnTarget()));
   }
 }

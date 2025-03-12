@@ -2,20 +2,19 @@ package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.wrist.Wrist;
 
 public class SetElevatorPresetCommand extends Command {
   private final Elevator elevator;
-  private final Wrist wrist;
   private final double presetHeight;
+
+  private boolean ran = false;
 
   /**
    * @param elevator The elevator subsystem.
    * @param presetHeight The target height (from preferences).
    */
-  public SetElevatorPresetCommand(Elevator elevator, Wrist wrist, double presetHeight) {
+  public SetElevatorPresetCommand(Elevator elevator, double presetHeight) {
     this.elevator = elevator;
-    this.wrist = wrist;
     this.presetHeight = presetHeight;
     addRequirements(elevator);
   }
@@ -23,7 +22,18 @@ public class SetElevatorPresetCommand extends Command {
   @Override
   public void initialize() {
     System.out.println("attempting an elevator preset command with the height " + presetHeight);
+    ran = false;
+  }
+
+  @Override
+  public void execute() {
+    if (ran) {
+      // System.out.println("Returning from SetElevatorPresetCommand.");
+      return;
+    }
+    // System.out.println("Set Preset Height");
     elevator.setTargetHeight(presetHeight);
+    ran = true;
   }
 
   @Override
